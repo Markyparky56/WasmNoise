@@ -11,15 +11,33 @@ namespace PointMath
   }
 
   template<typename T>
+  PM_INLINE Point2<T> add1_2(Point2<T> &a)
+  {
+    return Point2<T>(a[0] + static_cast<T>(1), a[1] + static_cast<T>(1));
+  }
+
+  template<typename T>
   PM_INLINE Point3<T> add3(Point3<T> &a, Point3<T> &b)
   {
     return Point3<T>(a[0] + b[0], a[1] + b[1], a[2] + b[2]);
   }
 
   template<typename T>
+  PM_INLINE Point3<T> add1_3(Point3<T> &a)
+  {
+    return Point3<T>(a[0] + static_cast<T>(1), a[1] + static_cast<T>(1), a[2] + static_cast<T>(1));
+  }
+
+  template<typename T>
   PM_INLINE Point4<T> add4(Point4<T> &a, Point4<T> &b)
   {
     return Point4<T>(a[0] + b[0], a[1] + b[1], a[2] + b[2], a[3] + b[3]);
+  }
+
+  template<typename T>
+  PM_INLINE Point4<T> add1_4(Point4<T> &a)
+  {
+    return Point4<T>(a[0] + static_cast<T>(1), a[1] + static_cast<T>(1), a[2] + static_cast<T>(1), a[3] + static_cast<T>(1));
   }
 
   // Subtract
@@ -30,15 +48,33 @@ namespace PointMath
   }
 
   template<typename T>
+  PM_INLINE Point2<T> sub1_2(Point2<T> &a)
+  {
+    return Point2<T>(a[0] - static_cast<T>(1), a[1] - static_cast<T>(1));
+  }
+
+  template<typename T>
   PM_INLINE Point3<T> sub3(Point3<T> &a, Point3<T> &b)
   {
     return Point3<T>(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
   }
 
   template<typename T>
+  PM_INLINE Point3<T> sub1_3(Point3<T> &a)
+  {
+    return Point3<T>(a[0] - static_cast<T>(1), a[1] - static_cast<T>(1), a[2] - static_cast<T>(1));
+  }
+
+  template<typename T>
   PM_INLINE Point4<T> sub4(Point4<T> &a, Point4<T> &b)
   {
     return Point4<T>(a[0] - b[0], a[1] - b[1], a[2] - b[2], a[3] - b[3]);
+  }
+
+  template<typename T>
+  PM_INLINE Point4<T> sub1_4(Point4<T> &a)
+  {
+    return Point4<T>(a[0] - static_cast<T>(1), a[1] - static_cast<T>(1), a[2] - static_cast<T>(1), a[3] - static_cast<T>(1));
   }
 
   // Divide
@@ -96,9 +132,21 @@ namespace PointMath
   template<typename T> PM_INLINE T fold4(Point4<T> &a, FoldOp::OpPtr<T> op) { return op(op(op(a[0], a[1]), a[2]), a[3]); }
 
   // We can leverage the fold functions to perform a dot product
-  template<typename T> PM_INLINE T dot2(Point2<T> &a, Point2<T> &b) { return fold2(mul2(a, b), FoldOp::AddOp); }
-  template<typename T> PM_INLINE T dot3(Point3<T> &a, Point3<T> &b) { return fold3(mul3(a, b), FoldOp::AddOp); }
-  template<typename T> PM_INLINE T dot4(Point4<T> &a, Point4<T> &b) { return fold4(mul4(a, b), FoldOp::AddOp); }
+  template<typename T> PM_INLINE T dot2(Point2<T> &a, Point2<T> &b) 
+  { 
+    auto val = mul2(a, b);
+    return fold2(val, FoldOp::AddOp); 
+  }
+  template<typename T> PM_INLINE T dot3(Point3<T> &a, Point3<T> &b) 
+  { 
+    auto val = mul3(a, b);
+    return fold3(val, FoldOp::AddOp); 
+  }
+  template<typename T> PM_INLINE T dot4(Point4<T> &a, Point4<T> &b) 
+  {
+    auto val =  mul4(a, b);
+    return fold4(val, FoldOp::AddOp); 
+  }
 
   // More complex mathematical functions for performing on point objects
   namespace MapOps
@@ -113,7 +161,7 @@ namespace PointMath
     // But should suffice for smaller values
     template<typename T> PM_INLINE Point2<T> FastFloor(Point2<T> &p)
     {
-      return
+      return Point2<T>
       {
         static_cast<T>(static_cast<int>(p[0] + 65536.0) - 65536),
         static_cast<T>(static_cast<int>(p[1] + 65536.0) - 65536)
@@ -122,7 +170,7 @@ namespace PointMath
     
     template<typename T> PM_INLINE Point3<T> FastFloor(Point3<T> &p)
     {
-      return
+      return Point3<T>
       {
         static_cast<T>(static_cast<int>(p[0] + 65536.0) - 65536),
         static_cast<T>(static_cast<int>(p[1] + 65536.0) - 65536),
@@ -131,7 +179,7 @@ namespace PointMath
     }
     template<typename T> PM_INLINE Point4<T> FastFloor(Point4<T> &p)
     {
-      return
+      return Point4<T>
       {
         static_cast<T>(static_cast<int>(p[0] + 65536.0) - 65536),
         static_cast<T>(static_cast<int>(p[1] + 65536.0) - 65536),
@@ -142,7 +190,7 @@ namespace PointMath
 
     template<typename T> PM_INLINE Point2<T> FastCeiling(Point2<T> &p)
     {
-      return
+      return Point2<T>
       {
         static_cast<T>(static_cast<int>(p[0] + 65536.0) - 65536),
         static_cast<T>(static_cast<int>(p[1] + 65536.0) - 65536)
@@ -150,7 +198,7 @@ namespace PointMath
     }
     template<typename T> PM_INLINE Point3<T> FastCeiling(Point3<T> &p)
     {
-      return
+      return Point3<T>
       {
         static_cast<T>(static_cast<int>(p[0] + 65536.0) - 65536),
         static_cast<T>(static_cast<int>(p[1] + 65536.0) - 65536),
@@ -159,7 +207,7 @@ namespace PointMath
     }
     template<typename T> PM_INLINE Point4<T> FastCeiling(Point4<T> &p)
     {
-      return
+      return Point4<T>
       {
         static_cast<T>(static_cast<int>(p[0] + 65536.0) - 65536),
         static_cast<T>(static_cast<int>(p[1] + 65536.0) - 65536),

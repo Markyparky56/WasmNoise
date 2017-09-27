@@ -39,8 +39,8 @@ private:
 
 public:
   typedef uint64_t result_type; // Attempt to interface with the STL's uniform distributions
-  static const uint64_t min() { return std::numeric_limits<uint64_t>::min(); }
-  static const uint64_t max() { return std::numeric_limits<uint64_t>::max(); }
+  static constexpr uint64_t min() { return std::numeric_limits<uint64_t>::min(); }
+  static constexpr uint64_t max() { return std::numeric_limits<uint64_t>::max(); }
 
   xoroshiro128plus()
     : s{ std::random_device()(), std::random_device()() }
@@ -110,7 +110,7 @@ public:
 
     for (size_t i = static_cast<size_t>(arr.size()) - 1; i >= 1; i--)
     {
-      size_t j = dist(*this, std::uniform_int<uint64_t>::param_type(0, i));
+      size_t j = dist(*this, std::uniform_int_distribution<uint64_t>::param_type(0, i));
       std::swap(arr[j], arr[i]);
     }
   }

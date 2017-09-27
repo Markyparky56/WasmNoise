@@ -11,7 +11,7 @@ class PermutationTable
 {
   std::array<uint8_t, 256> perm;
 
-  static std::array<uint8_t, 256> newPermTable(xoroshiro128plus &rng)
+  static std::array<uint8_t, 256> newPermTable(xoroshiro128plus rng)
   {
     std::array<uint8_t, 256> tmpPerm;
 
@@ -46,7 +46,7 @@ public:
         29,24,72,243,141,128,195,78,66,215,61,156,180
       }
   {}
-  PermutationTable(std::array<uint8_t, 256> &p)
+  PermutationTable(std::array<uint8_t, 256> p)
     : perm(p)
   {}
   PermutationTable(uint64_t seed)

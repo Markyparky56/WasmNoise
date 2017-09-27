@@ -4,13 +4,12 @@
 #include "point4.hpp"
 
 #if defined(__clang__) || defined(__GNUC__) || defined(__GNUG__)
-#defined PM_INLINE __attribute__((always_inline))
+#define PM_INLINE __attribute__((always_inline))
 #elif defined(_MSC_VER)
 #define PM_INLINE __forceinline 
 #else
 #define PM_INLINE inline
 #endif
-
 
 namespace Points
 {
