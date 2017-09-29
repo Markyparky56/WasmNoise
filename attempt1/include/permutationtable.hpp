@@ -2,18 +2,20 @@
 #include "points.hpp"
 #include "xoroshiro128plus.hpp"
 #include <cstdint>
-#include <array>
+#include <vector>
 using std::uint8_t;
+
+#include <emscripten/bind.h>
 
 // The classic table, from Ken Perlin's reference perlin implementation is used as the 
 // starting value for the permutation array if no seed is provided at initialisation
 class PermutationTable
 {
-  std::array<uint8_t, 256> perm;
+  std::vector<uint8_t> perm;
 
-  static std::array<uint8_t, 256> newPermTable(xoroshiro128plus rng)
+  static std::vector<uint8_t> newPermTable(xoroshiro128plus rng)
   {
-    std::array<uint8_t, 256> tmpPerm;
+    std::vector<uint8_t> tmpPerm(256);
 
     // Fill the temporary table with values from 0 till 255
     for (int i = 0; i < 256; i++)
@@ -26,6 +28,21 @@ class PermutationTable
 
     return tmpPerm;
   }
+
+  // uint8_t perm[256];
+  // static uint8_t[] newPermTable(xoroshiro128plus rng)
+  // {
+  //   uint8_t tmpPerm[256];
+
+  //   for(int i = 0; i < 256; i++)
+  //   {
+  //     tmpPerm[i] = i;
+  //   }
+
+  //   rng.shuffle<uint8_t, 256>(tmpPerm);
+
+  //   return tmpPerm;
+  // }
 
 public:
   PermutationTable()
@@ -46,10 +63,10 @@ public:
         29,24,72,243,141,128,195,78,66,215,61,156,180
       }
   {}
-  PermutationTable(std::array<uint8_t, 256> p)
+  PermutationTable(std::vector<uint8_t> p)
     : perm(p)
   {}
-  PermutationTable(uint64_t seed)
+  PermutationTable(uint32_t seed)
     : perm(newPermTable(xoroshiro128plus(seed)))
   {}
 
@@ -75,7 +92,7 @@ public:
     return perm[get3({ pos[0], pos[1], pos[2] }) ^ static_cast<uint8_t>((pos[3] & 0xff))];
   }
 
-  static PermutationTable NewTable(uint64_t seed)
+  static PermutationTable NewTable(uint32_t seed)
   {
     xoroshiro128plus rng(seed);
 
@@ -84,3 +101,13 @@ public:
   }
 
 };
+
+// EMSCRIPTEN_BINDINGS(PermTable)
+// {
+//   emscripten::register_vector<uint8_t>("uint8vector");
+//   emscripten::class_<PermutationTable>("PermutationTable")
+//     .constructor<>()
+//     //.constructor<std::vector<uint8_t>>()
+//     .constructor<uint32_t>()
+//     .class_function("NewTable", &PermutationTable::NewTable);
+// }

@@ -62,7 +62,7 @@ def build(buildType, loc=None):
         config.write(configfile)
 
     # Run cmake to generate an up to date make file
-    cmakeCmd = ["cmake.exe", "-DCMAKE_TOOLCHAIN_FILE=C:/local/emsdk/emscripten/incoming/cmake/Modules/Platform/Emscripten.cmake", "-DCMAKE_MAKE_PROGRAM:PATH=C:/gnuwin32/bin/make.exe", majorOpt, minorOpt, patchOpt, buildOpt, "-G", "MinGW Makefiles", "."]
+    cmakeCmd = ["cmake.exe", "-DEMSDK_LOC=C:/local/esmsdk", "-DCMAKE_TOOLCHAIN_FILE=C:/local/emsdk/emscripten/incoming/cmake/Modules/Platform/Emscripten.cmake", "-DCMAKE_MAKE_PROGRAM:PATH=C:/gnuwin32/bin/make.exe", majorOpt, minorOpt, patchOpt, buildOpt, "-G", "MinGW Makefiles", "."]
     subprocess.run(cmakeCmd, shell=True)
     subprocess.run(["make"], shell=True)
 

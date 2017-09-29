@@ -11,7 +11,7 @@ namespace Perlin
   {
   private:
     PermutationTable permutationTable;
-    uint64_t seed;
+    uint32_t seed;
 
     // Surflet functions
     template<typename T>
@@ -63,12 +63,12 @@ namespace Perlin
       : permutationTable(PermutationTable()) // Classic permuation table
       , seed(0)
     {}
-    PerlinGenerator(uint64_t _seed)
+    PerlinGenerator(uint32_t _seed)
       : permutationTable(PermutationTable::NewTable(_seed))
       , seed(_seed)
-    {}
+    {}      
 
-    void SetSeed(uint64_t newSeed)
+    void SetSeed(uint32_t newSeed)
     {
       permutationTable = PermutationTable::NewTable(newSeed);
       seed = newSeed;
@@ -271,7 +271,7 @@ EMSCRIPTEN_BINDINGS(Perlin)
 {
   emscripten::class_<Perlin::PerlinGenerator>("PerlinGenerator")
     .constructor<>()
-    .constructor<uint64_t>()
+    .constructor<uint32_t>()
     .function("SetSeed", &Perlin::PerlinGenerator::SetSeed)
     .function("evalXY", emscripten::select_overload<double(double, double)>(&Perlin::PerlinGenerator::eval<double>))
     .function("evalXYZ", emscripten::select_overload<double(double, double, double)>(&Perlin::PerlinGenerator::eval<double>))
