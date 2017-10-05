@@ -5,12 +5,8 @@
 // Conversion by Mark A. Ropper
 
 #include "splitmix64.hpp"
+#include "types.hpp"
 
-//using std::uint64_t;
-using uint64 = unsigned long long;
-#ifndef UINT64_C
-#define UINT64_C(x)  (x ## ULL)
-#endif
 class xoroshiro128plus
 {
 private:

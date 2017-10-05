@@ -1,13 +1,7 @@
 #pragma once
 // http://xoroshiro.di.unimi.it/splitmix64.c
 
-//#include <cstdint>
-//#include <random>
-
-using uint64 = unsigned long long;
-#ifndef UINT64_C
-#define UINT64_C(x)  (x ## ULL)
-#endif
+#include "types.hpp"
 
 class splitmix64
 {
