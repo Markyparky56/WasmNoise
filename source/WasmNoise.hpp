@@ -14,10 +14,10 @@ using WM_DECIMAL = double;
 using WM_DECIMAL = float;
 #endif
 
-using uint8 = unsigned char;
-using int8 = char;
-using uint32 = unsigned int;
-using int32 = int;
+// using uint8 = unsigned char;
+// using int8 = char;
+// using uint32 = unsigned int;
+// using int32 = int;
 
 #include "xoroshiro128plus.hpp"
 

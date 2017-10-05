@@ -4,12 +4,7 @@
 // Original file can be found here: http://xoroshiro.di.unimi.it/xoroshiro128plus.c
 // Conversion by Mark A. Ropper
 
-//#include <random>
 #include "splitmix64.hpp"
-// #include <array>
-// #include <vector>
-// #include <utility> // std::swap
-// #include <random>
 
 //using std::uint64_t;
 using uint64 = unsigned long long;
@@ -40,9 +35,9 @@ private:
   }
 
 public:
-  // typedef uint64 result_type; // Attempt to interface with the STL's uniform distributions
-  // static constexpr uint64 min() { return std::numeric_limits<uint64>::min(); }
-  // static constexpr uint64 max() { return std::numeric_limits<uint64>::max(); }
+  typedef uint64 result_type; // Attempt to interface with the STL's uniform distributions
+  static constexpr uint64 min() { return std::numeric_limits<uint64>::min(); }
+  static constexpr uint64 max() { return std::numeric_limits<uint64>::max(); }
 
   // xoroshiro128plus()
   //   : s{ std::random_device()(), std::random_device()() }

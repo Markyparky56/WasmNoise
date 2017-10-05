@@ -1,6 +1,6 @@
 #include "WasmNoise.hpp"
 #include "xoroshiro128plus.hpp"
-#include <math.h>
+#include "uniform_int_distribution.hpp"
 
 static WasmNoise wasmNoise;
 
@@ -27,8 +27,10 @@ const WM_DECIMAL GRAD_Z[] =
 
 static int32 FastFloor(WM_DECIMAL f) { return (f >= 0 ? static_cast<int32>(f) : static_cast<int32>(f) - 1); }
 static int32 FastRound(WM_DECIMAL f) { return (f >= 0 ? static_cast<int32>(f + WM_DECIMAL(0.5)) : static_cast<int32>(f - WM_DECIMAL(0.5))); }
-static int32 FastAbs(int32 i) { return abs(i); }
-static WM_DECIMAL FastAbs(WM_DECIMAL f) { return fabs(f); }
+//static int32 FastAbs(int32 i) { return abs(i); }
+static WM_INLINE int32 FastAbs(int32 i) { return __builtin_labs(i); }
+//static WM_DECIMAL FastAbs(WM_DECIMAL f) { return fabs(f); }
+static WM_INLINE WM_DECIMAL FastAbs(WM_DECIMAL f){ return __builtin_fabs(f); }
 static WM_DECIMAL Lerp(WM_DECIMAL a, WM_DECIMAL b, WM_DECIMAL t) { return a + t * (b - a); }
 static WM_DECIMAL InterpHermiteFunc(WM_DECIMAL t) { return t*t*(3 - 2*t); }
 static WM_DECIMAL InterpQuinticFunc(WM_DECIMAL t) { return t*t*t*(t*(t*6 -15) + 10); }
@@ -51,9 +53,9 @@ void WasmNoise::SetSeed(int32 _seed)
 
   for(int32 j = 0; j < 256; j++)
   {
-    //std::uniform_int_distribution<> dist(0, 256-j);
-    //int k = dist(gen) + j;
-    int k = (gen.next() % 256-j) + j;
+    std::uniform_int_distribution<> dist(0, 256-j);
+    int k = dist(gen) + j;
+    // int k = (gen.next() % 256-j) + j;
     int l = perm[j];
     perm[j] = perm[j + 256] = perm[k];
     perm[k] = l;
