@@ -87,14 +87,14 @@ def build(buildType):
 
   # Assemble build commands
   binLoc = "bin/" + outName + '.b' + config["VERSION"]["build"]
-  llvmlinkOut = outName+".ll"
+  llvmlinkOut = outName+".bc"
   llcOut = outName+".s"
   s2wasmOut = outName+".wat"
   wat2wasmOut = outName+".wasm"
   optimisationLevel = "-O3" # -O3 for final?
 
   clangCmd = ["clang"
-  , "-S", "--target=wasm32"
+  , "--target=wasm32"
   , "-emit-llvm"
   , "-std=c++14", optimisationLevel
   , "-v", "-c"
@@ -122,9 +122,9 @@ def build(buildType):
   
   # The llvm-link command requires knowledge of the output from the clang command
   # so we assemble it here
-  llvmlinkCmd = ["llvm-link", "-S", "-v", "-o", llvmlinkOut]
+  llvmlinkCmd = ["llvm-link", "-v", "-o", llvmlinkOut]
   for file in os.listdir('.'):
-    if(file.endswith(".ll")):
+    if(file.endswith(".bc")):
       llvmlinkCmd.append(file)
 
   print(TextColours.Blue + "Linking with llvm-link..." + TextColours.StopColour)
