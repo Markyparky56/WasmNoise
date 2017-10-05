@@ -1,6 +1,8 @@
 #include "WasmNoise.hpp"
 #include "xoroshiro128plus.hpp"
-#include <cmath>
+#include <math.h>
+
+static WasmNoise wasmNoise;
 
 const WM_DECIMAL GRAD_X[] =
 {
@@ -49,8 +51,9 @@ void WasmNoise::SetSeed(int32 _seed)
 
   for(int32 j = 0; j < 256; j++)
   {
-    std::uniform_int_distribution<> dist(0, 256-j);
-    int k = dist(gen) + j;
+    //std::uniform_int_distribution<> dist(0, 256-j);
+    //int k = dist(gen) + j;
+    int k = (gen.next() % 256-j) + j;
     int l = perm[j];
     perm[j] = perm[j + 256] = perm[k];
     perm[k] = l;
