@@ -25,7 +25,7 @@ using int_fast64 = long long;
 using uint_fast8 = unsigned char;
 using uint_fast16 = unsigned int;
 using uint_fast32 = unsigned int;
-using uint_fast 64 = unsigned long long;
+using uint_fast64 = unsigned long long;
 
 using intmax = long long;
 using uintmax = unsigned long long;

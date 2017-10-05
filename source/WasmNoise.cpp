@@ -53,7 +53,7 @@ void WasmNoise::SetSeed(int32 _seed)
 
   for(int32 j = 0; j < 256; j++)
   {
-    std::uniform_int_distribution<> dist(0, 256-j);
+    uniform_int_distribution<> dist(0, 256-j);
     int k = dist(gen) + j;
     // int k = (gen.next() % 256-j) + j;
     int l = perm[j];

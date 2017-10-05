@@ -1,6 +1,7 @@
 #pragma once
 #include "numeric_limits.hpp"
 #include "types.hpp"
+#include "independent_bits_engine.hpp"
 
 template<class IntType = int>
 class uniform_int_distribution
@@ -11,13 +12,13 @@ public:
 
   class param_type
   {
-    result_type a, b;
+    result_type _a, _b;
   public:
     typedef uniform_int_distribution distribution_type;
 
-    explicit param_type(result_type _a = 0, reuslt_type _b = numeric_limits<result_type>::max())
-      : a(_a)
-      , b(_b)
+    explicit param_type(result_type __a = 0, result_type __b = numeric_limits<result_type>::max())
+      : _a(__a)
+      , _b(__b)
     {}
 
     result_type a() const {return _a;}
@@ -25,21 +26,21 @@ public:
 
     friend bool operator==(const param_type& _x, const param_type& _y)
     {
-      return _x.a == _y.a && _x.b == _y.b;
+      return _x._a == _y._a && _x._b == _y._b;
     }
     friend bool operator!=(const param_type& _x, const param_type& _y)
     {
       return !(_x==_y);
     }
-  }
+  };
 
 private:
   param_type p;
 
 public:
   // constructors and reset functions
-  explicit uniform_int_distribution(result_type _a = 0, result_type _b = numeric_limits<result_type>::max())
-    : p(param_type(_a, _b))
+  explicit uniform_int_distribution(result_type __a = 0, result_type __b = numeric_limits<result_type>::max())
+    : p(param_type(__a, __b))
   {}
   explicit uniform_int_distribution(const param_type& _p) 
     : p(_p)
@@ -57,7 +58,7 @@ public:
   result_type a() const {return p.a();}
   result_type b() const {return p.b();}
 
-  friend bool operator==(const unfirom_int_distribution& _x, const uniform_int_distribution& _y)
+  friend bool operator==(const uniform_int_distribution& _x, const uniform_int_distribution& _y)
   {
     return _x.p == _y.p;
   }
@@ -72,7 +73,7 @@ template<class URNG>
 typename uniform_int_distribution<IntType>::result_type
 uniform_int_distribution<IntType>::operator()(URNG& _g, const param_type& _p)
 {
-  typedef typename conditional<sizeof(result_type) <= sizeof(uint32), uint32, uint64>::type UIntType;
+  typedef typename type_traits::conditional<sizeof(result_type) <= sizeof(uint32), uint32, uint64>::type UIntType;
   const UIntType Rp = p.b() - p.a() + UIntType(1);
   if(Rp == 1)
     return p.a();
@@ -81,7 +82,7 @@ uniform_int_distribution<IntType>::operator()(URNG& _g, const param_type& _p)
   if(Rp == 0)
     return static_cast<result_type>(Eng(_g, Dt)());
   size_t w = Dt - __builtin_clz(Rp) - 1;
-  if((Rp & (std::numeric_limits<UIntType>::max() >> (Dt - w))) != 0)
+  if((Rp & (numeric_limits<UIntType>::max() >> (Dt - w))) != 0)
     ++w;
   Eng e(_g, w);
   UIntType u;

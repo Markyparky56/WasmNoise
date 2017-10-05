@@ -1,5 +1,4 @@
 #pragma once
-#include "limits.hpp"
 #include "type_traits.hpp"
 
 #define FORCE_INLINE __attribute__((always_inline))
@@ -21,11 +20,11 @@ enum float_denorm_style
 };
 
 // wasm_numeric_limits base tamplte
-template<class T, bool = is_arithmetic<T>::value>
+template<class T, bool = type_traits::is_arithmetic<T>::value>
 class wasm_numeric_limits
 {
 protected:
-  using T type;
+  typedef T type;
 
   static constexpr bool is_specialized = false;
   static constexpr T min() noexcept {return type();}
@@ -73,7 +72,7 @@ struct compute_min
 };
 
 template<class T, int __digits>
-struct compute_min
+struct compute_min<T, __digits, false>
 {
   static constexpr const T value = static_cast<T>(0);
 };
@@ -81,6 +80,7 @@ struct compute_min
 template<class T>
 class wasm_numeric_limits<T, true>
 {
+protected:
   typedef T type;
 
   static constexpr const bool is_specialized = true;
@@ -118,7 +118,7 @@ class wasm_numeric_limits<T, true>
 
   static constexpr const bool is_iec559 = false;
   static constexpr const bool is_bounded = true;
-  static constexpr const bool is_modulo = !is_signed<T>::value;
+  static constexpr const bool is_modulo = !type_traits::is_signed<T>::value;
   // Since this header is explicitly intended for WebAssembly
   static constexpr const bool traps = true;
   static constexpr const bool tinyness_before = false;
@@ -141,7 +141,7 @@ protected:
   static constexpr const type __max = true;
   FORCE_INLINE static constexpr type min() noexcept {return __min;}
   FORCE_INLINE static constexpr type max() noexcept {return __max;}
-  FORCE_INLINE static constexpr type lowest() noexcept {Return min();}
+  FORCE_INLINE static constexpr type lowest() noexcept {return min();}
 
   static constexpr const bool is_integer = true;
   static constexpr const bool is_exact = true;
@@ -170,7 +170,7 @@ protected:
 
   static constexpr const bool traps = false;
   static constexpr const bool tinyness_before = false;
-  static constexpr const float_Round_style = round_style = round_toward_zero;
+  static constexpr const float_round_style round_style = round_toward_zero;
 };
 
 template<>
@@ -233,11 +233,11 @@ protected:
   static constexpr const int max_digits10 = 2+(digits * 30103l)/100000l;
   FORCE_INLINE static constexpr type min() noexcept {return __DBL_MIN__;}
   FORCE_INLINE static constexpr type max() noexcept {return __DBL_MAX__;}
-  FORCE_INLINE static constexpr tyoe lowest() noexcept {return -max();}
+  FORCE_INLINE static constexpr type lowest() noexcept {return -max();}
 
   static constexpr const bool is_integer = false;
   static constexpr const bool is_exact = false;
-  static constexpr const int radix = __DBL_RADIX__;
+  static constexpr const int radix = __FLT_RADIX__;
   FORCE_INLINE static constexpr type epsilon() noexcept {return __DBL_EPSILON__;}
   FORCE_INLINE static constexpr type round_error() noexcept {return 0.5;}
 
@@ -283,7 +283,7 @@ protected:
 
   static constexpr const bool is_integer = false;
   static constexpr const bool is_exact = false;
-  static constexpr const int radix = __LDBL_RADIX__;
+  static constexpr const int radix = __FLT_RADIX__;
   FORCE_INLINE static constexpr type epsilon() noexcept {return __LDBL_EPSILON__;}
   FORCE_INLINE static constexpr type round_Error() noexcept {return 0.5f;}
 
@@ -313,9 +313,9 @@ protected:
 
 // Actual usable numeric_limits class
 template<class T>
-class numeric_limits : private wasm_numeric_limits<typename remove_cv<T>::type>
+class numeric_limits : private wasm_numeric_limits<typename type_traits::remove_cv<T>::type>
 {
-  typedef wasm_numeric_limits<typename remove_cv<T>::type> __base;
+  typedef wasm_numeric_limits<typename type_traits::remove_cv<T>::type> __base;
   typedef typename __base::type type;
 public:
   static constexpr const bool is_specialized = __base::is_specialized;
@@ -327,7 +327,7 @@ public:
   static constexpr const int digits10 = __base::digits10;
   static constexpr const int max_digits10 = __base::max_digits10;
   static constexpr const bool is_signed = __base::is_signed;
-  static constexpr const bool is_integer = __based::is_integer;
+  static constexpr const bool is_integer = __base::is_integer;
   static constexpr const bool is_exact = __base::is_exact;
   static constexpr const int radix = __base::radix;
   FORCE_INLINE static constexpr type epsilon() noexcept {return __base::epsilon();}
@@ -336,7 +336,7 @@ public:
   static constexpr const int min_exponent = __base::min_exponent;
   static constexpr const int min_exponent10 = __base::min_exponent10;
   static constexpr const int max_exponent = __base::max_exponent;
-  static constexpr const int max_exponenet10 = __base::max_exponent10;
+  static constexpr const int max_exponent10 = __base::max_exponent10;
 
   static constexpr const bool has_infinity = __base::has_infinity;
   static constexpr const bool has_quiet_NaN = __base::has_quiet_NaN;
@@ -345,7 +345,7 @@ public:
   static constexpr const bool has_denorm_loss = __base::has_denorm_loss;
   FORCE_INLINE static constexpr type infinity() noexcept {return __base::infinity();}
   FORCE_INLINE static constexpr type quiet_NaN() noexcept {return __base::quiet_NaN();}
-  FORCE_INLINE static constexpr type signaling_NaN() noexcept {return __base:signaling_NaN();}
+  FORCE_INLINE static constexpr type signaling_NaN() noexcept {return __base::signaling_NaN();}
   FORCE_INLINE static constexpr type denorm_min() noexcept {return __base::denorm_min();}
 
   static constexpr const bool is_iec559 = __base::is_iec559;
@@ -357,7 +357,7 @@ public:
   static constexpr const float_round_style round_style = __base::round_style;
 };
 
-template<class T> constexpr const bool numeric_limits<T>::is_sepcialized;
+template<class T> constexpr const bool numeric_limits<T>::is_specialized;
 template<class T> constexpr const int numeric_limits<T>::digits;
 template<class T> constexpr const int numeric_limits<T>::digits10;
 template<class T> constexpr const int numeric_limits<T>::max_digits10;
@@ -385,7 +385,7 @@ template<class T>
 class numeric_limits<const T> : private numeric_limits<T>
 {
   typedef numeric_limits<T> __base;
-  typdef T type;
+  typedef T type;
 public:
   static constexpr const bool is_specialized = __base::is_specialized;
   FORCE_INLINE static constexpr type min() noexcept {return __base::min();}
@@ -396,7 +396,7 @@ public:
   static constexpr const int digits10 = __base::digits10;
   static constexpr const int max_digits10 = __base::max_digits10;
   static constexpr const bool is_signed = __base::is_signed;
-  static constexpr const bool is_integer = __based::is_integer;
+  static constexpr const bool is_integer = __base::is_integer;
   static constexpr const bool is_exact = __base::is_exact;
   static constexpr const int radix = __base::radix;
   FORCE_INLINE static constexpr type epsilon() noexcept {return __base::epsilon();}
@@ -405,7 +405,7 @@ public:
   static constexpr const int min_exponent = __base::min_exponent;
   static constexpr const int min_exponent10 = __base::min_exponent10;
   static constexpr const int max_exponent = __base::max_exponent;
-  static constexpr const int max_exponenet10 = __base::max_exponent10;
+  static constexpr const int max_exponent10 = __base::max_exponent10;
 
   static constexpr const bool has_infinity = __base::has_infinity;
   static constexpr const bool has_quiet_NaN = __base::has_quiet_NaN;
@@ -414,7 +414,7 @@ public:
   static constexpr const bool has_denorm_loss = __base::has_denorm_loss;
   FORCE_INLINE static constexpr type infinity() noexcept {return __base::infinity();}
   FORCE_INLINE static constexpr type quiet_NaN() noexcept {return __base::quiet_NaN();}
-  FORCE_INLINE static constexpr type signaling_NaN() noexcept {return __base:signaling_NaN();}
+  FORCE_INLINE static constexpr type signaling_NaN() noexcept {return __base::signaling_NaN();}
   FORCE_INLINE static constexpr type denorm_min() noexcept {return __base::denorm_min();}
 
   static constexpr const bool is_iec559 = __base::is_iec559;
@@ -441,14 +441,14 @@ template<class T> constexpr const int numeric_limits<const T>::max_exponent10;
 template<class T> constexpr const bool numeric_limits<const T>::has_infinity;
 template<class T> constexpr const bool numeric_limits<const T>::has_quiet_NaN;
 template<class T> constexpr const bool numeric_limits<const T>::has_signaling_NaN;
-template<class T> constexpr const float_denorm_style numeric_lmits<const T>::has_denorm;
+template<class T> constexpr const float_denorm_style numeric_limits<const T>::has_denorm;
 template<class T> constexpr const bool numeric_limits<const T>::has_denorm_loss;
 template<class T> constexpr const bool numeric_limits<const T>::is_iec559;
 template<class T> constexpr const bool numeric_limits<const T>::is_bounded;
 template<class T> constexpr const bool numeric_limits<const T>::is_modulo;
 template<class T> constexpr const bool numeric_limits<const T>::traps;
 template<class T> constexpr const bool numeric_limits<const T>::tinyness_before;
-template<class T> constexpr float_round_style numeric_limits<const T>::round_style;
+template<class T> constexpr const float_round_style numeric_limits<const T>::round_style;
 
 template<class T>
 class numeric_limits<volatile T> : private numeric_limits<T>
@@ -465,7 +465,7 @@ public:
   static constexpr const int digits10 = __base::digits10;
   static constexpr const int max_digits10 = __base::max_digits10;
   static constexpr const bool is_signed = __base::is_signed;
-  static constexpr const bool is_integer = __based::is_integer;
+  static constexpr const bool is_integer = __base::is_integer;
   static constexpr const bool is_exact = __base::is_exact;
   static constexpr const int radix = __base::radix;
   FORCE_INLINE static constexpr type epsilon() noexcept {return __base::epsilon();}
@@ -474,7 +474,7 @@ public:
   static constexpr const int min_exponent = __base::min_exponent;
   static constexpr const int min_exponent10 = __base::min_exponent10;
   static constexpr const int max_exponent = __base::max_exponent;
-  static constexpr const int max_exponenet10 = __base::max_exponent10;
+  static constexpr const int max_exponent10 = __base::max_exponent10;
 
   static constexpr const bool has_infinity = __base::has_infinity;
   static constexpr const bool has_quiet_NaN = __base::has_quiet_NaN;
@@ -483,7 +483,7 @@ public:
   static constexpr const bool has_denorm_loss = __base::has_denorm_loss;
   FORCE_INLINE static constexpr type infinity() noexcept {return __base::infinity();}
   FORCE_INLINE static constexpr type quiet_NaN() noexcept {return __base::quiet_NaN();}
-  FORCE_INLINE static constexpr type signaling_NaN() noexcept {return __base:signaling_NaN();}
+  FORCE_INLINE static constexpr type signaling_NaN() noexcept {return __base::signaling_NaN();}
   FORCE_INLINE static constexpr type denorm_min() noexcept {return __base::denorm_min();}
 
   static constexpr const bool is_iec559 = __base::is_iec559;
@@ -510,14 +510,14 @@ template<class T> constexpr const int numeric_limits<volatile T>::max_exponent10
 template<class T> constexpr const bool numeric_limits<volatile T>::has_infinity;
 template<class T> constexpr const bool numeric_limits<volatile T>::has_quiet_NaN;
 template<class T> constexpr const bool numeric_limits<volatile T>::has_signaling_NaN;
-template<class T> constexpr const float_denorm_style numeric_lmits<volatile T>::has_denorm;
+template<class T> constexpr const float_denorm_style numeric_limits<volatile T>::has_denorm;
 template<class T> constexpr const bool numeric_limits<volatile T>::has_denorm_loss;
 template<class T> constexpr const bool numeric_limits<volatile T>::is_iec559;
 template<class T> constexpr const bool numeric_limits<volatile T>::is_bounded;
 template<class T> constexpr const bool numeric_limits<volatile T>::is_modulo;
 template<class T> constexpr const bool numeric_limits<volatile T>::traps;
 template<class T> constexpr const bool numeric_limits<volatile T>::tinyness_before;
-template<class T> constexpr float_round_style numeric_limits<volatile T>::round_style;
+template<class T> constexpr const float_round_style numeric_limits<volatile T>::round_style;
 
 template<class T>
 class numeric_limits<const volatile T> : private numeric_limits<T>
@@ -534,7 +534,7 @@ public:
   static constexpr const int digits10 = __base::digits10;
   static constexpr const int max_digits10 = __base::max_digits10;
   static constexpr const bool is_signed = __base::is_signed;
-  static constexpr const bool is_integer = __based::is_integer;
+  static constexpr const bool is_integer = __base::is_integer;
   static constexpr const bool is_exact = __base::is_exact;
   static constexpr const int radix = __base::radix;
   FORCE_INLINE static constexpr type epsilon() noexcept {return __base::epsilon();}
@@ -543,7 +543,7 @@ public:
   static constexpr const int min_exponent = __base::min_exponent;
   static constexpr const int min_exponent10 = __base::min_exponent10;
   static constexpr const int max_exponent = __base::max_exponent;
-  static constexpr const int max_exponenet10 = __base::max_exponent10;
+  static constexpr const int max_exponent10 = __base::max_exponent10;
 
   static constexpr const bool has_infinity = __base::has_infinity;
   static constexpr const bool has_quiet_NaN = __base::has_quiet_NaN;
@@ -552,7 +552,7 @@ public:
   static constexpr const bool has_denorm_loss = __base::has_denorm_loss;
   FORCE_INLINE static constexpr type infinity() noexcept {return __base::infinity();}
   FORCE_INLINE static constexpr type quiet_NaN() noexcept {return __base::quiet_NaN();}
-  FORCE_INLINE static constexpr type signaling_NaN() noexcept {return __base:signaling_NaN();}
+  FORCE_INLINE static constexpr type signaling_NaN() noexcept {return __base::signaling_NaN();}
   FORCE_INLINE static constexpr type denorm_min() noexcept {return __base::denorm_min();}
 
   static constexpr const bool is_iec559 = __base::is_iec559;
@@ -579,11 +579,11 @@ template<class T> constexpr const int numeric_limits<const volatile T>::max_expo
 template<class T> constexpr const bool numeric_limits<const volatile T>::has_infinity;
 template<class T> constexpr const bool numeric_limits<const volatile T>::has_quiet_NaN;
 template<class T> constexpr const bool numeric_limits<const volatile T>::has_signaling_NaN;
-template<class T> constexpr const float_denorm_style numeric_lmits<const volatile T>::has_denorm;
+template<class T> constexpr const float_denorm_style numeric_limits<const volatile T>::has_denorm;
 template<class T> constexpr const bool numeric_limits<const volatile T>::has_denorm_loss;
 template<class T> constexpr const bool numeric_limits<const volatile T>::is_iec559;
 template<class T> constexpr const bool numeric_limits<const volatile T>::is_bounded;
 template<class T> constexpr const bool numeric_limits<const volatile T>::is_modulo;
 template<class T> constexpr const bool numeric_limits<const volatile T>::traps;
 template<class T> constexpr const bool numeric_limits<const volatile T>::tinyness_before;
-template<class T> constexpr float_round_style numeric_limits<const volatile T>::round_style;
+template<class T> constexpr const float_round_style numeric_limits<const volatile T>::round_style;

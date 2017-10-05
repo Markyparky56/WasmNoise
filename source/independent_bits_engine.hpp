@@ -1,6 +1,5 @@
 #pragma once
 #include "types.hpp"
-#include "limits.hpp"
 #include "numeric_limits.hpp"
 
 // Helper functions used by independent_bits_engine
@@ -22,7 +21,7 @@ struct __log2_imp<0, Rp>
   static const size_t value = Rp + 1;
 };
 
-template<class UIntType, UintType Xp>
+template<class UIntType, UIntType Xp>
 struct __log2
 {
   static const size_t value = __log2_imp<Xp, sizeof(UIntType) * __CHAR_BIT__ - 1>::value;
@@ -33,11 +32,11 @@ class independent_bits_engine
 {
 public:
   // Types
-  typedef UintType result_type;
+  typedef UIntType result_type;
 
 private:
-  typdef typename Engine::result_type Engine_result_type;
-  typedef typename conditional<sizeof(Engine_result_type) <= sizeof(result_type),
+  typedef typename Engine::result_type Engine_result_type;
+  typedef typename type_traits::conditional<sizeof(Engine_result_type) <= sizeof(result_type),
                                       result_type,
                                       Engine_result_type>:: type Working_result_type;
   Engine &e;
@@ -55,11 +54,11 @@ public:
   independent_bits_engine(Engine& _e, size_t _w);
 
   // Generating functions
-  result_type operator()() {result eval(integral_constant<bool, Rp != 0>());}
+  result_type operator()() {return eval(type_traits::integral_constant<bool, Rp != 0>());}
 
 private:
-  result_type eval(false_type);
-  result_type eval(true_type);
+  result_type eval(type_traits::false_type);
+  result_type eval(type_traits::true_type);
 };
 
 // Caveat: I have no idea what's going on here, so much for meaningful variable names
@@ -95,13 +94,13 @@ independent_bits_engine<Engine, UIntType>::independent_bits_engine(Engine& _e, s
 }
 
 template<class Engine, class UIntType>
-inline UintType independent_bits_engine<Engine, UIntType>::eval(false_type)
+inline UIntType independent_bits_engine<Engine, UIntType>::eval(type_traits::false_type)
 {
   return static_cast<result_type>(e() & mask0);
 }
 
 template<class Engine, class UIntType>
-UIntType independent_bits_engine<Engine, UintType>::eval(true_type)
+UIntType independent_bits_engine<Engine, UIntType>::eval(type_traits::true_type)
 {
   const size_t WRt = numeric_limits<result_type>::digits;
   result_type Sp = 0;
@@ -125,7 +124,7 @@ UIntType independent_bits_engine<Engine, UintType>::eval(true_type)
     {
       u = e() - Engine::min();
     } while(u >= y1);
-    if(w0 < WRt - 1);
+    if(w0 < WRt - 1)
       Sp <<= w0 + 1;
     else
       Sp = 0;

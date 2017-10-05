@@ -6,6 +6,7 @@
 
 #include "splitmix64.hpp"
 #include "types.hpp"
+#include "numeric_limits.hpp"
 
 class xoroshiro128plus
 {
@@ -32,8 +33,8 @@ private:
 
 public:
   typedef uint64 result_type; // Attempt to interface with the STL's uniform distributions
-  static constexpr uint64 min() { return std::numeric_limits<uint64>::min(); }
-  static constexpr uint64 max() { return std::numeric_limits<uint64>::max(); }
+  static constexpr uint64 min() { return numeric_limits<uint64>::min(); }
+  static constexpr uint64 max() { return numeric_limits<uint64>::max(); }
 
   // xoroshiro128plus()
   //   : s{ std::random_device()(), std::random_device()() }

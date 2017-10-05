@@ -12,6 +12,12 @@ class BuildType(enum.IntEnum):
   
 referenceLookup = ["build", "patch", "minor", "major"]
 
+class TextColours:
+  Blue = '\033[94m'
+  Green = '\033[92m'
+  Red = '\033[91m'  
+  StopColour = '\033[0m'
+
 # Args:
 # --build to increment the build counter in version.ini
 # --patch to increment the patch counter in version.ini and zero build
@@ -81,69 +87,75 @@ def build(buildType):
 
   # Assemble build commands
   binLoc = "bin/" + outName + '.b' + config["VERSION"]["build"]
-  llvmlinkOut = binLoc+'/'+outName+".ll"
-  llcOut = binLoc+'/'+outName+".s"
-  s2wasmOut = binLoc+'/'+outName+".wat"
-  wat2wasmOut = binLoc+'/'+outName+".wasm"
+  llvmlinkOut = outName+".ll"
+  llcOut = outName+".s"
+  s2wasmOut = outName+".wat"
+  wat2wasmOut = outName+".wasm"
+  optimisationLevel = "-O3" # -O3 for final?
 
   clangCmd = ["clang"
-  , "-IC:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.11.25503/include"
-  , "-IC:/Program Files (x86)/Windows Kits/10/Include/10.0.15063.0/ucrt"
-  , "-IC:/Program Files (x86)/Windows Kits/10/include/10.0.15063.0/shared"
-  , "-IC:/Program Files (x86)/Windows Kits/10/include/10.0.15063.0/um"
-  , "-IC:/Program Files (x86)/Windows Kits/10/include/10.0.15063.0/winrt"
-  , "-fdeclspec"
-  ,"-S", "--target=wasm32"
-  , "-std=c++14", "-Oz"
+  , "-S", "--target=wasm32"
+  , "-emit-llvm"
+  , "-std=c++14", optimisationLevel
   , "-v", "-c"
-  , "source/*.cpp"]
+  , "../../source/*.cpp"]
 
-  llcCmd = ["-asm-verbose=false", "-o", llcOut, llvmlinkOut]
+  llcCmd = ["llc", "-asm-verbose=false", optimisationLevel, "-o", llcOut, llvmlinkOut]
 
-  s2wasmCmd = [llcCmd, ">", s2wasmOut]
+  s2wasmCmd = ["s2wasm", llcOut, ">", s2wasmOut]
 
-  wat2wasmCmd = [s2wasmOut, "-o", wat2wasmOut]
+  wat2wasmCmd = ["wat2wasm", s2wasmOut, "-o", wat2wasmOut]
 
   # Make sure the build directory exists
   os.makedirs(binLoc, exist_ok=True)
 
+  # Change the working directory to the build directory
+  os.chdir(binLoc)
+
   # Run build commands
+  print(TextColours.Blue + "Compiling With clang..." + TextColours.StopColour)
   try:
     subprocess.run(clangCmd, shell=True, check=True)
   except subprocess.CalledProcessError as e:
-    print("Error: " + ' '.join(e.cmd) + " returned code: " + str(e.returncode) + "\nCheck output above for more information, stopping build.")
+    print(TextColor.Red + "Error: " + ' '.join(e.cmd) + " returned code: " + str(e.returncode) + "\nCheck output above for more information, stopping build." + TextColours.StopColour)
     return
   
   # The llvm-link command requires knowledge of the output from the clang command
   # so we assemble it here
   llvmlinkCmd = ["llvm-link", "-S", "-v", "-o", llvmlinkOut]
-  for file in os.listdir(binLoc):
+  for file in os.listdir('.'):
     if(file.endswith(".ll")):
       llvmlinkCmd.append(file)
 
+  print(TextColours.Blue + "Linking with llvm-link..." + TextColours.StopColour)
   try:
     subprocess.run(llvmlinkCmd, shell=True, check=True)
   except subprocess.CalledProcessError as e:
-    print("Error: " + ' '.join(e.cmd) + " returned code: " + str(e.returncode) + "\nCheck output above for more information, stopping build.")
+    print(TextColours.Red + "Error: " + ' '.join(e.cmd) + " returned code: " + str(e.returncode) + "\nCheck output above for more information, stopping build." + TextColours.StopColour)
     return
-
+  
+  print(TextColours.Blue + "Converting to S-expressions with llc..." + TextColours.StopColour)
   try:
     subprocess.run(llcCmd, shell=True, check=True)
   except subprocess.CalledProcessError as e:
-    print("Error: " + ' '.join(e.cmd) + " returned code: " + str(e.returncode) + "\nCheck output above for more information, stopping build.")
+    print(TextColours.Red + "Error: " + ' '.join(e.cmd) + " returned code: " + str(e.returncode) + "\nCheck output above for more information, stopping build." + TextColours.StopColour)
     return
-
+  
+  print(TextColours.Blue + "Converting S-expressions to wat..." + TextColours.StopColour)
   try:
     subprocess.run(s2wasmCmd, shell=True, check=True)
   except subprocess.CalledProcessError as e:
-    print("Error: " + ' '.join(e.cmd) + " returned code: " + str(e.returncode) + "\nCheck output above for more information, stopping build.")
+    print(TextColours.Red + "Error: " + ' '.join(e.cmd) + " returned code: " + str(e.returncode) + "\nCheck output above for more information, stopping build." + TextColours.StopColour)
     return
-
+  
+  print(TextColours.Blue + "Compiling wat to wasm..." + TextColours.StopColour)
   try:
     subprocess.run(wat2wasmCmd, shell=True, check=True)
   except subprocess.CalledProcessError as e:
-    print("Error: " + ' '.join(e.cmd) + " returned code: " + str(e.returncode) + "\nCheck output above for more information, stopping build.")
+    print(TextColours.Red + "Error: " + ' '.join(e.cmd) + " returned code: " + str(e.returncode) + "\nCheck output above for more information, stopping build." + TextColours.StopColour)
     return
+
+  print(TextColours.Green + "Wasm compiled successfully! " + wat2wasmOut + " file now located at " + binLoc + TextColours.StopColour)
 
 if __name__ == "__main__":
   main(sys.argv)
