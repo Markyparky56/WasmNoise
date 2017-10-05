@@ -117,7 +117,7 @@ def build(buildType):
   try:
     subprocess.run(clangCmd, shell=True, check=True)
   except subprocess.CalledProcessError as e:
-    print(TextColor.Red + "Error: " + ' '.join(e.cmd) + " returned code: " + str(e.returncode) + "\nCheck output above for more information, stopping build." + TextColours.StopColour)
+    print(TextColors.Red + "Error: " + ' '.join(e.cmd) + " returned code: " + str(e.returncode) + "\nCheck output above for more information, stopping build." + TextColours.StopColour)
     return
   
   # The llvm-link command requires knowledge of the output from the clang command
