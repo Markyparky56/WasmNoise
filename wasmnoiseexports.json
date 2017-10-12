@@ -7,7 +7,8 @@
     "SetFrequency",
     "GetFrequency",
 
-    "GetPerlin",
-    "GetPerlinStrip"
+    "GetPerlin2",
+    "GetPerlin2_Strip",
+    "GetPerlin2_Square"
   ]
 }

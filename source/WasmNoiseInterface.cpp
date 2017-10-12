@@ -23,13 +23,19 @@ extern "C"
   void SetFrequency(WM_DECIMAL _frequency) { wasmNoise.SetFrequency(_frequency); }
   WM_DECIMAL GetFrequency() { return wasmNoise.GetFrequency(); }
 
-  WM_INLINE WM_DECIMAL GetPerlin(WM_DECIMAL x, WM_DECIMAL y) 
+  // Slow, but if you just need a single value this is ideal
+  WM_INLINE WM_DECIMAL GetPerlin2(WM_DECIMAL x, WM_DECIMAL y) 
   {
     return wasmNoise.GetPerlin(x, y);
   }
 
-  WM_INLINE WM_DECIMAL *GetPerlinStrip(WM_DECIMAL x, WM_DECIMAL y, uint32 length)
+  WM_INLINE WM_DECIMAL *GetPerlin2_Strip(WM_DECIMAL x, WM_DECIMAL y, uint32 length)
   {
     return wasmNoise.GetPerlinStrip(x, y, length);
+  }
+
+  WM_INLINE WM_DECIMAL *GetPerlin2_Square(WM_DECIMAL x, WM_DECIMAL y, uint32 length, uint32 height)
+  {
+    return wasmNoise.GetPerlinSquare(x, y, length, height);
   }
 }
