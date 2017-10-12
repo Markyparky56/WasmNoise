@@ -1,20 +1,8 @@
 #pragma once
-
-#if defined(__clang__) || defined(__GNUC__) || defined(__GNUG__)
-#define WM_INLINE __attribute__((always_inline))
-#elif defined(_MSC_VER)
-#define WM_INLINE __forceinline 
-#else
-#define WM_INLINE inline
-#endif
-
-#ifdef WM_USE_DOUBLES
-using WM_DECIMAL = double;
-#else
-using WM_DECIMAL = float;
-#endif
+#include "defineconfig.hpp"
 
 #include "xoroshiro128plus.hpp"
+#include "ReturnArrayHelper.hpp"
 
 class WasmNoise
 {
@@ -41,10 +29,13 @@ public:
   void SetFrequency(WM_DECIMAL _frequency) { frequency = _frequency; }
   WM_DECIMAL GetFrequency() const { return frequency; }
 
-  WM_DECIMAL GetPerlin(WM_DECIMAL x, WM_DECIMAL y) const;  
-  WM_DECIMAL GetPerlin_log(WM_DECIMAL x, WM_DECIMAL y) const;  
+  WM_DECIMAL  GetPerlin(WM_DECIMAL x, WM_DECIMAL y) const;
+  WM_DECIMAL *GetPerlinStrip(WM_DECIMAL startX, WM_DECIMAL startY, uint32 length);  
+  WM_DECIMAL *GetPerlinSquare(WM_DECIMAL startX, WM_DECIMAL startY, uint32 length, uint32 height);
   
 private:
+  ReturnArrayHelper returnHelper;
+
   uint8 perm[512];
   uint8 perm12[512];
 
@@ -52,7 +43,6 @@ private:
   WM_DECIMAL frequency;
 
   WM_DECIMAL SinglePerlin(uint8 offset, WM_DECIMAL x, WM_DECIMAL y) const;  
-  WM_DECIMAL SinglePerlin_log(uint8 offset, WM_DECIMAL x, WM_DECIMAL y) const;  
   
   WM_INLINE uint8 Index2D_12(uint8 offset, int32 x, int32 y) const;
 

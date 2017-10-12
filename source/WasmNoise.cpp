@@ -2,8 +2,6 @@
 #include "xoroshiro128plus.hpp"
 #include "uniform_int_distribution.hpp"
 
-static WasmNoise wasmNoise;
-
 const WM_DECIMAL GRAD_X[] =
 {
   1, -1, 1, -1,
@@ -76,14 +74,28 @@ WM_DECIMAL WasmNoise::GetPerlin(WM_DECIMAL x, WM_DECIMAL y) const
   return SinglePerlin(0, x * frequency, y * frequency);
 }
 
-WM_DECIMAL WasmNoise::GetPerlin_log(WM_DECIMAL x, WM_DECIMAL y) const
+// TODO: Add direction? X/Y axis, vector?
+WM_DECIMAL *WasmNoise::GetPerlinStrip(WM_DECIMAL startX, WM_DECIMAL startY, uint32 length)
 {
-  consolelogDecimal(x);
-  consolelogDecimal(y);
-  consolelogDecimal(frequency);
-  consolelogDecimal(x * frequency);
-  consolelogDecimal(y * frequency);
-  return SinglePerlin_log(0, x * frequency, y * frequency);
+  WM_DECIMAL *values = returnHelper.NewArray(length);
+  for(int i = 0; i < length; i++)
+  {
+    values[i] = SinglePerlin(0, (startX+i) * frequency, startY * frequency);
+  }
+  return values;
+}
+
+WM_DECIMAL *WasmNoise::GetPerlinSquare(WM_DECIMAL startX, WM_DECIMAL startY, uint32 length, uint32 height)  
+{
+  WM_DECIMAL *values = returnHelper.NewArray(length*height);
+  for(int y = 0; y < height; y++)
+  {
+    for(int x = 0; x < length; x++)
+    {
+      values[length * y + x] = SinglePerlin(0, (startX+x) * frequency, (startY+y) * frequency);
+    }
+  }
+  return values;
 }
 
 WM_DECIMAL WasmNoise::SinglePerlin(uint8 offset, WM_DECIMAL x, WM_DECIMAL y) const
@@ -92,35 +104,6 @@ WM_DECIMAL WasmNoise::SinglePerlin(uint8 offset, WM_DECIMAL x, WM_DECIMAL y) con
   int32 y0 = FastFloor(y);
   int32 x1 = x0+1;
   int32 y1 = y0+1;
-
-  WM_DECIMAL xs, ys;
-  // TODO: switch for different interps
-  xs = x - static_cast<WM_DECIMAL>(x0);
-  ys = y - static_cast<WM_DECIMAL>(y0);
-
-  WM_DECIMAL xd0 = x - static_cast<WM_DECIMAL>(x0);
-  WM_DECIMAL yd0 = y - static_cast<WM_DECIMAL>(y0);
-  WM_DECIMAL xd1 = xd0 - 1;
-  WM_DECIMAL yd1 = yd0 - 1;
-
-  WM_DECIMAL xf0 = Lerp(GradCoord2D(offset, x0, y0, xd0, yd0), GradCoord2D(offset, x1, y0, xd1, yd0), xs);
-  WM_DECIMAL xf1 = Lerp(GradCoord2D(offset, x0, y1, xd0, yd1), GradCoord2D(offset, x1, y1, xd1, yd1), xs);
-
-  return Lerp(xf0, xf1, ys);
-}
-
-WM_DECIMAL WasmNoise::SinglePerlin_log(uint8 offset, WM_DECIMAL x, WM_DECIMAL y) const
-{
-  consolelogDecimal(x);
-  consolelogDecimal(y);
-  int32 x0 = FastFloor(x);
-  int32 y0 = FastFloor(y);
-  int32 x1 = x0+1;
-  int32 y1 = y0+1;
-  consolelogInt(x0);
-  consolelogInt(y0);
-  consolelogInt(x1);
-  consolelogInt(y1);
 
   WM_DECIMAL xs, ys;
   // TODO: switch for different interps

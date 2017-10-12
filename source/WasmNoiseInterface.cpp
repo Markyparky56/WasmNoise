@@ -1,11 +1,22 @@
 #include "WasmNoise.hpp"
+#include <stdlib.h> // Included from libc, allows us to import malloc and free
+
+extern "C"
+{
+  void consolelogi(size_t outI);
+}
+
+// We need to override the global new/delete operators to use our own malloc/free functions
+// which allocate and free memory in the WebAssembly modules linear memory
+void *operator new     (size_t size) { return malloc(size); }
+void *operator new[]   (size_t size) { return malloc(size); }
+void  operator delete  (void   *ptr) noexcept { return free(ptr); }
+void  operator delete[](void   *ptr) noexcept { return free(ptr); }
 
 static WasmNoise wasmNoise;
 
 extern "C"
-{
-  void Initialise() { wasmNoise.Initialise(); }
-
+{  
   void SetSeed(int32 _seed) { wasmNoise.SetSeed(_seed); }
   int32 GetSeed() { return wasmNoise.GetSeed(); }
 
@@ -17,12 +28,8 @@ extern "C"
     return wasmNoise.GetPerlin(x, y);
   }
 
-  WM_INLINE WM_DECIMAL GetPerlin_log(WM_DECIMAL x, WM_DECIMAL y)
+  WM_INLINE WM_DECIMAL *GetPerlinStrip(WM_DECIMAL x, WM_DECIMAL y, uint32 length)
   {
-    consolelogDecimal(x);
-    consolelogDecimal(y);
-    WM_DECIMAL val = wasmNoise.GetPerlin_log(x, y); 
-    consolelogDecimal(val);
-    return val;
+    return wasmNoise.GetPerlinStrip(x, y, length);
   }
 }

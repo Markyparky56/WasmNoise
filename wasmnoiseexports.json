@@ -1,0 +1,13 @@
+{
+  "exports": [
+    "_GLOBAL__sub_I_WasmNoiseInterface.cpp",
+    
+    "SetSeed",
+    "GetSeed",
+    "SetFrequency",
+    "GetFrequency",
+
+    "GetPerlin",
+    "GetPerlinStrip"
+  ]
+}
