@@ -7,31 +7,28 @@
 class WasmNoise
 {
 public:
-  explicit WasmNoise(int32 _seed = 42, WM_DECIMAL _frequency = 0.01) 
+  explicit WasmNoise(int32 _seed = 42, WN_DECIMAL _frequency = 0.01) 
     : frequency(_frequency)
   { 
     SetSeed(_seed);
   }
 
-  // WebAssembly doesn't seem to call the static object's constructor so everything
-  // is left 0-initialised, so move I'm moving all the default setting to this function
-  // and exporting a call to this function through the interface so it can be called
-  // first when the module is loaded
-  void Initialise()
-  {
-    frequency = 0.01;
-    SetSeed(42);
-  }
-
   void SetSeed(int32 _seed);
   int32 GetSeed() const { return seed; }
 
-  void SetFrequency(WM_DECIMAL _frequency) { frequency = _frequency; }
-  WM_DECIMAL GetFrequency() const { return frequency; }
+  void SetFrequency(WN_DECIMAL _frequency) { frequency = _frequency; }
+  WN_DECIMAL GetFrequency() const { return frequency; }
 
-  WM_DECIMAL  GetPerlin(WM_DECIMAL x, WM_DECIMAL y) const;
-  WM_DECIMAL *GetPerlinStrip(WM_DECIMAL startX, WM_DECIMAL startY, uint32 length);  
-  WM_DECIMAL *GetPerlinSquare(WM_DECIMAL startX, WM_DECIMAL startY, uint32 length, uint32 height);
+  // 2D
+  WN_INLINE WN_DECIMAL  GetPerlin(WN_DECIMAL x, WN_DECIMAL y) const;
+  WN_INLINE WN_DECIMAL *GetPerlinStrip(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length);  
+  WN_INLINE WN_DECIMAL *GetPerlinSquare(WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height);
+
+  // 3D
+  WN_INLINE WN_DECIMAL  GetPerlin(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
+  WN_INLINE WN_DECIMAL *GetPerlinStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length);
+  WN_INLINE WN_DECIMAL *GetPerlinSquare(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height);
+  WN_INLINE WN_DECIMAL *GetPerlinCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth);
   
 private:
   ReturnArrayHelper returnHelper;
@@ -39,21 +36,24 @@ private:
   uint8 perm[512];
   uint8 perm12[512];
 
-  int32 seed = 42;
-  WM_DECIMAL frequency;
+  int32 seed;
+  WN_DECIMAL frequency;
 
-  WM_DECIMAL SinglePerlin(uint8 offset, WM_DECIMAL x, WM_DECIMAL y) const;  
+  WN_INLINE WN_DECIMAL SinglePerlin(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
+  WN_INLINE WN_DECIMAL SinglePerlin(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;  
   
-  WM_INLINE uint8 Index2D_12(uint8 offset, int32 x, int32 y) const;
+  WN_INLINE uint8 Index2D_12(uint8 offset, int32 x, int32 y) const;
+  WN_INLINE uint8 Index3D_12(uint8 offset, int32 x, int32 y, int32 z) const;
 
-  WM_INLINE WM_DECIMAL GradCoord2D(uint8 offset, int32 x, int32 y, WM_DECIMAL xd, WM_DECIMAL yd) const;  
+  WN_INLINE WN_DECIMAL GradCoord2D(uint8 offset, int32 x, int32 y, WN_DECIMAL xd, WN_DECIMAL yd) const;  
+  WN_INLINE WN_DECIMAL GradCoord3D(uint8 offset, int32 x, int32 y, int32 z, WN_DECIMAL xd, WN_DECIMAL yd, WN_DECIMAL zd) const;
 };
 
 // Declare some log functions as extern so we can call in them in WasmNoise.cpp 
 // but import them from javascript
 extern "C"
 {
-  extern void consolelogDecimal(WM_DECIMAL fOut);
+  extern void consolelogDecimal(WN_DECIMAL fOut);
   extern void consolelogInt(int32 iOut);
   extern void consolelogStr(char *str);
 }

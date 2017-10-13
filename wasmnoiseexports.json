@@ -9,6 +9,10 @@
 
     "GetPerlin2",
     "GetPerlin2_Strip",
-    "GetPerlin2_Square"
+    "GetPerlin2_Square",
+    "GetPerlin3",
+    "GetPerlin3_Strip",
+    "GetPerlin3_Square",
+    "GetPerlin3_Cube"
   ]
 }

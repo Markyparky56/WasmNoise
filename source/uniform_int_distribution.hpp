@@ -74,9 +74,9 @@ typename uniform_int_distribution<IntType>::result_type
 uniform_int_distribution<IntType>::operator()(URNG& _g, const param_type& _p)
 {
   typedef typename type_traits::conditional<sizeof(result_type) <= sizeof(uint32), uint32, uint64>::type UIntType;
-  const UIntType Rp = p.b() - p.a() + UIntType(1);
+  const UIntType Rp = _p.b() - _p.a() + UIntType(1);
   if(Rp == 1)
-    return p.a();
+    return _p.a();
   const size_t Dt = numeric_limits<UIntType>::digits;
   typedef independent_bits_engine<URNG, UIntType> Eng;
   if(Rp == 0)
@@ -90,5 +90,5 @@ uniform_int_distribution<IntType>::operator()(URNG& _g, const param_type& _p)
   {
     u = e();
   } while(u >= Rp);
-  return static_cast<result_type>(u + p.a());
+  return static_cast<result_type>(u + _p.a());
 }

@@ -4,18 +4,18 @@
 // A helper class
 class ReturnArrayHelper
 {
-  WM_DECIMAL *array;
+  WN_DECIMAL *array;
 public:
   ReturnArrayHelper()
     : array(nullptr)
   {}
-  WM_DECIMAL *NewArray(int num)
+  WN_DECIMAL *NewArray(int num)
   {
     if(array != nullptr)
     {
       delete[] array;
     }
-    array = new WM_DECIMAL[num];
+    array = new WN_DECIMAL[num];
     return array;
   }
 };

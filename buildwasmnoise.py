@@ -24,7 +24,7 @@ def runCommand(cmd):
     subprocess.run(cmd, shell=True, check=True)
   except subprocess.CalledProcessError as e:
     print(TextColours.Red + "Error: " + ' '.join(e.cmd) + " returned code: " + str(e.returncode) + "\nCheck output above for more information, stopping build." + TextColours.StopColour)
-    return
+    exit()
 
 # Args:
 # --build to increment the build counter in version.ini
@@ -114,13 +114,15 @@ def build(buildType, optLevel, verbose):
   wasmoptOut = outName+".opt.wasm"
   optimisationLevel = optLevel
 
-  clangCmd = ["clang"
+  clangCmd = ["clang++"
   , "--target=wasm32"
   , "-emit-llvm"
   , "-std=c++14", optimisationLevel
   , "-c"
   , "-I..\..\..\wasm-stdlib-hack\include\libc"
-  , "../../source/*.cpp"]
+  , "../../source/*.cpp"
+  , "-pedantic", "-Wall", "-Wextra"]
+  
   if verbose:
     clangCmd.append("-v")
 
