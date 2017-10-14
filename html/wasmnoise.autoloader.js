@@ -10,7 +10,7 @@ WasmNoise.fetchCompileAndInstantiate = WasmNoise.fetchCompileAndInstantiate || f
 {
   // TODO: Find a way to keep the version number here accurate, I'm thinking a template 
   // which is generated/filled out for each patch/minor/major build? Or just every build
-  return fetch("./wasmnoise-0.0.0.opt.wasm")
+  return fetch("./wasmnoise-0.1.0.opt.wasm")
   .then(res => {
     if(res.ok)
     {

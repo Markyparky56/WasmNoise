@@ -22,7 +22,7 @@
       let WasmNoise = null;      
       let WasmNoiseMemory = WebAssembly.Memory({initial: 9})
       //let noiseMem = WebAssembly.Memory({initial: 1, maximum: 32});
-      fetchAndCompileWasmModules(["./wasmnoise-0.0.0.opt.wasm"])
+      fetchAndCompileWasmModules(["./wasmnoise-0.1.0.opt.wasm"])
       .then(([wasmnoiseModule]) => {        
         return WebAssembly.instantiate(wasmnoiseModule, {
           env: {

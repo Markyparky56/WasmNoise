@@ -49,20 +49,32 @@ def main(args):
   verboseMode = False  
 
   if(len(args) > 1):
+    print(len(args))
     # For each arg
     for arg in args:
+      doneWithArg = False
+      if "buildwasmnoise.py" in arg:
+        continue
       # Check if it's recognised
       for recongisedArg, value in recognisedBuildTypeArgs.items():
-        if arg == recongisedArg:
+        if arg.strip() == recongisedArg:
           buildType = value
+          doneWithArg = True
           break
+      if doneWithArg:
+        continue
       for recongisedArg in recognisedOptimisationArgs:
-        if arg == recongisedArg:
+        if arg.strip() == recongisedArg:
           optimisationLevel = arg
-      if arg == verboseArg:
+          doneWithArg = True
+          break
+      if doneWithArg:
+        continue
+      if arg.strip() == verboseArg:
         verboseMode = True
-      else:
-        print("Ignoring Unrecongised Option '", arg, "'")
+        continue
+      # Else, unrecognised arg
+      print("Ignoring Unrecongised Option '", arg, "'")
 
   print("Building WasmNoise, incrementing ", referenceLookup[int(buildType)])
   build(buildType, optimisationLevel, verboseMode)
