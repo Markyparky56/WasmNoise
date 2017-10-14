@@ -60,7 +60,7 @@
             let end = performance.now();
             let values = new Float32Array(WasmNoiseMemory.buffer.slice(offset, offset+1000000*4));
             let diff = end-start;
-            let avg = (diff*1000000)/1000000; // Multiply by 1,000,000 for nanoseconds, divide by 1,000,000 for average
+            let avg = (diff*1000000)/1000000; // Multiply by 1,000,000 for nanoseconds, divide by 1,000,000 for average, yay for redundancy
             console.log("1,000,000 2D Values: " + (end-start) + "ms, Average per value: " + avg + "ns");
             console.log(values);
           }

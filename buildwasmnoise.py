@@ -49,7 +49,6 @@ def main(args):
   verboseMode = False  
 
   if(len(args) > 1):
-    print(len(args))
     # For each arg
     for arg in args:
       doneWithArg = False
