@@ -6,6 +6,8 @@
     "GetSeed",
     "SetFrequency",
     "GetFrequency",
+    "SetInterp",
+    "GetInterp",
 
     "GetPerlin2",
     "GetPerlin2_Strip",

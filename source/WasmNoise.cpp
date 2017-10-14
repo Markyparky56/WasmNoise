@@ -79,7 +79,7 @@ WN_INLINE WN_DECIMAL WasmNoise::GradCoord2D(uint8 offset, int32 x, int32 y, WN_D
 WN_INLINE WN_DECIMAL WasmNoise::GradCoord3D(uint8 offset, int32 x, int32 y, int32 z, WN_DECIMAL xd, WN_DECIMAL yd, WN_DECIMAL zd) const
 {
   uint8 lutPos = Index3D_12(offset, x, y, z);
-  return xd*GRAD_X[lutPos] + yd*GRAD_Y[lutPos] + zd*GRAD_Y[lutPos];
+  return xd*GRAD_X[lutPos] + yd*GRAD_Y[lutPos] + zd*GRAD_Z[lutPos];
 }
 
 // Single noise function section *******************************
@@ -93,12 +93,22 @@ WN_INLINE WN_DECIMAL WasmNoise::SinglePerlin(uint8 offset, WN_DECIMAL x, WN_DECI
   int32 y1 = y0+1;
 
   WN_DECIMAL xs, ys;
-  // TODO: switch for different interps
-  // xs = x - static_cast<WN_DECIMAL>(x0);
-  // ys = y - static_cast<WN_DECIMAL>(y0);
-  xs = InterpQuinticFunc(x - static_cast<WN_DECIMAL>(x0));
-  ys = InterpQuinticFunc(y - static_cast<WN_DECIMAL>(y0));
-
+  switch(interp)
+  {
+  case Interp::Linear:
+    xs = x - static_cast<WN_DECIMAL>(x0);
+    ys = y - static_cast<WN_DECIMAL>(y0);
+    break;
+  case Interp::Hermite:
+    xs = InterpHermiteFunc(x - static_cast<WN_DECIMAL>(x0));
+    ys = InterpHermiteFunc(y - static_cast<WN_DECIMAL>(y0));
+    break;
+  case Interp::Quintic:
+    xs = InterpQuinticFunc(x - static_cast<WN_DECIMAL>(x0));
+    ys = InterpQuinticFunc(y - static_cast<WN_DECIMAL>(y0));
+    break;
+  }  
+  
   WN_DECIMAL xd0 = x - static_cast<WN_DECIMAL>(x0);
   WN_DECIMAL yd0 = y - static_cast<WN_DECIMAL>(y0);
   WN_DECIMAL xd1 = xd0 - 1;
@@ -121,13 +131,24 @@ WN_INLINE WN_DECIMAL WasmNoise::SinglePerlin(uint8 offset, WN_DECIMAL x, WN_DECI
   int32 z1 = z0 + 1;
 
   WN_DECIMAL xs, ys, zs;
-  // TODO: switch for different interps
-  // xs = x - static_cast<WN_DECIMAL>(x0);
-  // ys = y - static_cast<WN_DECIMAL>(y0);
-  // zs = z - static_cast<WN_DECIMAL>(z0);
-  xs = InterpQuinticFunc(x - static_cast<WN_DECIMAL>(x0));
-  ys = InterpQuinticFunc(y - static_cast<WN_DECIMAL>(y0));
-  zs = InterpQuinticFunc(z - static_cast<WN_DECIMAL>(z0));
+  switch(interp)
+  {
+  case Interp::Linear:
+    xs = x - static_cast<WN_DECIMAL>(x0);
+    ys = y - static_cast<WN_DECIMAL>(y0);
+    zs = z - static_cast<WN_DECIMAL>(z0);
+    break;
+  case Interp::Hermite:
+    xs = InterpHermiteFunc(x - static_cast<WN_DECIMAL>(x0));
+    ys = InterpHermiteFunc(y - static_cast<WN_DECIMAL>(y0));
+    zs = InterpHermiteFunc(z - static_cast<WN_DECIMAL>(z0));
+    break;
+  case Interp::Quintic:
+    xs = InterpQuinticFunc(x - static_cast<WN_DECIMAL>(x0));
+    ys = InterpQuinticFunc(y - static_cast<WN_DECIMAL>(y0));
+    zs = InterpQuinticFunc(z - static_cast<WN_DECIMAL>(z0));  
+    break;
+  }
   
   WN_DECIMAL xd0 = x - static_cast<WN_DECIMAL>(x0);
   WN_DECIMAL yd0 = y - static_cast<WN_DECIMAL>(y0);

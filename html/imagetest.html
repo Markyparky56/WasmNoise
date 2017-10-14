@@ -51,7 +51,7 @@
             let diffTex = endGenTexture-startGenTexture;
             console.log("Time to generate values for 256*256 texture with 2D Perlin Noise: " + diffValues + "ms\n" 
                       + "Time to generate texture: " + diffTex + "ms\n" 
-                      + "Total time: " + diffValues + diffTex + "ms");
+                      + "Total time: " + (diffValues + diffTex) + "ms");
           }
 
           // 3D Square to Texture
@@ -68,7 +68,7 @@
             let diffTex = endGenTexture-startGenTexture;
             console.log("Time to generate values for 256*256 texture with 3D Perlin Noise: " + diffValues + "ms\n" 
                       + "Time to generate texture: " + diffTex + "ms\n" 
-                      + "Total time: " + diffValues + diffTex + "ms");
+                      + "Total time: " + (diffValues + diffTex) + "ms");
           }
         })
       });
