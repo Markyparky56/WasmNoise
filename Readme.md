@@ -13,9 +13,9 @@ parity with FastNoise in terms of features offered. WebAssembly offers _near_
 native speeds but there will always be a slight difference in terms of speed. 
 
 My intention for this library is that it can be used to accelerate generation of 
-noise in existing and new web sites, games and applications which are predominately 
-JavaScript. **If you are compiling an exisiting C/C++ application which uses 
-FastNoise you should be using Emscripten, as it will compile it into 
+noise in existing and new web sites, games and applications which consist 
+predominately of JavaScript. **If you are compiling an exisiting C/C++ application 
+which uses FastNoise you should be using Emscripten, as it will compile it into 
 your application.** 
 
 ### Current Features
@@ -23,15 +23,24 @@ your application.**
 
 ### Planned Features
 - Feature parity with FastNoise
-- Custom builds to remove diffrent noise types to reduce binary size
+- Custom builds to remove different noise types to reduce binary size
 
 ## Using WasmNoise
-WebAssembly does not have the functionality to return arrays like JavaScript does, it is only able to return single values from exported functions. Currently there is also a noticeable overhead for calling an exported WebAssembly, this makes the single value return functions slower than their JavaScript equivalents. 
+WebAssembly does not have the functionality to return arrays like JavaScript does, 
+it is only able to return single values from exported functions. Currently there is 
+also a noticeable overhead for calling an exported WebAssembly, this makes the 
+single value return functions slower than their JavaScript equivalents. 
 
-To bypass this limitation I have implemented functions which generate noise values in bulk and return a pointer to the array these values are stored in. Variations of
-these functions allow you to produce _strips_, _squares_ and _cubes_ of noise values, cubes are not available for 2D noise functions due to the obvious limitations. These functions are comparable in speed to regular FastNoise, and _much_ faster than their JavaScript equivalents.
+To bypass this limitation I have implemented functions which generate noise values 
+in bulk and return a pointer (offset) to the array these values are stored in, in 
+linear memory. Variations of these functions allow you to produce _strips_, 
+_squares_ and _cubes_ of noise values, cubes are not available for 2D noise 
+functions due to the obvious limitations. These functions are comparable in speed 
+to regular FastNoise, and _much_ faster than their JavaScript equivalents.
 
-There are a couple of examples in the `html` folder which demonstrate different usages and outputs, however these are still just the pages I use for testing build iterations and not actual polished use cases.
+There are a couple of examples in the `html` folder which demonstrate different 
+usages and outputs, however these are still just the pages I use for testing build 
+iterations and not actual polished use cases.
 
 WebAssembly binary files (.wasm) currently need to be loaded manually, as there 
 is no way to load them with `<script>` tags as of yet. For this purpose I have 
@@ -39,15 +48,17 @@ written a simple autoloader script which can be found in the `html` folder, whil
 not fully featured it does load the WasmNoise module and provides an optional 
 `onLoaded` function which it calls once it has set up the WasmNoise object as well 
 as some extra functionality such as wrappers for the functions which return arrays.
-Check out `autoloadertest.html` for how to use the `onLoaded` function to tell when 
-the module is loaded, and play around with the different functions in the developer console through the `WasmNoise` global variable. 
+Take a look at `autoloadertest.html` for how to use the `onLoaded` function to tell 
+when the module is loaded, and play around with the different functions in the 
+developer console through the `WasmNoise` global variable. 
 
 ## Building
-WasmNoise is developed on a Windows 7 PC, and so the build instructions below that 
+WasmNoise is developed on a Windows 7 PC, and so the build instructions below 
 are geared towards a similar build environment, however the tools used are all 
 (except Visual Studio) available and buildable on Mac and Linux so adjusting the 
 instructions to suit your environment should be straightforward.
-If you want to compile WasmNoise for yourself you will need:
+
+### If you want to compile WasmNoise for yourself you will need:
 - LLVM + Clang
 - [Binaryen](https://github.com/WebAssembly/binaryen)
 - [Wabt](https://github.com/WebAssembly/wabt)
