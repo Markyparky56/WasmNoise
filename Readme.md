@@ -158,7 +158,7 @@ Again, Wabt is best built with Visual Studio.
 
 The following command should handle checking out wabt and compiling it
 ```
-git clone http://github.com/WebAssembly/wabt.git && cd wabt && mkdir build && cd build && cmake -G "Visual Studio 15 2017 win64" .. && cmake --build .
+git clone http://github.com/WebAssembly/wabt.git && cd wabt && mkdir build && cd build && cmake -G "Visual Studio 15 2017 Win64" .. && cmake --build .
 ```
 
 Add the *bin* folder to your Path and you should have all the necessary tools.
