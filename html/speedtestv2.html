@@ -1,0 +1,173 @@
+<html>
+  <head>
+    <script type="text/javascript">
+      // Optional onLoaded function callback
+      let WasmNoise = {}
+      WasmNoise.onLoaded = function()
+      {
+        document.getElementById("loaded").innerText = "Loaded!";
+
+        console.log("Seed: " + WasmNoise.GetSeed());
+        console.log("Frequency: " + WasmNoise.GetFrequency());
+        console.log("10 Perlin 2D Values:");
+        // Regular, slow single value tests
+        for(let i = 0; i < 10; i++)
+        {
+          console.log(WasmNoise.GetPerlin2(i, 0.1));
+        }
+        console.log("10 Perlin 3D Values:");
+        for(let i = 0; i < 10; i++)
+        {
+          console.log(WasmNoise.GetPerlin3(i, 0.1, 0.1));
+        }
+        console.log("10 Perlin Fractal 2D Values:")
+        for(let i = 0; i < 10; i++)
+        {
+          console.log(WasmNoise.GetPerlinFractal2(i, 0.1));
+        }
+        console.log("10 Perlin Fractal 3D Values:");
+        for(let i = 0; i < 10; i++)
+        {
+          // Coming soon...
+          //console.log(WasmNoise.GetPerlinFractal3(i, 0.1, 0.1));
+        }
+
+        // 1 Million Value performance test, strip, 2d
+        {
+          console.log("Testing 2D Strip...");
+          let start = performance.now();
+          let offset = WasmNoise.GetPerlin2_Strip(0.5, 0.5, 1000000, WasmNoise.StripDirection.XAxis);
+          let end = performance.now();
+          let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+(1000000*4)));
+          let diff = end-start;
+          let avg = (diff*1000000)/1000000;
+          console.log("1,000,000 2D Values: " + (end-start) + "ms, Average per value: " + avg + "ns");
+          console.log(values);
+        }
+
+        // 1 Million Value performance test, strip, fractal 2d, 3 octaves
+        {
+          console.log("Testing 2D Strip, fractal, 3 octaves...");
+          let start = performance.now();
+          let offset = WasmNoise.GetPerlinFractal2_Strip(0.5, 0.5, 1000000, WasmNoise.StripDirection.XAxis);
+          let end = performance.now();
+          let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+(1000000*4)));
+          let diff = end-start;
+          let avg = (diff*1000000)/1000000;
+          console.log("1,000,000 2D Values: " + (end-start) + "ms, Average per value: " + avg + "ns");
+          console.log(values);
+        }
+
+        // 1 Million Value performance test, square, 2d
+        {
+          console.log("Testing 2D Square...");
+          let start = performance.now();
+          let offset = WasmNoise.GetPerlin2_Square(0.5, 0.5, 1000, 1000);
+          let end = performance.now();
+          let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+(1000000*4)));
+          let diff = end-start;
+          let avg = (diff*1000000)/1000000;
+          console.log("1,000,000 2D Values: " + (end-start) + "ms, Average per value: " + avg + "ns");
+          console.log(values);
+        }
+
+        // 1 Million Value performance test, square, fractal 2d, 3 octaves
+        {
+          console.log("Testing 2D Square, fractal, 3 octaves...");
+          let start = performance.now();
+          let offset = WasmNoise.GetPerlinFractal2_Square(0.5, 0.5, 1000, 1000);
+          let end = performance.now();
+          let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+(1000000*4)));
+          let diff = end-start;
+          let avg = (diff*1000000)/1000000;
+          console.log("1,000,000 2D Values: " + (end-start) + "ms, Average per value: " + avg + "ns");
+          console.log(values);
+        }
+
+        // 1 Million Value performance test, strip, 3d
+        {
+          console.log("Testing 3D Strip...");
+          let start = performance.now();
+          let offset = WasmNoise.GetPerlin3_Strip(0.5, 0.5, 0.5, 1000000, WasmNoise.StripDirection.XAxis);
+          let end = performance.now();
+          let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+(1000000*4)));
+          let diff = end-start;
+          let avg = (diff*1000000)/1000000;
+          console.log("1,000,000 3D Values: " + (end-start) + "ms, Average per value: " + avg + "ns");
+          console.log(values);
+        }
+
+        // 1 Million Value performance test, strip, fractal 3d, 3 octaves
+        {
+          // Coming soon...
+          // console.log("Testing 3D Strip, fractal, 3 octaves...");
+          // let start = performance.now();
+          // let offset = WasmNoise.GetPerlinFractal3_Strip(0.5, 0.5, 0.5, 1000000, WasmNoise.StripDirection.XAxis);
+          // let end = performance.now();
+          // let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+(1000000*4)));
+          // let diff = end-start;
+          // let avg = (diff*1000000)/1000000;
+          // console.log("1,000,000 3D Values: " + (end-start) + "ms, Average per value: " + avg + "ns");
+          // console.log(values);
+        }
+
+        // 1 Million Value performance test, square, 2d
+        {
+          console.log("Testing 3D Square...")
+          let start = performance.now();
+          let offset = WasmNoise.GetPerlin3_Square(0.5, 0.5, 0.5, 1000, 1000);
+          let end = performance.now();
+          let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+1000000*4));
+          let diff = end-start;
+          let avg = (diff*1000000)/1000000;
+          console.log("1,000,000 3D Values: " + (diff) + "ms, Average per value: " + avg + "ns");
+          console.log(values);
+        }
+
+        // 1 Million Value performance test, square, fractal 3d, 3 octaves
+        {
+          // Coming soon...
+          // console.log("Testing 3D Strip, fractal, 3 octaves...");
+          // let start = performance.now();
+          // let offset = WasmNoise.GetPerlinFractal3_Square(0.5, 0.5, 0.5, 1000, 1000);
+          // let end = performance.now();
+          // let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+(1000000*4)));
+          // let diff = end-start;
+          // let avg = (diff*1000000)/1000000;
+          // console.log("1,000,000 3D Values: " + (end-start) + "ms, Average per value: " + avg + "ns");
+          // console.log(values);
+        }
+
+        // 1 Million Value performance test, cube
+        {
+          console.log("Testing 3D Cube...")
+          let start = performance.now();
+          let offset = WasmNoise.GetPerlin3_Cube(0.5, 0.5, 0.5, 100, 100, 100);
+          let end = performance.now();
+          let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+1000000*4));
+          let diff = end-start;
+          let avg = (diff*1000000)/1000000;
+          console.log("1,000,000 3D Values: " + (diff) + "ms, Average per value: " + avg + "ns");
+          console.log(values);
+        }
+
+        // 1 Million Value performance test, cube, fractal 3d, 3 octaves
+        {
+          // console.log("Testing 3D Cube, fractal, 3 octaves...")
+          // let start = performance.now();
+          // let offset = WasmNoise.GetPerlinFractal3_Cube(0.5, 0.5, 0.5, 100, 100, 100);
+          // let end = performance.now();
+          // let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+1000000*4));
+          // let diff = end-start;
+          // let avg = (diff*1000000)/1000000;
+          // console.log("1,000,000 3D Values: " + (diff) + "ms, Average per value: " + avg + "ns");
+          // console.log(values);
+        }
+      }
+    </script>
+    <script type="text/javascript" src="./wasmnoise.autoloader.js"></script>
+  </head>
+  <body>
+    <span id="loaded">Loading...</span>
+  </body>
+</html>

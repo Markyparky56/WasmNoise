@@ -32,13 +32,13 @@ public:
     YAxis = 1,
     ZAxis = 2,
     WAxis = 3
-  }
+  };
   enum class SquarePlane
   {
-    XYPlane,
-    XZPlane,
-    ZYPlane
-  }
+    XYPlane = 0,
+    XZPlane = 1,
+    ZYPlane = 2
+  };
 
   explicit WasmNoise( int32 _seed = 42
                     , WN_DECIMAL _frequency = 0.01
@@ -67,7 +67,7 @@ public:
   void SetInterp(Interp _interp) { interp = _interp; }
   Interp GetInterp() const { return interp; }
 
-  void SetFractalOctaves(uint32 _octaves) { fractalOctaves = octaves; CalculateFractalBounding(); }
+  void SetFractalOctaves(uint32 _octaves) { fractalOctaves = _octaves; CalculateFractalBounding(); }
   uint32 GetFractalOctaves() { return fractalOctaves; }
 
   void SetFractalLacunarity(WN_DECIMAL _lacunarity) { fractalLacunarity = _lacunarity; }

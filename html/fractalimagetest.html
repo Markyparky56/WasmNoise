@@ -1,0 +1,105 @@
+<html>
+  <head>
+    <script type="text/javascript">
+      // Optional onLoaded function callback
+      let WasmNoise = {}
+      WasmNoise.onLoaded = function()
+      {
+        document.getElementById("loaded").innerText = "Loaded!";
+
+        WasmNoise.SetSeed(629831064);
+        console.log("Seed: " + WasmNoise.GetSeed());        
+
+        // 2D Square to Texture, FBM
+        {
+          let startGenValues = performance.now();
+          let values = WasmNoise.GetPerlinFractal2_Square_Values(-256, -256, 512, 512);
+          let endGenValues = performance.now();
+          let startGenTexture = performance.now();
+          generateTexture(512, 512, "perlinFBMSquare2D", values);
+          let endGenTexture = performance.now();
+          let diffValues = endGenValues - startGenValues;
+          let diffTex = endGenTexture - startGenTexture;
+          console.log("Time to generate values for 512*512 texture with 2D Fractal Perlin Noise (FBM, default settings): " + diffValues + "ms\n"
+                    + "Time to generate texture: " + diffTex + "ms\n"
+                    + "Total time: " + (diffValues + diffTex) + "ms");
+        }
+
+        // 2D Square to Texture, Billow
+        {
+          WasmNoise.SetFractalType(WasmNoise.FractalType.Billow);          
+          let startGenValues = performance.now();
+          let values = WasmNoise.GetPerlinFractal2_Square_Values(-256, -256, 512, 512);
+          let endGenValues = performance.now();
+          let startGenTexture = performance.now();
+          generateTexture(512, 512, "perlinBillowSquare2D", values, false);
+          let endGenTexture = performance.now();
+          let diffValues = endGenValues - startGenValues;
+          let diffTex = endGenTexture - startGenTexture;
+          console.log("Time to generate values for 512*512 texture with 2D Fractal Perlin Noise (Billow, default settings): " + diffValues + "ms\n"
+                    + "Time to generate texture: " + diffTex + "ms\n"
+                    + "Total time: " + (diffValues + diffTex) + "ms");
+        }
+
+        // 2D Square to Texture, RigidMulti
+        {
+          WasmNoise.SetFractalType(WasmNoise.FractalType.RigidMulti);          
+          let startGenValues = performance.now();
+          let values = WasmNoise.GetPerlinFractal2_Square_Values(-256, -256, 512, 512);
+          let endGenValues = performance.now();
+          let startGenTexture = performance.now();
+          generateTexture(512, 512, "perlinRigidMultiSquare2D", values);
+          let endGenTexture = performance.now();
+          let diffValues = endGenValues - startGenValues;
+          let diffTex = endGenTexture - startGenTexture;
+          console.log("Time to generate values for 512*512 texture with 2D Fractal Perlin Noise (RigidMulti, default settings): " + diffValues + "ms\n"
+                    + "Time to generate texture: " + diffTex + "ms\n"
+                    + "Total time: " + (diffValues + diffTex) + "ms");
+        }
+      }
+
+      function generateTexture(width, height, id, values, invert = false)
+      {
+        // Create the canvas for this texture
+        let div = document.createElement("div");
+        div.id = id;
+        let canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        div.appendChild(canvas);
+        document.body.appendChild(div);
+
+        let context = canvas.getContext("2d");
+        let imageDataObject = context.createImageData(width, height);
+        let imageData = imageDataObject.data;
+        
+        // Fill out the image data with our values
+        let imageDataSize = width * height * 4;
+        for(let di = 0, vi = 0; di < imageDataSize; di += 4, vi++)
+        {
+          if(invert)
+          {
+            // Invert
+            imageData[di    ] = (1 - ((values[vi]*0.5)+0.5)) * 255;
+            imageData[di + 1] = (1 - ((values[vi]*0.5)+0.5)) * 255;
+            imageData[di + 2] = (1 - ((values[vi]*0.5)+0.5)) * 255;
+          }
+          else
+          {
+            imageData[di    ] = ((values[vi]+0.5)*0.5) * 255;
+            imageData[di + 1] = ((values[vi]+0.5)*0.5) * 255;
+            imageData[di + 2] = ((values[vi]+0.5)*0.5) * 255;
+          }
+          imageData[di + 3] = 255;          
+        }
+
+        // Present the texture
+        context.putImageData(imageDataObject, 0, 0);
+      }
+    </script>
+    <script type="text/javascript" src="./wasmnoise.autoloader.js"></script>
+  </head>
+  <body>
+    <span id="loaded">Loading...</span>
+  </body>
+</html>

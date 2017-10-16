@@ -62,7 +62,7 @@ void WasmNoise::CalculateFractalBounding()
 {
   WN_DECIMAL amp = fractalGain;
   WN_DECIMAL ampFractal = WN_DECIMAL(1.0);
-  for(uint32 i = 1; i < octaves; i++)
+  for(uint32 i = 1; i < fractalOctaves; i++)
   {
     ampFractal += amp;
     amp *= fractalGain;
@@ -181,7 +181,7 @@ WN_INLINE WN_DECIMAL WasmNoise::SinglePerlin(uint8 offset, WN_DECIMAL x, WN_DECI
 }
 
 // 2D Perlin Fractal Functions
-WN_INLINE WN_DECIMAL SinglePerlinFractalFBM(WN_DECIMAL x, WN_DECIMAL y) const
+WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalFBM(WN_DECIMAL x, WN_DECIMAL y) const
 {
   WN_DECIMAL sum = SinglePerlin(perm[0], x, y);
   WN_DECIMAL amp = 1;
@@ -193,13 +193,13 @@ WN_INLINE WN_DECIMAL SinglePerlinFractalFBM(WN_DECIMAL x, WN_DECIMAL y) const
     y *= fractalLacunarity;
 
     amp *= fractalGain;
-    sum += singlePerlin(perm[i], x, y) * amp;
+    sum += SinglePerlin(perm[i], x, y) * amp;
   }
 
   return sum * fractalBounding;
 }
 
-WN_INLINE WN_DECIMAL SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIMAL y) const
+WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIMAL y) const
 {
   WN_DECIMAL sum = FastAbs(SinglePerlin(perm[0], x, y)) * 2 - 1;
   WN_DECIMAL amp = 1;
@@ -211,13 +211,13 @@ WN_INLINE WN_DECIMAL SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIMAL y) const
     y *= fractalLacunarity;
 
     amp *= fractalGain;
-    sum += (FastAbs(SinglePerlin(perm[0], x, y)) * 2 - 1) * amp;
-  }
+    sum += (FastAbs(SinglePerlin(perm[i], x, y)) * 2 - 1) * amp;
+  }  
 
   return sum * fractalBounding;
 }
 
-WN_INLINE WN_DECIMAL SinglePerlinFractalRigidMulti(WN_DECIMAL x, WN_DECIMAL y) const
+WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalRigidMulti(WN_DECIMAL x, WN_DECIMAL y) const
 {
   WN_DECIMAL sum = 1 - FastAbs(SinglePerlin(perm[0], x, y));
   WN_DECIMAL amp = 1;
@@ -229,14 +229,14 @@ WN_INLINE WN_DECIMAL SinglePerlinFractalRigidMulti(WN_DECIMAL x, WN_DECIMAL y) c
     y *= fractalLacunarity;
 
     amp *= fractalGain;
-    sum -= (1 - FastAbs(SinglePerlin(perm[0], x, y))) * amp;
+    sum -= (1 - FastAbs(SinglePerlin(perm[i], x, y))) * amp;
   }
 
   return sum;
 }
 
 // 3D Perlin Fractal Functions
-WN_INLINE WN_DECIMAL SinglePerlinFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
+WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
 {
   WN_DECIMAL sum = SinglePerlin(perm[0], x, y, z);
   WN_DECIMAL amp = 1;
@@ -249,13 +249,13 @@ WN_INLINE WN_DECIMAL SinglePerlinFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIM
     z *= fractalLacunarity;
 
     amp *= fractalGain;
-    sum += singlePerlin(perm[i], x, y, z) * amp;
+    sum += SinglePerlin(perm[i], x, y, z) * amp;
   }
 
   return sum * fractalBounding;
 }
 
-WN_INLINE WN_DECIMAL SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
+WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
 {
   WN_DECIMAL sum = FastAbs(SinglePerlin(perm[0], x, y, z)) * 2 - 1;
   WN_DECIMAL amp = 1;
@@ -268,13 +268,13 @@ WN_INLINE WN_DECIMAL SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DE
     z *= fractalLacunarity;
 
     amp *= fractalGain;
-    sum += (FastAbs(SinglePerlin(perm[0], x, y, z)) * 2 - 1) * amp;
+    sum += (FastAbs(SinglePerlin(perm[i], x, y, z)) * 2 - 1) * amp;
   }
 
   return sum * fractalBounding;
 }
 
-WN_INLINE WN_DECIMAL SinglePerlinFractalRigidMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
+WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalRigidMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
 {
   WN_DECIMAL sum = 1 - FastAbs(SinglePerlin(perm[0], x, y, z));
   WN_DECIMAL amp = 1;
@@ -287,7 +287,7 @@ WN_INLINE WN_DECIMAL SinglePerlinFractalRigidMulti(WN_DECIMAL x, WN_DECIMAL y, W
     z *= fractalLacunarity;
 
     amp *= fractalGain;
-    sum -= (1 - FastAbs(SinglePerlin(perm[0], x, y, z))) * amp;
+    sum -= (1 - FastAbs(SinglePerlin(perm[i], x, y, z))) * amp;
   }
 
   return sum;
@@ -350,16 +350,15 @@ WN_INLINE WN_DECIMAL WasmNoise::GetPerlinFractal(WN_DECIMAL x, WN_DECIMAL y) con
 {
   x *= frequency;
   y *= frequency;
-  z *= frequency;
 
   switch(fractalType)
   {
   case FractalType::FBM:
-    return SinglePerlinFractalFBM(x, y, z);
+    return SinglePerlinFractalFBM(x, y);
   case FractalType::Billow:
-    return SinglePerlinFractalBillow(x, y, z);
+    return SinglePerlinFractalBillow(x, y);
   case FractalType::RigidMulti:
-    return SinglePerlinFractalRigidMulti(x, y, z);
+    return SinglePerlinFractalRigidMulti(x, y);
   default:
     ABORT();
   }
@@ -381,7 +380,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalStrip(WN_DECIMAL startX, WN_DEC
         WN_DECIMAL fX, fY;
         fX = (startX+i) * frequency;
         fY = startY * frequency;
-        values[i] = SinglePerlinFractalFBM(x, y);      
+        values[i] = SinglePerlinFractalFBM(fX, fY);      
       }
       return values;
     }
@@ -392,7 +391,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalStrip(WN_DECIMAL startX, WN_DEC
         WN_DECIMAL fX, fY;
         fX = (startX+i) * frequency;
         fY = startY * frequency;
-        values[i] = SinglePerlinFractalBillow(x, y);
+        values[i] = SinglePerlinFractalBillow(fX, fY);
       }
     }
     case FractalType::RigidMulti:
@@ -402,7 +401,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalStrip(WN_DECIMAL startX, WN_DEC
         WN_DECIMAL fX, fY;
         fX = (startX+i) * frequency;
         fY = startY * frequency;
-        values[i] = SinglePerlinFractalRigidMulti(x, y);
+        values[i] = SinglePerlinFractalRigidMulti(fX, fY);
       }
     }
     default:
@@ -420,7 +419,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalStrip(WN_DECIMAL startX, WN_DEC
         WN_DECIMAL fX, fY;
         fX = startX * frequency;
         fY = (startY+i) * frequency;
-        values[i] = SinglePerlinFractalFBM(x, y);      
+        values[i] = SinglePerlinFractalFBM(fX, fY);      
       }
       return values;
     }
@@ -431,7 +430,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalStrip(WN_DECIMAL startX, WN_DEC
         WN_DECIMAL fX, fY;
         fX = startX * frequency;
         fY = (startY+i) * frequency;
-        values[i] = SinglePerlinFractalBillow(x, y);
+        values[i] = SinglePerlinFractalBillow(fX, fY);
       }
     }
     case FractalType::RigidMulti:
@@ -441,7 +440,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalStrip(WN_DECIMAL startX, WN_DEC
         WN_DECIMAL fX, fY;
         fX = startX * frequency;
         fY = (startY+i) * frequency;
-        values[i] = SinglePerlinFractalRigidMulti(x, y);
+        values[i] = SinglePerlinFractalRigidMulti(fX, fY);
       }
     }
     default:
@@ -465,7 +464,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalSquare(WN_DECIMAL startX, WN_DE
     {
       for(uint32 x = 0; x < width; x++)
       {
-        WN_DECIMAL fX, fY, fZ;
+        WN_DECIMAL fX, fY;
         fX = (startX+x) * frequency;
         fY = (startY+y) * frequency;
         values[(width * y) + x] = SinglePerlinFractalFBM(fX, fY);
@@ -479,7 +478,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalSquare(WN_DECIMAL startX, WN_DE
     {
       for(uint32 x = 0; x < width; x++)
       {
-        WN_DECIMAL fX, fY, fZ;
+        WN_DECIMAL fX, fY;
         fX = (startX+x) * frequency;
         fY = (startY+y) * frequency;
         values[(width * y) + x] = SinglePerlinFractalBillow(fX, fY);
@@ -493,7 +492,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalSquare(WN_DECIMAL startX, WN_DE
     {
       for(uint32 x = 0; x < width; x++)
       {
-        WN_DECIMAL fX, fY, fZ;
+        WN_DECIMAL fX, fY;
         fX = (startX+x) * frequency;
         fY = (startY+y) * frequency;
         values[(width * y) + x] = SinglePerlinFractalRigidMulti(fX, fY);
