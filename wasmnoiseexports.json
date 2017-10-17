@@ -1,31 +1,41 @@
 {
-  "exports": [
-    "_GLOBAL__sub_I_WasmNoiseInterface.cpp",
-    
-    "SetSeed",
-    "GetSeed",
-    "SetFrequency",
-    "GetFrequency",
-    "SetInterp",
-    "GetInterp",
-    "SetFractalOctaves",
-    "GetFractalOctaves",
-    "SetFractalLacunarity",
-    "GetFractalLacunarity",
-    "SetFractalGain",
-    "GetFractalGain",
-    "SetFractalType",
-    "GetFractalType",
-
-    "GetPerlin2",
-    "GetPerlin2_Strip",
-    "GetPerlin2_Square",
-    "GetPerlinFractal2",
-    "GetPerlinFractal2_Strip",
-    "GetPerlinFractal2_Square",
-    "GetPerlin3",
-    "GetPerlin3_Strip",
-    "GetPerlin3_Square",
-    "GetPerlin3_Cube"
-  ]
+  "exports": {
+    "getset":[
+      "_GLOBAL__sub_I_WasmNoiseInterface.cpp",    
+      "SetSeed",
+      "GetSeed",
+      "SetFrequency",
+      "GetFrequency",
+      "SetInterp",
+      "GetInterp"    
+    ],
+    "optionalGetSet":[
+      "SetFractalOctaves",
+      "GetFractalOctaves",
+      "SetFractalLacunarity",
+      "GetFractalLacunarity",
+      "SetFractalGain",
+      "GetFractalGain",
+      "SetFractalType",
+      "GetFractalType"
+    ],
+    "perlin":[
+      "GetPerlin2",
+      "GetPerlin2_Strip",
+      "GetPerlin2_Square",
+      "GetPerlin3",    
+      "GetPerlin3_Strip",
+      "GetPerlin3_Square",
+      "GetPerlin3_Cube"
+    ],
+    "perlinFractal":[
+      "GetPerlinFractal2",
+      "GetPerlinFractal2_Strip",
+      "GetPerlinFractal2_Square",    
+      "GetPerlinFractal3",
+      "GetPerlinFractal3_Strip",
+      "GetPerlinFractal3_Square",
+      "GetPerlinFractal3_Cube"
+    ]
+  }
 }

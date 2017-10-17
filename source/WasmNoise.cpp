@@ -766,7 +766,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalStrip(WN_DECIMAL startX, WN_DEC
     }
     default:
       ABORT();
-      nullptr;
+      return nullptr;
     }
   }
   default:

@@ -10,14 +10,45 @@ class BuildType(enum.IntEnum):
   patch = 1
   minor = 2
   major = 3  
-  
-referenceLookup = ["build", "patch", "minor", "major"]
+
+buildTypeLookup = ["build", "patch", "minor", "major"]
+
+class FunctionEnableType(enum.IntEnum):
+  EnableAll = 0
+  EnablePerlin = 1
+  EnablePerlinFractal = 2
+  EnableAllPerlin = 3
+
+# Lookup maps to exportNames array
+enableTypeLookup = [
+  [0], # EnableAll has special case
+  [0, 2], # Enable Perlin
+  [0, 1, 3], # Enable Perlin Fractal
+  [0, 1, 2, 3] # Enable Perlin and Perlin Fractal
+]
+exportNames = ["getset", "optionalGetSet", "perlin", "perlinFractal"]
+
 
 class TextColours:
   Blue = '\033[94m'
   Green = '\033[92m'
   Red = '\033[91m'  
   StopColour = '\033[0m'
+
+def getEnabledExportsSet(enableType):
+  enabledExports = set()
+  lookupArr = enableTypeLookup[int(enableType)]
+  for i in lookupArr:
+    enabledExports.add(exportNames[i])
+  return enabledExports
+
+def getEnabledFunctions(enables):
+  enabledFunctions = set()
+  if FunctionEnableType.EnableAll in enables:
+    return exportNames
+  for enable in enables:
+    enabledFunctions |= getEnabledExportsSet(enable)
+  return enabledFunctions        
 
 def runCommand(cmd):
   try:
@@ -34,19 +65,24 @@ def runCommand(cmd):
 # TODO: Consider optimisation flags and other compiler options
 def main(args):
   recognisedBuildTypeArgs = {
-    "--build": BuildType.build, 
-    "--patch": BuildType.patch,
-    "--minor": BuildType.minor,
-    "--major": BuildType.major
+    "-build": BuildType.build, 
+    "-patch": BuildType.patch,
+    "-minor": BuildType.minor,
+    "-major": BuildType.major
   }
-
   recognisedOptimisationArgs = ["-O0", "-O1", "-O2", "-O3"]
-
   verboseArg = "-v"
+  recognisedEnableArgs = {
+    "-EnableAll": FunctionEnableType.EnableAll,
+    "-EnablePerlin": FunctionEnableType.EnablePerlin,
+    "-EnablePerlinFractal": FunctionEnableType.EnablePerlinFractal,
+    "-EnableAllPerlin": FunctionEnableType.EnableAllPerlin
+  }
 
   buildType = BuildType(0)
   optimisationLevel = "-O3"
   verboseMode = False  
+  enableFlags = []
 
   if(len(args) > 1):
     # For each arg
@@ -54,7 +90,7 @@ def main(args):
       doneWithArg = False
       if "buildwasmnoise.py" in arg:
         continue
-      # Check if it's recognised
+      # Check if it is a recognised Build Type
       for recongisedArg, value in recognisedBuildTypeArgs.items():
         if arg.strip() == recongisedArg:
           buildType = value
@@ -62,6 +98,7 @@ def main(args):
           break
       if doneWithArg:
         continue
+      # Check if it is a recognised optimisation arg
       for recongisedArg in recognisedOptimisationArgs:
         if arg.strip() == recongisedArg:
           optimisationLevel = arg
@@ -69,16 +106,32 @@ def main(args):
           break
       if doneWithArg:
         continue
+
+      # Check if it is a recognised enable arg
+      for recognisedArg, value in recognisedEnableArgs.items():
+        if arg.strip() == recognisedArg:
+          enableFlags.append(value)
+          doneWithArg = True
+          break
+      if doneWithArg:
+        continue
+
+      # Check if it is a verbose arg
       if arg.strip() == verboseArg:
         verboseMode = True
         continue
+
       # Else, unrecognised arg
       print("Ignoring Unrecongised Option '", arg, "'")
 
-  print("Building WasmNoise, incrementing ", referenceLookup[int(buildType)])
-  build(buildType, optimisationLevel, verboseMode)
+  # Assume enable all if no flags provided
+  if len(enableFlags) == 0:
+    enableFlags.append(FunctionEnableType.EnableAll)
 
-def build(buildType, optLevel, verbose):
+  print("Building WasmNoise, incrementing", buildTypeLookup[int(buildType)])
+  build(buildType, optimisationLevel, verboseMode, enableFlags)
+
+def build(buildType, optLevel, verbose, enabledFlags):
   iniLoc = "version.ini"
 
   # Create a configparser and load version.ini
@@ -86,7 +139,7 @@ def build(buildType, optLevel, verbose):
   config.read(iniLoc)
 
   # Increment the build version
-  config["VERSION"][referenceLookup[int(buildType)]] = str(int(config["VERSION"][referenceLookup[buildType]])+1)
+  config["VERSION"][buildTypeLookup[int(buildType)]] = str(int(config["VERSION"][buildTypeLookup[buildType]])+1)
 
   # Reset lower values
   if(buildType == BuildType.major): 
@@ -108,6 +161,11 @@ def build(buildType, optLevel, verbose):
   # Save the modified file
   with open(iniLoc, 'w') as configfile:
     config.write(configfile)
+
+  # Prepare the enable functions array
+  enabledFunctions = getEnabledFunctions(enabledFlags)
+  for enable in enabledFunctions:
+    print(TextColours.Blue + "Enabling function set: " + enable + TextColours.StopColour)
 
   # Grab all code files from source directory
   codefiles = []
@@ -178,7 +236,7 @@ def build(buildType, optLevel, verbose):
 
   # Remove extra exports from the wat file before compiling
   print(TextColours.Blue + "Removing unwanted exports from wat file..." + TextColours.StopColour)
-  removeExtraExports(s2wasmOut)
+  removeExtraExports(s2wasmOut, enabledFunctions)
   
   print(TextColours.Blue + "Compiling wat to wasm..." + TextColours.StopColour)
   runCommand(wat2wasmCmd)
