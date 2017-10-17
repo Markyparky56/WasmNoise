@@ -305,11 +305,11 @@ WN_INLINE WN_DECIMAL WasmNoise::GetPerlin(WN_DECIMAL x, WN_DECIMAL y) const
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinStrip(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction)
 {
+  WN_DECIMAL *values = returnHelper.NewArray(length);  
   switch(direction)
   {
   case StripDirection::XAxis:
   {
-    WN_DECIMAL *values = returnHelper.NewArray(length);
     for(uint32 i = 0; i < length; i++)
     {
       values[i] = SinglePerlin(0, (startX+i) * frequency, startY * frequency);
@@ -318,7 +318,6 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinStrip(WN_DECIMAL startX, WN_DECIMAL st
   }
   case StripDirection::YAxis:
   {
-    WN_DECIMAL *values = returnHelper.NewArray(length);
     for(uint32 i = 0; i < length; i++)
     {
       values[i] = SinglePerlin(0, startX * frequency, (startY+i) * frequency);
@@ -361,6 +360,7 @@ WN_INLINE WN_DECIMAL WasmNoise::GetPerlinFractal(WN_DECIMAL x, WN_DECIMAL y) con
     return SinglePerlinFractalRigidMulti(x, y);
   default:
     ABORT();
+    return 0;
   }
 }
 
@@ -405,7 +405,8 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalStrip(WN_DECIMAL startX, WN_DEC
       }
     }
     default:
-      ABORT();        
+      ABORT();
+      return nullptr;        
     }    
   }
   case StripDirection::YAxis:
@@ -444,7 +445,8 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalStrip(WN_DECIMAL startX, WN_DEC
       }
     }
     default:
-      ABORT();        
+      ABORT();
+      return nullptr;        
     }  
   }
   default:
@@ -512,27 +514,83 @@ WN_INLINE WN_DECIMAL WasmNoise::GetPerlin(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL
   return SinglePerlin(0, x * frequency, y * frequency, z * frequency);
 }
 
-WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length)
+WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction)
 {
   WN_DECIMAL *values = returnHelper.NewArray(length);
-  for(uint32 i = 0; i < length; i++)
+  switch(direction)
   {
-    values[i] = SinglePerlin(0, (startX + i) * frequency, startY *frequency, startZ * frequency);
+  case StripDirection::XAxis:
+  {
+    for(uint32 i = 0; i < length; i++)
+    {
+      values[i] = SinglePerlin(0, (startX + i) * frequency, startY *frequency, startZ * frequency);
+    }
+    return values;
   }
-  return values;
+  case StripDirection::YAxis:
+  {
+    for(uint32 i = 0; i < length; i++)
+    {
+      values[i] = SinglePerlin(0, startX * frequency, (startY + i) *frequency, startZ * frequency);
+    }
+    return values;
+  }
+  case StripDirection::ZAxis:
+  {
+    for(uint32 i = 0; i < length; i++)
+    {
+      values[i] = SinglePerlin(0, startX * frequency, startY *frequency, (startZ + i) * frequency);
+    }
+    return values;
+  }
+  default:
+    ABORT();
+    return nullptr;
+  }  
 }
 
-WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinSquare(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height)
+WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinSquare(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane)
 {
   WN_DECIMAL *values = returnHelper.NewArray(width*height);
-  for(uint32 y = 0; y < height; y++)
+  switch(plane)
   {
-    for(uint32 x = 0; x < width; x++)
+  case SquarePlane::XYPlane:
+  {
+    for(uint32 y = 0; y < height; y++)
     {
-      values[(width * y) + x] = SinglePerlin(0, (startX+x) * frequency, (startY+y) * frequency, startZ * frequency);
+      for(uint32 x = 0; x < width; x++)
+      {
+        values[(width * y) + x] = SinglePerlin(0, (startX+x) * frequency, (startY+y) * frequency, startZ * frequency);
+      }
     }
+    return values;  
   }
-  return values;
+  case SquarePlane::XZPlane:
+  {
+    for(uint32 z = 0; z < height; z++)
+    {
+      for(uint32 x = 0; x < width; x++)
+      {
+        values[(width * z) + x] = SinglePerlin(0, (startX+x) * frequency, startY * frequency, (startZ+z) * frequency);
+      }
+    }
+    return values;  
+  }
+  case SquarePlane::ZYPlane:
+  {
+    for(uint32 y = 0; y < height; y++)
+    {
+      for(uint32 z = 0; z < width; z++)
+      {
+        values[(width * y) + z] = SinglePerlin(0, startX * frequency, (startY+y) * frequency, (startZ+z) * frequency);
+      }
+    }
+    return values;  
+  }
+  default:
+    ABORT();
+    return nullptr;  
+  }
 }
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth)
@@ -576,7 +634,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalStrip(WN_DECIMAL startX, WN_DEC
   WN_DECIMAL *values = returnHelper.NewArray(length);
   switch(direction)
   {
-  case StripDirection::Xaxis:
+  case StripDirection::XAxis:
   {
     switch(fractalType)
     {
@@ -585,7 +643,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalStrip(WN_DECIMAL startX, WN_DEC
       for(uint32 i = 0; i < length; i++)
       {
         WN_DECIMAL fX, fY, fZ;
-        fX = (startX+i) * frequency;
+        fX = (startX + i) * frequency;
         fY = startY * frequency;
         fZ = startZ * frequency;
         values[i] = SinglePerlinFractalFBM(fX, fY, fZ);
@@ -593,24 +651,364 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalStrip(WN_DECIMAL startX, WN_DEC
       return values;
     }
     case FractalType::Billow:
-    case FractalType::RigidMulti:
-    default:
-      ABORT();
+    {
+      for(uint32 i = 0; i < length; i++)
+      {
+        WN_DECIMAL fX, fY, fZ;
+        fX = (startX + i) * frequency;
+        fY = startY * frequency;
+        fZ = startZ * frequency;
+        values[i] = SinglePerlinFractalBillow(fX, fY, fZ);
+      }
+      return values;
     }
+    case FractalType::RigidMulti:
+    {
+      for(uint32 i = 0; i < length; i++)
+      {
+        WN_DECIMAL fX, fY, fZ;
+        fX = (startX + i) * frequency;
+        fY = startY * frequency;
+        fZ = startZ * frequency;
+        values[i] = SinglePerlinFractalRigidMulti(fX, fY, fZ);
+      }
+      return values;
+    }
+    default:
+      ABORT(); 
+      return nullptr;
+    }       
   }
   case StripDirection::YAxis:
+  {
+    switch(fractalType)
+    {
+    case FractalType::FBM:
+    {
+      for(uint32 i = 0; i < length; i++)
+      {
+        WN_DECIMAL fX, fY, fZ;
+        fX = startX * frequency;
+        fY = (startY + i) * frequency;
+        fZ = startZ * frequency;
+        values[i] = SinglePerlinFractalFBM(fX, fY, fZ);
+      }
+      return values;
+    }
+    case FractalType::Billow:
+    {
+      for(uint32 i = 0; i < length; i++)
+      {
+        WN_DECIMAL fX, fY, fZ;
+        fX = startX * frequency;
+        fY = (startY + i) * frequency;
+        fZ = startZ * frequency;
+        values[i] = SinglePerlinFractalBillow(fX, fY, fZ);
+      }
+      return values;
+    }
+    case FractalType::RigidMulti:
+    {
+      for(uint32 i = 0; i < length; i++)
+      {
+        WN_DECIMAL fX, fY, fZ;
+        fX = startX * frequency;
+        fY = (startY + i) * frequency;
+        fZ = startZ * frequency;
+        values[i] = SinglePerlinFractalRigidMulti(fX, fY, fZ);
+      }
+      return values;
+    }
+    default:
+      ABORT();
+      return nullptr;
+    }
+  }
   case StripDirection::ZAxis:
+  {
+    switch(fractalType)
+    {
+    case FractalType::FBM:
+    {
+      for(uint32 i = 0; i < length; i++)
+      {
+        WN_DECIMAL fX, fY, fZ;
+        fX = startX * frequency;
+        fY = startY * frequency;
+        fZ = (startZ + i) * frequency;
+        values[i] = SinglePerlinFractalFBM(fX, fY, fZ);
+      }
+      return values;
+    }
+    case FractalType::Billow:
+    {
+      for(uint32 i = 0; i < length; i++)
+      {
+        WN_DECIMAL fX, fY, fZ;
+        fX = startX * frequency;
+        fY = startY * frequency;
+        fZ = (startZ + i) * frequency;
+        values[i] = SinglePerlinFractalBillow(fX, fY, fZ);
+      }
+      return values;
+    }
+    case FractalType::RigidMulti:
+    {
+      for(uint32 i = 0; i < length; i++)
+      {
+        WN_DECIMAL fX, fY, fZ;
+        fX = startX * frequency;
+        fY = startY * frequency;
+        fZ = (startZ + i) * frequency;
+        values[i] = SinglePerlinFractalRigidMulti(fX, fY, fZ);
+      }
+      return values;
+    }
+    default:
+      ABORT();
+      nullptr;
+    }
+  }
   default:
     ABORT();
+    return nullptr;
   }
 }
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalSquare(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane)
 {
-
+  WN_DECIMAL *values = returnHelper.NewArray(width*height);
+  switch(plane)
+  {
+  case SquarePlane::XYPlane:
+  {
+    switch(fractalType)
+    {
+    case FractalType::FBM:
+    {
+      for(uint32 y = 0; y < height; y++)
+      {
+        for(uint32 x = 0; x < width; x++)
+        {
+          WN_DECIMAL fX, fY, fZ;
+          fX = (startX+x) * frequency;
+          fY = (startY+y) * frequency;
+          fZ = startZ * frequency;
+          values[(width * y) + x] = SinglePerlinFractalFBM(fX, fY, fZ);
+        }
+      }
+      return values;
+    }
+    case FractalType::Billow:
+    {
+      for(uint32 y = 0; y < height; y++)
+      {
+        for(uint32 x = 0; x < width; x++)
+        {
+          WN_DECIMAL fX, fY, fZ;
+          fX = (startX+x) * frequency;
+          fY = (startY+y) * frequency;
+          fZ = startZ * frequency;
+          values[(width * y) + x] = SinglePerlinFractalBillow(fX, fY, fZ);
+        }
+      }
+      return values;
+    }
+    case FractalType::RigidMulti:
+    {
+      for(uint32 y = 0; y < height; y++)
+      {
+        for(uint32 x = 0; x < width; x++)
+        {
+          WN_DECIMAL fX, fY, fZ;
+          fX = (startX+x) * frequency;
+          fY = (startY+y) * frequency;
+          fZ = startZ * frequency;
+          values[(width * y) + x] = SinglePerlinFractalRigidMulti(fX, fY, fZ);
+        }
+      }
+      return values;
+    }
+    default:
+      ABORT();
+      return nullptr;
+    }
+  }
+  case SquarePlane::XZPlane:
+  {
+    switch(fractalType)
+    {
+    case FractalType::FBM:
+    {
+      for(uint32 z = 0; z < height; z++)
+      {
+        for(uint32 x = 0; x < width; x++)
+        {
+          WN_DECIMAL fX, fY, fZ;
+          fX = (startX+x) * frequency;
+          fY = startY * frequency;
+          fZ = (startZ+z) * frequency;
+          values[(width * z) + x] = SinglePerlinFractalFBM(fX, fY, fZ);
+        }
+      }
+      return values;
+    }
+    case FractalType::Billow:
+    {
+      for(uint32 z = 0; z < height; z++)
+      {
+        for(uint32 x = 0; x < width; x++)
+        {
+          WN_DECIMAL fX, fY, fZ;
+          fX = (startX+x) * frequency;
+          fY = startY * frequency;
+          fZ = (startZ+z) * frequency;
+          values[(width * z) + x] = SinglePerlinFractalBillow(fX, fY, fZ);
+        }
+      }
+      return values;
+    }
+    case FractalType::RigidMulti:
+    {
+      for(uint32 z = 0; z < height; z++)
+      {
+        for(uint32 x = 0; x < width; x++)
+        {
+          WN_DECIMAL fX, fY, fZ;
+          fX = (startX+x) * frequency;
+          fY = startY * frequency;
+          fZ = (startZ+z) * frequency;
+          values[(width * z) + x] = SinglePerlinFractalRigidMulti(fX, fY, fZ);
+        }
+      }
+      return values;
+    }
+    default:
+      ABORT();
+      return nullptr;
+    }
+  }
+  case SquarePlane::ZYPlane:
+  {
+    switch(fractalType)
+    {
+    case FractalType::FBM:
+    {
+      for(uint32 y = 0; y < height; y++)
+      {
+        for(uint32 z = 0; z < width; z++)
+        {
+          WN_DECIMAL fX, fY, fZ;
+          fX = startX * frequency;
+          fY = (startY+y) * frequency;
+          fZ = (startZ+z) * frequency;
+          values[(width * y) + z] = SinglePerlinFractalFBM(fX, fY, fZ);
+        }
+      }
+      return values;
+    }
+    case FractalType::Billow:
+    {
+      for(uint32 y = 0; y < height; y++)
+      {
+        for(uint32 z = 0; z < width; z++)
+        {
+          WN_DECIMAL fX, fY, fZ;
+          fX = startX * frequency;
+          fY = (startY+y) * frequency;
+          fZ = (startZ+z) * frequency;
+          values[(width * y) + z] = SinglePerlinFractalBillow(fX, fY, fZ);
+        }
+      }
+      return values;
+    }
+    case FractalType::RigidMulti:
+    {
+      for(uint32 y = 0; y < height; y++)
+      {
+        for(uint32 z = 0; z < width; z++)
+        {
+          WN_DECIMAL fX, fY, fZ;
+          fX = startX * frequency;
+          fY = (startY+y) * frequency;
+          fZ = (startZ+z) * frequency;
+          values[(width * y) + z] = SinglePerlinFractalRigidMulti(fX, fY, fZ);
+        }
+      }
+      return values;
+    }
+    default:
+      ABORT();
+      return nullptr;
+    }
+  }
+  default:
+    ABORT();
+    return nullptr;
+  }
 }
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth)
 {
-
+  WN_DECIMAL *values = returnHelper.NewArray(width*height*depth);
+  switch(fractalType)
+  {
+  case FractalType::FBM:
+  {
+    for(uint32 z = 0; z < depth; z++)
+    {
+      for(uint32 y = 0; y < height; y++)
+      {
+        for(uint32 x = 0; x < width; x++)
+        {
+          WN_DECIMAL fX, fY, fZ;
+          fX = (startX + x) * frequency;
+          fY = (startY + y) * frequency;
+          fZ = (startZ + z) * frequency;
+          values[(height*width*z)+(width*y)+x] = SinglePerlinFractalFBM(fX, fY, fZ);
+        }
+      }
+    }
+    return values;
+  }
+  case FractalType::Billow:
+  {
+    for(uint32 z = 0; z < depth; z++)
+    {
+      for(uint32 y = 0; y < height; y++)
+      {
+        for(uint32 x = 0; x < width; x++)
+        {
+          WN_DECIMAL fX, fY, fZ;
+          fX = (startX + x) * frequency;
+          fY = (startY + y) * frequency;
+          fZ = (startZ + z) * frequency;
+          values[(height*width*z)+(width*y)+x] = SinglePerlinFractalBillow(fX, fY, fZ);
+        }
+      }
+    }
+    return values;
+  }
+  case FractalType::RigidMulti:
+  {
+    for(uint32 z = 0; z < depth; z++)
+    {
+      for(uint32 y = 0; y < height; y++)
+      {
+        for(uint32 x = 0; x < width; x++)
+        {
+          WN_DECIMAL fX, fY, fZ;
+          fX = (startX + x) * frequency;
+          fY = (startY + y) * frequency;
+          fZ = (startZ + z) * frequency;
+          values[(height*width*z)+(width*y)+x] = SinglePerlinFractalFBM(fX, fY, fZ);
+        }
+      }
+    }
+    return values;
+  }
+  default:
+    ABORT();
+    return nullptr;
+  }
 }

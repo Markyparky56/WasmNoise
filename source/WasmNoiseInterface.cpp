@@ -53,8 +53,14 @@ extern "C"
   WN_INLINE WN_DECIMAL *GetPerlinFractal2_Square(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, uint32 height) { return wasmNoise.GetPerlinFractalSquare(startX, startY, length, height); }
 
   WN_INLINE WN_DECIMAL  GetPerlin3(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) { return wasmNoise.GetPerlin(x, y, z); }
-  WN_INLINE WN_DECIMAL *GetPerlin3_Strip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length) { return wasmNoise.GetPerlinStrip(startX, startY, startZ, length); }
-  WN_INLINE WN_DECIMAL *GetPerlin3_Square(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height) { return wasmNoise.GetPerlinSquare(startX, startY, startZ, width, height); }
+  WN_INLINE WN_DECIMAL *GetPerlin3_Strip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, int32 direction) { return wasmNoise.GetPerlinStrip(startX, startY, startZ, length, static_cast<WasmNoise::StripDirection>(direction)); }
+  WN_INLINE WN_DECIMAL *GetPerlin3_Square(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, int32 plane) { return wasmNoise.GetPerlinSquare(startX, startY, startZ, width, height, static_cast<WasmNoise::SquarePlane>(plane)); }
   WN_INLINE WN_DECIMAL *GetPerlin3_Cube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth) { return wasmNoise.GetPerlinCube(startX, startY, startZ, width, height, depth); }
+
+  WN_INLINE WN_DECIMAL  GetPerlinFractal3(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) { return wasmNoise.GetPerlin(x, y, z); }
+  WN_INLINE WN_DECIMAL *GetPerlinFractal3_Strip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, int32 direction) { return wasmNoise.GetPerlinFractalStrip(startX, startY, startZ, length, static_cast<WasmNoise::StripDirection>(direction)); }
+  WN_INLINE WN_DECIMAL *GetPerlinFractal3_Square(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, int32 plane) { return wasmNoise.GetPerlinFractalSquare(startX, startY, startZ, width, height, static_cast<WasmNoise::SquarePlane>(plane)); }
+  WN_INLINE WN_DECIMAL *GetPerlinFractal3_Cube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth) { return wasmNoise.GetPerlinFractalCube(startX, startY, startZ, width, height, depth); }
+
 }
 
