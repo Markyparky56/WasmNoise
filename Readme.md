@@ -144,7 +144,7 @@ The best way to build Binaryen is with Visual Studio, and is relatively painless
 The following command should handle using git to checkout binaryen and building it 
 with MSBuild
 ```
-git clone http://github.com/WebAssembly/binaryen.git && cd binaryen && mkdir build && cd build && cmake -G "Visual Studio 15 2017 Win64" .. && cmake --build .
+git clone http://github.com/WebAssembly/binaryen.git && cd binaryen && mkdir build && cd build && cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=RelWithDebInfo .. && cmake --build .
 ```
 
 You can also use Visual Studio to build with the solution file produced by cmake if 
@@ -158,7 +158,7 @@ Again, Wabt is best built with Visual Studio.
 
 The following command should handle checking out wabt and compiling it
 ```
-git clone http://github.com/WebAssembly/wabt.git && cd wabt && mkdir build && cd build && cmake -G "Visual Studio 15 2017 Win64" .. && cmake --build .
+git clone http://github.com/WebAssembly/wabt.git && cd wabt && mkdir build && cd build && cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF .. && cmake --build .
 ```
 
 Add the *bin* folder to your Path and you should have all the necessary tools.

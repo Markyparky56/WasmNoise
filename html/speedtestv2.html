@@ -28,8 +28,7 @@
         console.log("10 Perlin Fractal 3D Values:");
         for(let i = 0; i < 10; i++)
         {
-          // Coming soon...
-          //console.log(WasmNoise.GetPerlinFractal3(i, 0.1, 0.1));
+          console.log(WasmNoise.GetPerlinFractal3(i, 0.1, 0.1));
         }
 
         // 1 Million Value performance test, strip, 2d
@@ -99,16 +98,15 @@
 
         // 1 Million Value performance test, strip, fractal 3d, 3 octaves
         {
-          // Coming soon...
-          // console.log("Testing 3D Strip, fractal, 3 octaves...");
-          // let start = performance.now();
-          // let offset = WasmNoise.GetPerlinFractal3_Strip(0.5, 0.5, 0.5, 1000000, WasmNoise.StripDirection.XAxis);
-          // let end = performance.now();
-          // let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+(1000000*4)));
-          // let diff = end-start;
-          // let avg = (diff*1000000)/1000000;
-          // console.log("1,000,000 3D Values: " + (end-start) + "ms, Average per value: " + avg + "ns");
-          // console.log(values);
+          console.log("Testing 3D Strip, fractal, 3 octaves...");
+          let start = performance.now();
+          let offset = WasmNoise.GetPerlinFractal3_Strip(0.5, 0.5, 0.5, 1000000, WasmNoise.StripDirection.XAxis);
+          let end = performance.now();
+          let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+(1000000*4)));
+          let diff = end-start;
+          let avg = (diff*1000000)/1000000;
+          console.log("1,000,000 3D Values: " + (end-start) + "ms, Average per value: " + avg + "ns");
+          console.log(values);
         }
 
         // 1 Million Value performance test, square, 2d
@@ -126,16 +124,15 @@
 
         // 1 Million Value performance test, square, fractal 3d, 3 octaves
         {
-          // Coming soon...
-          // console.log("Testing 3D Strip, fractal, 3 octaves...");
-          // let start = performance.now();
-          // let offset = WasmNoise.GetPerlinFractal3_Square(0.5, 0.5, 0.5, 1000, 1000);
-          // let end = performance.now();
-          // let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+(1000000*4)));
-          // let diff = end-start;
-          // let avg = (diff*1000000)/1000000;
-          // console.log("1,000,000 3D Values: " + (end-start) + "ms, Average per value: " + avg + "ns");
-          // console.log(values);
+          console.log("Testing 3D Strip, fractal, 3 octaves...");
+          let start = performance.now();
+          let offset = WasmNoise.GetPerlinFractal3_Square(0.5, 0.5, 0.5, 1000, 1000);
+          let end = performance.now();
+          let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+(1000000*4)));
+          let diff = end-start;
+          let avg = (diff*1000000)/1000000;
+          console.log("1,000,000 3D Values: " + (end-start) + "ms, Average per value: " + avg + "ns");
+          console.log(values);
         }
 
         // 1 Million Value performance test, cube
@@ -153,15 +150,15 @@
 
         // 1 Million Value performance test, cube, fractal 3d, 3 octaves
         {
-          // console.log("Testing 3D Cube, fractal, 3 octaves...")
-          // let start = performance.now();
-          // let offset = WasmNoise.GetPerlinFractal3_Cube(0.5, 0.5, 0.5, 100, 100, 100);
-          // let end = performance.now();
-          // let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+1000000*4));
-          // let diff = end-start;
-          // let avg = (diff*1000000)/1000000;
-          // console.log("1,000,000 3D Values: " + (diff) + "ms, Average per value: " + avg + "ns");
-          // console.log(values);
+          console.log("Testing 3D Cube, fractal, 3 octaves...")
+          let start = performance.now();
+          let offset = WasmNoise.GetPerlinFractal3_Cube(0.5, 0.5, 0.5, 100, 100, 100);
+          let end = performance.now();
+          let values = new Float32Array(WasmNoise.memory.buffer.slice(offset, offset+1000000*4));
+          let diff = end-start;
+          let avg = (diff*1000000)/1000000;
+          console.log("1,000,000 3D Values: " + (diff) + "ms, Average per value: " + avg + "ns");
+          console.log(values);
         }
       }
     </script>

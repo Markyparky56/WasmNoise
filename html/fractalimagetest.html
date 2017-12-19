@@ -7,7 +7,7 @@
       {
         document.getElementById("loaded").innerText = "Loaded!";
 
-        WasmNoise.SetSeed(629831064);
+        WasmNoise.SetSeed(Date.now());
         console.log("Seed: " + WasmNoise.GetSeed());        
 
         // 2D Square to Texture, FBM
@@ -27,7 +27,7 @@
 
         // 2D Square to Texture, Billow
         {
-          WasmNoise.SetFractalType(WasmNoise.FractalType.Billow);          
+          WasmNoise.SetFractalType(WasmNoise.FractalType.Billow);
           let startGenValues = performance.now();
           let values = WasmNoise.GetPerlinFractal2_Square_Values(-256, -256, 512, 512);
           let endGenValues = performance.now();
@@ -43,7 +43,7 @@
 
         // 2D Square to Texture, RigidMulti
         {
-          WasmNoise.SetFractalType(WasmNoise.FractalType.RigidMulti);          
+          WasmNoise.SetFractalType(WasmNoise.FractalType.RigidMulti);   
           let startGenValues = performance.now();
           let values = WasmNoise.GetPerlinFractal2_Square_Values(-256, -256, 512, 512);
           let endGenValues = performance.now();
@@ -72,6 +72,31 @@
         let context = canvas.getContext("2d");
         let imageDataObject = context.createImageData(width, height);
         let imageData = imageDataObject.data;
+
+        let normedValues = new Float32Array(values);
+        let vMin = 1, vMax = -1;
+        let nMin = 1, nMax = 0;
+        for(let vi = 0; vi < width*height*4; vi++)
+        {
+          normedValues[vi] = (values[vi]*0.5)+0.5;
+          if(normedValues[vi] < nMin) nMin = normedValues[vi];
+          if(normedValues[vi] > nMax) nMax = normedValues[vi];
+          if(values[vi] < vMin) vMin = values[vi];
+          if(values[vi] > vMax) vMax = values[vi];
+        }
+        console.log(normedValues);        
+        let pixelValues = new Float32Array(normedValues);
+        let pMin = 255, pMax = 0;
+        for(let vi = 0; vi < width*height*4; vi++)
+        {
+          pixelValues[vi] = normedValues[vi] * 255;
+          if(pixelValues[vi] < pMin) pMin = pixelValues[vi];
+          if(pixelValues[vi] > pMax) pMax = pixelValues[vi];
+        }
+        console.log(pixelValues);
+        console.log("Min Original Value: " + vMin + "\n" + "Max Original Value: " + vMax
+                  + "\nMin Normalised Value: " + nMin + "\n" + "Max Normalised Value: " + nMax
+                  + "\nMin Pixel Value: " + pMin + "\n" + "Max Pixel Value: " + pMax);
         
         // Fill out the image data with our values
         let imageDataSize = width * height * 4;
@@ -80,15 +105,15 @@
           if(invert)
           {
             // Invert
-            imageData[di    ] = (1 - ((values[vi]*0.5)+0.5)) * 255;
-            imageData[di + 1] = (1 - ((values[vi]*0.5)+0.5)) * 255;
-            imageData[di + 2] = (1 - ((values[vi]*0.5)+0.5)) * 255;
+            imageData[di    ] = (255 - pixelValues[vi]);
+            imageData[di + 1] = (255 - pixelValues[vi]);
+            imageData[di + 2] = (255 - pixelValues[vi]);
           }
           else
           {
-            imageData[di    ] = ((values[vi]+0.5)*0.5) * 255;
-            imageData[di + 1] = ((values[vi]+0.5)*0.5) * 255;
-            imageData[di + 2] = ((values[vi]+0.5)*0.5) * 255;
+            imageData[di    ] = pixelValues[vi];
+            imageData[di + 1] = pixelValues[vi];
+            imageData[di + 2] = pixelValues[vi];
           }
           imageData[di + 3] = 255;          
         }

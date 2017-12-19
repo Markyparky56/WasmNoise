@@ -26,7 +26,7 @@ enableTypeLookup = [
   [0, 1, 3], # Enable Perlin Fractal
   [0, 1, 2, 3] # Enable Perlin and Perlin Fractal
 ]
-exportNames = ["getset", "optionalGetSet", "perlin", "perlinFractal"]
+exportNames = ["getset", "fractalGetSet", "perlin", "perlinFractal"]
 
 
 class TextColours:

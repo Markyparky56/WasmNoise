@@ -9,7 +9,7 @@
       "SetInterp",
       "GetInterp"    
     ],
-    "optionalGetSet":[
+    "fractalGetSet":[
       "SetFractalOctaves",
       "GetFractalOctaves",
       "SetFractalLacunarity",
