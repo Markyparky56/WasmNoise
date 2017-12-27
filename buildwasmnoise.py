@@ -98,6 +98,7 @@ def main(args):
           break
       if doneWithArg:
         continue
+
       # Check if it is a recognised optimisation arg
       for recongisedArg in recognisedOptimisationArgs:
         if arg.strip() == recongisedArg:

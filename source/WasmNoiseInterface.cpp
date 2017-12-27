@@ -39,7 +39,7 @@ extern "C"
   void SetFractalType(int32 _fractalType) { wasmNoise.SetFractalType(static_cast<WasmNoise::FractalType>(_fractalType)); }
   int32 GetFractalType() { return static_cast<int32>(wasmNoise.GetFractalType()); }
 
-  // The non "bulk" or "batch" functions (GetPerlin2, GetPerlin3) 
+  // The non "bulk" or "batch" functions (GetPerlin2, GetPerlin3 etc.) 
   // are slower than their counterparts because there is a noticable overhead
   // for calling an exported WebAssembly function from javascript, hence why
   // I've implemented Strip, Square and Cube alternatives which achieve near

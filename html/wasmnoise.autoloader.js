@@ -53,7 +53,7 @@ WasmNoise.fetchCompileAndInstantiate = WasmNoise.fetchCompileAndInstantiate || f
     // Call startup function
     this.instance.exports["_GLOBAL__sub_I_WasmNoiseInterface.cpp"]();
     // TODO: These will need to be kept up to date as I add new functions
-    // Elevate exported functions from instance to toplevel WasmNoise
+    // Elevate exported functions from instance to top-level WasmNoise object
     this.SetSeed = this.instance.exports.SetSeed;
     this.GetSeed = this.instance.exports.GetSeed;
     this.SetFrequency = this.instance.exports.SetFrequency;
@@ -78,6 +78,10 @@ WasmNoise.fetchCompileAndInstantiate = WasmNoise.fetchCompileAndInstantiate || f
     this.GetPerlin3_Strip = this.instance.exports.GetPerlin3_Strip;
     this.GetPerlin3_Square = this.instance.exports.GetPerlin3_Square;
     this.GetPerlin3_Cube = this.instance.exports.GetPerlin3_Cube;
+    this.GetPerlinFractal3 = this.instance.exports.GetPerlinFractal3;
+    this.GetPerlinFractal3_Strip = this.instance.exports.GetPerlinFractal3_Strip;
+    this.GetPerlinFractal3_Square = this.instance.exports.GetPerlinFractal3_Square;
+    this.GetPerlinFractal3_Cube = this.instance.exports.GetPerlinFractal3_Cube;
 
     // Auto fetchers for the array functions
     this.GetPerlin2_Strip_Values = function(startX, startY, length, direction)
@@ -104,9 +108,9 @@ WasmNoise.fetchCompileAndInstantiate = WasmNoise.fetchCompileAndInstantiate || f
       return new Float32Array(this.memory.buffer.slice(offset, offset+(width*height*4)));
     }
 
-    this.GetPerlin3_Strip_Values = function(startX, startY, startZ, length)
+    this.GetPerlin3_Strip_Values = function(startX, startY, startZ, length, direction)
     {
-      let offset = this.GetPerlin3_Strip(startX, startY, startZ, length);
+      let offset = this.GetPerlin3_Strip(startX, startY, startZ, length, direction);
       return new Float32Array(this.memory.buffer.slice(offset, offset+(length*4)));
     }
 
@@ -119,6 +123,24 @@ WasmNoise.fetchCompileAndInstantiate = WasmNoise.fetchCompileAndInstantiate || f
     this.GetPerlin3_Cube_Values = function(startX, startY, startZ, width, height, depth)
     {
       let offset = this.GetPerlin3_Cube(startX, startY, startZ, width, height, depth);
+      return new Float32Array(this.memory.buffer.slice(offset, offset+(width*height*depth*4)));
+    }
+
+    this.GetPerlinFractal3_Strip_Values = function(startX, startY, startZ, length, direction)
+    {
+      let offset = this.GetPerlinFractal3_Strip(startX, startY, startZ, length, direction);
+      return new Float32Array(this.memory.buffer.slice(offset, offset+(length*4)));
+    }
+
+    this.GetPerlinFractal3_Square_Values = function(startX, startY, startZ, width, height, plane)
+    {
+      let offset = this.GetPerlinFractal3_Strip(startX, startY, startZ, width, height, plane);
+      return new Float32Array(this.memory.buffer.slice(offset, offset+(width*height*4)));
+    }
+
+    this.GetPerlinFractal3_Cube_Values = function(startX, startY, startZ, width, height, depth)
+    {
+      let offset = this.GetPerlinFractal3_Strip(startX, startY, startZ, width, height, depth);
       return new Float32Array(this.memory.buffer.slice(offset, offset+(width*height*depth*4)));
     }
 
