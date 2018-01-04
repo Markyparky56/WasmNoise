@@ -1,6 +1,7 @@
 {
   "exports": {
-    "getset":[
+    "getset":{
+      "funcs":[      
       "_GLOBAL__sub_I_WasmNoiseInterface.cpp",    
       "SetSeed",
       "GetSeed",
@@ -8,8 +9,10 @@
       "GetFrequency",
       "SetInterp",
       "GetInterp"    
-    ],
-    "fractalGetSet":[
+      ]
+    },
+    "fractalGetSet":{
+      "funcs":[
       "SetFractalOctaves",
       "GetFractalOctaves",
       "SetFractalLacunarity",
@@ -18,8 +21,11 @@
       "GetFractalGain",
       "SetFractalType",
       "GetFractalType"
-    ],
-    "perlin":[
+      ],
+      "macro":"-DWN_INCLUDE_FRACTAL_GETSET"
+    },
+    "perlin":{
+      "funcs":[
       "GetPerlin2",
       "GetPerlin2_Strip",
       "GetPerlin2_Square",
@@ -27,8 +33,11 @@
       "GetPerlin3_Strip",
       "GetPerlin3_Square",
       "GetPerlin3_Cube"
-    ],
-    "perlinFractal":[
+      ],
+      "macro":"-DWN_INCLUDE_PERLIN"
+    },
+    "perlinFractal":{
+      "funcs":[
       "GetPerlinFractal2",
       "GetPerlinFractal2_Strip",
       "GetPerlinFractal2_Square",    
@@ -36,6 +45,8 @@
       "GetPerlinFractal3_Strip",
       "GetPerlinFractal3_Square",
       "GetPerlinFractal3_Cube"
-    ]
+      ],
+      "macro":"-DWN_INCLUDE_PERLIN_FRACTAL"
+    }
   }
 }

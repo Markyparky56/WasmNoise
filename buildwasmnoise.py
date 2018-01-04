@@ -1,19 +1,27 @@
+"""
+Build script to compile WasmNoise from C++ to a WebAssembly Binary file
+Requires Python 3
+"""
 import configparser
 import sys
 import subprocess
 import os
 import enum
+import json
 from removeextraexports import removeExtraExports
+from constructautoloader import outputAutloaderFile
 
 class BuildType(enum.IntEnum):
+  """Enum for build types"""
   build = 0
   patch = 1
   minor = 2
-  major = 3  
+  major = 3
 
 buildTypeLookup = ["build", "patch", "minor", "major"]
 
 class FunctionEnableType(enum.IntEnum):
+  """Enum for function sets"""
   EnableAll = 0
   EnablePerlin = 1
   EnablePerlinFractal = 2
@@ -26,16 +34,26 @@ enableTypeLookup = [
   [0, 1, 3], # Enable Perlin Fractal
   [0, 1, 2, 3] # Enable Perlin and Perlin Fractal
 ]
-exportNames = ["getset", "fractalGetSet", "perlin", "perlinFractal"]
+exportNames = [
+  "getset",         #0
+  "fractalGetSet",  #1
+  "perlin",         #2
+  "perlinFractal"   #3
+]
 
 
 class TextColours:
+  """Class to store Text Colours"""
   Blue = '\033[94m'
   Green = '\033[92m'
   Red = '\033[91m'  
   StopColour = '\033[0m'
 
 def getEnabledExportsSet(enableType):
+  """
+  Constructs a set of strings by mapping the indexes in
+  the corresponding enableTypeLookup array to the function sets in exportNames
+  """
   enabledExports = set()
   lookupArr = enableTypeLookup[int(enableType)]
   for i in lookupArr:
@@ -43,6 +61,10 @@ def getEnabledExportsSet(enableType):
   return enabledExports
 
 def getEnabledFunctions(enables):
+  """
+  Constructs a set of enabled function groups by adding (ORing) together all the
+  enabled sets. Bypasses this loop if EnableAll is present.
+  """
   enabledFunctions = set()
   if FunctionEnableType.EnableAll in enables:
     return exportNames
@@ -51,10 +73,13 @@ def getEnabledFunctions(enables):
   return enabledFunctions        
 
 def runCommand(cmd):
+  """
+  Helper to run subprocesses and catch errors they may return
+  """
   try:
     subprocess.run(cmd, shell=True, check=True)
-  except subprocess.CalledProcessError as e:
-    print(TextColours.Red + "Error: " + ' '.join(e.cmd) + " returned code: " + str(e.returncode) + "\nCheck output above for more information, stopping build." + TextColours.StopColour)
+  except subprocess.CalledProcessError as err:
+    print(TextColours.Red + "Error: " + ' '.join(err.cmd) + " returned code: " + str(err.returncode) + "\nCheck output above for more information, stopping build." + TextColours.StopColour)
     exit()
 
 # Args:
@@ -64,6 +89,10 @@ def runCommand(cmd):
 # --major to increment the major counter in version.ini and zero the rest
 # TODO: Consider optimisation flags and other compiler options
 def main(args):
+  """
+  Main Function
+  Processes arguments passed to the script and then configures the build process
+  """
   recognisedBuildTypeArgs = {
     "-build": BuildType.build, 
     "-patch": BuildType.patch,
@@ -78,13 +107,43 @@ def main(args):
     "-EnablePerlinFractal": FunctionEnableType.EnablePerlinFractal,
     "-EnableAllPerlin": FunctionEnableType.EnableAllPerlin
   }
+  helpArgs = ["-h", "-help", "--h", "--help", "-H", "--H"]
+  allowAbortArg = "-AllowAbort"
 
   buildType = BuildType(0)
   optimisationLevel = "-O3"
   verboseMode = False  
+  allowAbort = False
   enableFlags = []
 
   if(len(args) > 1):
+    # Check for a help arg
+    if any(arg in args for arg in helpArgs):
+      print(
+        "Allowed Configuration Arguments As Follows:\n",
+        "Build Types:\n",
+        "\t-build\tIncrement Build Number\n",
+        "\t-patch\tIncrement Patch Number\n",
+        "\t-minor\tIncrement Minor Number\n",
+        "\t-major\tIncrement Major Number\n",
+        "Optimisation Args:\n",
+        "\t -O0, -O1, -O2, -O3\n",
+        "Verbose Arg:\n",
+        "\t-v\n",
+        "Enable Function Sets With:\n",
+        "\tCombine as necessary\n",
+        "\t-EnableAll\t\tEnable All Function Sets\n",
+        "\t-EnablePerlin\t\tEnable Non-Fractal Perlin Functions Only\n",
+        "\t-EnablePerlinFractal\tEnable Fractal Perlin Functions Only\n",
+        "\t-EnableAllPerlin\tEnable All Perlin Functions (Fractal and Non-Fractal)\n",
+        "Allow Abort Alerts:\n",
+        "(Only recommended for testing and development, not for production)\n",
+        "\t-AllowAbort\n",
+        "This Help Message -\n",
+        "\t-h --h -H --H -help --help"
+      )
+      return
+
     # For each arg
     for arg in args:
       doneWithArg = False
@@ -122,17 +181,26 @@ def main(args):
         verboseMode = True
         continue
 
+      # Check if it is an allowAbort arg
+      if arg.strip() == allowAbortArg:
+        allowAbort = True
+        continue
+
       # Else, unrecognised arg
       print("Ignoring Unrecongised Option '", arg, "'")
 
   # Assume enable all if no flags provided
-  if len(enableFlags) == 0:
+  if not enableFlags:
     enableFlags.append(FunctionEnableType.EnableAll)
 
   print("Building WasmNoise, incrementing", buildTypeLookup[int(buildType)])
-  build(buildType, optimisationLevel, verboseMode, enableFlags)
+  build(buildType, optimisationLevel, verboseMode, allowAbort, enableFlags)
 
-def build(buildType, optLevel, verbose, enabledFlags):
+def build(buildType, optLevel, verbose, allowAbort, enabledFlags):
+  #TODO: Break version increment off into own function for neatness
+  """
+  Build process, multi-step
+  """
   iniLoc = "version.ini"
 
   # Create a configparser and load version.ini
@@ -140,17 +208,19 @@ def build(buildType, optLevel, verbose, enabledFlags):
   config.read(iniLoc)
 
   # Increment the build version
-  config["VERSION"][buildTypeLookup[int(buildType)]] = str(int(config["VERSION"][buildTypeLookup[buildType]])+1)
+  config["VERSION"][buildTypeLookup[int(buildType)]] = str(
+    int(config["VERSION"][buildTypeLookup[buildType]])+1
+  )
 
   # Reset lower values
-  if(buildType == BuildType.major): 
+  if buildType == BuildType.major: 
     config["VERSION"]["minor"] = str(0)
     config["VERSION"]["patch"] = str(0)
     config["VERSION"]["build"] = str(0)
-  elif(buildType == BuildType.minor): 
+  elif buildType == BuildType.minor: 
     config["VERSION"]["patch"] = str(0)
     config["VERSION"]["build"] = str(0)
-  elif(buildType == BuildType.patch):
+  elif buildType == BuildType.patch:
     config["VERSION"]["build"] = str(0)
 
   # Output the new value
@@ -165,9 +235,20 @@ def build(buildType, optLevel, verbose, enabledFlags):
 
   # Prepare the enable functions array
   enabledFunctions = getEnabledFunctions(enabledFlags)
+  enabledFuncMacros = []
   for enable in enabledFunctions:
     print(TextColours.Blue + "Enabling function set: " + enable + TextColours.StopColour)
 
+  # Load the exports json file and collect macros for enabled function sets
+  exportsFile = open("wasmnoiseexports.json", "r")
+  exports = json.load(exportsFile)
+
+  for enabledFuncSet in enabledFunctions:
+    try:
+      enabledFuncMacros.append(exports["exports"][enabledFuncSet]["macro"])
+    except KeyError:
+      continue
+  
   # Grab all code files from source directory
   codefiles = []
   for file in os.listdir("source"):
@@ -184,24 +265,41 @@ def build(buildType, optLevel, verbose, enabledFlags):
   wasmoptOut = outName+".opt.wasm"
   optimisationLevel = optLevel
 
-  clangCmd = ["clang++"
-  , "--target=wasm32"
-  , "-emit-llvm"
-  , "-std=c++14", optimisationLevel
-  , "-c"
-  , "-I..\..\..\wasm-stdlib-hack\include\libc"
-  , "../../source/*.cpp"
-  , "-pedantic", "-Wall", "-Wextra"]
+  clangCmd = [
+    "clang++",
+    "--target=wasm32",
+    "-emit-llvm",
+    "-std=c++14",
+    optimisationLevel,
+    "-c",
+    "-I..\\..\\..\\wasm-stdlib-hack\\include\\libc",
+    "../../source/*.cpp",
+    "-pedantic",
+    "-Wall",
+    "-Wextra"
+  ]
+  for macro in enabledFuncMacros:
+    clangCmd.append(macro)
+  if allowAbort:
+    clangCmd.append("-DWN_ALLOW_ABORT")
   
   if verbose:
     clangCmd.append("-v")
 
-  llcCmd = ["llc", "-asm-verbose=false", optimisationLevel, "-o", llcOut, llvmlinkOut]
+  llcCmd = [
+    "llc",
+    "-asm-verbose=false",
+    optimisationLevel,
+    "-o", llcOut,
+    llvmlinkOut
+  ]
 
-  s2wasmCmd = ["s2wasm"
-  , "-s", "524288"
-  , "--import-memory"
-  , llcOut, ">", s2wasmOut]
+  s2wasmCmd = [
+    "s2wasm",
+     "-s", "524288",
+     "--import-memory",
+     llcOut, ">", s2wasmOut
+  ]
 
   wat2wasmCmd = ["wat2wasm", processedWat, "-o", wat2wasmOut]
 
@@ -216,29 +314,29 @@ def build(buildType, optLevel, verbose, enabledFlags):
   # Run build commands
   print(TextColours.Blue + "Compiling With clang..." + TextColours.StopColour)
   runCommand(clangCmd)
-  
+
   # The llvm-link command requires knowledge of the output from the clang command
   # so we assemble it here
   llvmlinkCmd = ["llvm-link", "-v", "-o", llvmlinkOut]
   for file in os.listdir('.'):
-    if(file.endswith(".bc")):
+    if file.endswith(".bc"):
       llvmlinkCmd.append(file)
-  # Include memory.bc 
+  # Include memory.bc
   llvmlinkCmd.append("../../source/memory-bitcode/memory.bc")
 
   print(TextColours.Blue + "Linking with llvm-link..." + TextColours.StopColour)
   runCommand(llvmlinkCmd)
-  
+
   print(TextColours.Blue + "Converting to S-expressions with llc..." + TextColours.StopColour)
   runCommand(llcCmd)
-  
+
   print(TextColours.Blue + "Converting S-expressions to wat..." + TextColours.StopColour)
   runCommand(s2wasmCmd)
 
   # Remove extra exports from the wat file before compiling
   print(TextColours.Blue + "Removing unwanted exports from wat file..." + TextColours.StopColour)
-  removeExtraExports(s2wasmOut, enabledFunctions)
-  
+  removeExtraExports(s2wasmOut, enabledFunctions, exports)
+
   print(TextColours.Blue + "Compiling wat to wasm..." + TextColours.StopColour)
   runCommand(wat2wasmCmd)
 
@@ -246,6 +344,9 @@ def build(buildType, optLevel, verbose, enabledFlags):
   runCommand(wasmoptCmd)
 
   print(TextColours.Green + "Wasm compiled successfully! " + wat2wasmOut + " file now located at " + binLoc + TextColours.StopColour)
+  print(TextColours.Blue + "Writing Autoloader Script..." + TextColours.StopColour)
+  outputAutloaderFile(wasmoptOut, enabledFunctions, exports)  
+  print(TextColours.Green + "wasmnoise.autoloader.js written successfully!" + TextColours.StopColour)
 
 if __name__ == "__main__":
   main(sys.argv)
