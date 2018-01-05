@@ -129,7 +129,7 @@ WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIM
   return sum * fractalBounding;
 }
 
-WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalRigidMulti(WN_DECIMAL x, WN_DECIMAL y) const
+WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y) const
 {
   WN_DECIMAL sum = 1 - FastAbs(SinglePerlin(perm[0], x, y));
   WN_DECIMAL amp = 1;
@@ -186,7 +186,7 @@ WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIM
   return sum * fractalBounding;
 }
 
-WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalRigidMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
+WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
 {
   WN_DECIMAL sum = 1 - FastAbs(SinglePerlin(perm[0], x, y, z));
   WN_DECIMAL amp = 1;
@@ -234,7 +234,7 @@ WN_INLINE WN_DECIMAL WasmNoise::GetPerlinFractal(WN_DECIMAL x, WN_DECIMAL y) con
   {
   case FractalType::FBM:        return SinglePerlinFractalFBM(x * frequency, y * frequency);
   case FractalType::Billow:     return SinglePerlinFractalBillow(x * frequency, y * frequency);
-  case FractalType::RigidMulti: return SinglePerlinFractalRigidMulti(x * frequency, y * frequency);
+  case FractalType::RidgedMulti: return SinglePerlinFractalRidgedMulti(x * frequency, y * frequency);
   default:
     ABORT();
     return 0;
@@ -247,7 +247,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalStrip(WN_DECIMAL startX, WN_DEC
   {
   case FractalType::FBM:        return GetStrip2D(&WasmNoise::SinglePerlinFractalFBM, startX, startY, length, direction);
   case FractalType::Billow:     return GetStrip2D(&WasmNoise::SinglePerlinFractalBillow, startX, startY, length, direction);
-  case FractalType::RigidMulti: return GetStrip2D(&WasmNoise::SinglePerlinFractalRigidMulti, startX, startY, length, direction);
+  case FractalType::RidgedMulti: return GetStrip2D(&WasmNoise::SinglePerlinFractalRidgedMulti, startX, startY, length, direction);
   default:
       ABORT();
       return nullptr;
@@ -260,7 +260,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalSquare(WN_DECIMAL startX, WN_DE
   {
   case FractalType::FBM:        return GetSquare2D(&WasmNoise::SinglePerlinFractalFBM, startX, startY, width, height);
   case FractalType::Billow:     return GetSquare2D(&WasmNoise::SinglePerlinFractalBillow, startX, startY, width, height);
-  case FractalType::RigidMulti: return GetSquare2D(&WasmNoise::SinglePerlinFractalRigidMulti, startX, startY, width, height);
+  case FractalType::RidgedMulti: return GetSquare2D(&WasmNoise::SinglePerlinFractalRidgedMulti, startX, startY, width, height);
   default:
     ABORT();
     return nullptr;
@@ -299,7 +299,7 @@ WN_INLINE WN_DECIMAL WasmNoise::GetPerlinFractal(WN_DECIMAL x, WN_DECIMAL y, WN_
   {
   case FractalType::FBM:        return SinglePerlinFractalFBM(x *frequency, y * frequency, z * frequency);
   case FractalType::Billow:     return SinglePerlinFractalBillow(x * frequency, y * frequency, z * frequency);
-  case FractalType::RigidMulti: return SinglePerlinFractalRigidMulti(x * frequency, y * frequency, z * frequency);
+  case FractalType::RidgedMulti: return SinglePerlinFractalRidgedMulti(x * frequency, y * frequency, z * frequency);
   default:
     ABORT();
     return 0;
@@ -312,7 +312,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalStrip(WN_DECIMAL startX, WN_DEC
   {
   case FractalType::FBM:        return GetStrip3D(&WasmNoise::SinglePerlinFractalFBM, startX, startY, startZ, length, direction);
   case FractalType::Billow:     return GetStrip3D(&WasmNoise::SinglePerlinFractalBillow, startX, startY, startZ, length, direction);
-  case FractalType::RigidMulti: return GetStrip3D(&WasmNoise::SinglePerlinFractalRigidMulti, startX, startY, startZ, length, direction);
+  case FractalType::RidgedMulti: return GetStrip3D(&WasmNoise::SinglePerlinFractalRidgedMulti, startX, startY, startZ, length, direction);
   default:
     ABORT();
     return nullptr;
@@ -325,7 +325,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalSquare(WN_DECIMAL startX, WN_DE
   {
   case FractalType::FBM:        return GetSquare3D(&WasmNoise::SinglePerlinFractalFBM, startX, startY, startZ, width, height, plane);
   case FractalType::Billow:     return GetSquare3D(&WasmNoise::SinglePerlinFractalBillow, startX, startY, startZ, width, height, plane);
-  case FractalType::RigidMulti: return GetSquare3D(&WasmNoise::SinglePerlinFractalRigidMulti, startX, startY, startZ, width, height, plane);
+  case FractalType::RidgedMulti: return GetSquare3D(&WasmNoise::SinglePerlinFractalRidgedMulti, startX, startY, startZ, width, height, plane);
   default:
     ABORT();
     return nullptr;
@@ -338,7 +338,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalCube(WN_DECIMAL startX, WN_DECI
   {
   case FractalType::FBM:        return GetCube3D(&WasmNoise::SinglePerlinFractalFBM, startX, startY, startZ, width, height, depth);
   case FractalType::Billow:     return GetCube3D(&WasmNoise::SinglePerlinFractalBillow, startX, startY, startZ, width, height, depth);
-  case FractalType::RigidMulti: return GetCube3D(&WasmNoise::SinglePerlinFractalRigidMulti, startX, startY, startZ, width, height, depth);
+  case FractalType::RidgedMulti: return GetCube3D(&WasmNoise::SinglePerlinFractalRidgedMulti, startX, startY, startZ, width, height, depth);
   default:
     ABORT();
     return nullptr;

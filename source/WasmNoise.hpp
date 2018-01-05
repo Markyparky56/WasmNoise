@@ -7,9 +7,12 @@
 class WasmNoise
 {
 public:
+  // This isn't actually used anywhere yet, until we implement a generic GetNoise function
   enum class NoiseType
   {
-    Perlin = 0
+    Perlin = 0,
+    PerlinFractal = 1,
+    Simplex = 2,
   };
   enum class Interp
   {
@@ -21,7 +24,7 @@ public:
   { 
     FBM = 0, 
     Billow = 1, 
-    RigidMulti = 2
+    RidgedMulti = 2
   };
   // TODO: CellularDistanceFunction
   // TODO: CellularReturnType
@@ -151,10 +154,10 @@ private:
   // Fractal Noise Functions
   WN_INLINE WN_DECIMAL SinglePerlinFractalFBM(WN_DECIMAL x, WN_DECIMAL y) const;
   WN_INLINE WN_DECIMAL SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIMAL y) const;
-  WN_INLINE WN_DECIMAL SinglePerlinFractalRigidMulti(WN_DECIMAL x, WN_DECIMAL y) const;
+  WN_INLINE WN_DECIMAL SinglePerlinFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y) const;
   WN_INLINE WN_DECIMAL SinglePerlinFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
   WN_INLINE WN_DECIMAL SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
-  WN_INLINE WN_DECIMAL SinglePerlinFractalRigidMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
+  WN_INLINE WN_DECIMAL SinglePerlinFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
 #endif // WN_INCLUDE_PERLIN_FRACTAL
 
   WN_INLINE uint8 Index2D_12(uint8 offset, int32 x, int32 y) const;
