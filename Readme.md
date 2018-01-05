@@ -19,8 +19,8 @@ My intention for this library is that it can be used to accelerate generation of
 ### Rough Road Map
 - v0.3.0 - Simplex Noise
 - v0.4.0 - Cellular Noise
-- v0.5.0 - Cubic Noise
-- v0.6.0 - Value Noise
+- v0.5.0 - Value Noise
+- v0.6.0 - Cubic Noise
 - v0.7.0 - White Noise
 - v0.8.0/v1.0.0 - Gradient Perturb
 

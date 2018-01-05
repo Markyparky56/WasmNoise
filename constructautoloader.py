@@ -7,7 +7,7 @@ WasmNoiseObjectDeclaration = "if(WasmNoise != undefined) {let WasmNoise = {};}"
 WasmNoiseMemoryDeclaration = "WasmNoise.memory = WasmNoise.memory || WebAssembly.Memory({initial: 9});"
 WasmNoiseEnums = {
   "Interp": "WasmNoise.Interp = WasmNoise.Interp || Object.freeze({Linear: 0, Hermite: 1, Quintic: 2});",
-  "FractalType":"WasmNoise.FractalType = WasmNoise.FractalType || Object.freeze({FBM: 0, Billow: 1, RigidMulti: 2});",
+  "FractalType":"WasmNoise.FractalType = WasmNoise.FractalType || Object.freeze({FBM: 0, Billow: 1, RidgedMulti: 2});",
   "StripDirection":"WasmNoise.StripDirection = WasmNoise.StripDirection || Object.freeze({XAxis: 0, YAxis: 1, ZAxis: 2, WAxis: 3});",
   "SquarePlane":"WasmNoise.SquarePlane = WasmNoise.SquarePlane || Object.freeze({XYPlane: 0, XZPlane: 1, ZYPlane: 2});"
 }

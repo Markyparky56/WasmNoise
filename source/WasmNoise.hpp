@@ -12,7 +12,7 @@ public:
   {
     Perlin = 0,
     PerlinFractal = 1,
-    Simplex = 2,
+    Simplex = 2
   };
   enum class Interp
   {
@@ -39,7 +39,10 @@ public:
   {
     XYPlane = 0,
     XZPlane = 1,
-    ZYPlane = 2
+    ZYPlane = 2,
+    XWPlane = 3,
+    YWPlane = 4,
+    ZWPlane = 5,
   };
 
   explicit WasmNoise( int32 _seed = 42
@@ -99,16 +102,54 @@ public:
 
 #ifdef WN_INCLUDE_PERLIN_FRACTAL
   // 2D
-  WN_INLINE WN_DECIMAL  GetPerlinFractal(WN_DECIMAL x, WN_DECIMAL y) const;
+  WN_INLINE WN_DECIMAL  GetPerlinFractal(WN_DECIMAL x, WN_DECIMAL y);
   WN_INLINE WN_DECIMAL *GetPerlinFractalStrip(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction);
   WN_INLINE WN_DECIMAL *GetPerlinFractalSquare(WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height);  
 
   // 3D
-  WN_INLINE WN_DECIMAL  GetPerlinFractal(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
+  WN_INLINE WN_DECIMAL  GetPerlinFractal(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
   WN_INLINE WN_DECIMAL *GetPerlinFractalStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction);
   WN_INLINE WN_DECIMAL *GetPerlinFractalSquare(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane);
   WN_INLINE WN_DECIMAL *GetPerlinFractalCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth);
 #endif // WN_INCLUDE_PERLIN_FRACTAL
+
+#ifdef WN_INCLUDE_SIMPLEX
+  // 2D
+  WN_INLINE WN_DECIMAL  GetSimplex(WN_DECIMAL x, WN_DECIMAL y) const;
+  WN_INLINE WN_DECIMAL *GetSimplexStrip(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction);
+  WN_INLINE WN_DECIMAL *GetSimplexSquare(WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height);
+
+  // 3D
+  WN_INLINE WN_DECIMAL  GetSimplex(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
+  WN_INLINE WN_DECIMAL *GetSimplexStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction);
+  WN_INLINE WN_DECIMAL *GetSimplexSquare(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane);
+  WN_INLINE WN_DECIMAL *GetSimplexCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth);
+
+  // 4D
+  WN_INLINE WN_DECIMAL  GetSimplex(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w) const;
+  WN_INLINE WN_DECIMAL *GetSimplexStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 length, StripDirection direction);
+  WN_INLINE WN_DECIMAL *GetSimplexSquare(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, SquarePlane plane);
+  WN_INLINE WN_DECIMAL *GetSimplexCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, uint32 depth);
+#endif // WN_INCLUDE_SIMPLEX
+
+#ifdef WN_INCLUDE_SIMPLEX_FRACTAL
+  // 2D
+  WN_INLINE WN_DECIMAL  GetSimplexFractal(WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL *GetSimplexFractalStrip(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction);
+  WN_INLINE WN_DECIMAL *GetSimplexFractalSquare(WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height);
+
+  // 3D
+  WN_INLINE WN_DECIMAL  GetSimplexFractal(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL *GetSimplexFractalStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction);
+  WN_INLINE WN_DECIMAL *GetSimplexFractalSquare(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane);
+  WN_INLINE WN_DECIMAL *GetSimplexFractalCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth);
+
+  // 4D
+  WN_INLINE WN_DECIMAL  GetSimplexFractal(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
+  WN_INLINE WN_DECIMAL *GetSimplexFractalStrip(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w, uint32 length, StripDirection direction);
+  WN_INLINE WN_DECIMAL *GetSimplexFractalSquare(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w, uint32 width, uint32 height, SquarePlane plane);
+  WN_INLINE WN_DECIMAL *GetSimplexFractalCube(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w, uint32 width, uint32 height, uint32 depth);
+#endif // WN_INCLUDE_SIMPLEX_FRACTAL
 
 private:
   ReturnArrayHelper returnHelper;
@@ -129,14 +170,18 @@ private:
 
   using Single2DFPtr = WN_DECIMAL(WasmNoise::*)(uint8, WN_DECIMAL, WN_DECIMAL) const; 
   using Single3DFPtr = WN_DECIMAL(WasmNoise::*)(uint8, WN_DECIMAL, WN_DECIMAL, WN_DECIMAL) const;
-  using Fractal2DFPtr = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL) const;
-  using Fractal3DFPtr = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL, WN_DECIMAL) const;
+  using Single4DFPtr = WN_DECIMAL(WasmNoise::*)(uint8, WN_DECIMAL, WN_DECIMAL, WN_DECIMAL, WN_DECIMAL) const;
+  using Fractal2DFPtr = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL);
+  using Fractal3DFPtr = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL, WN_DECIMAL);
+  using Fractal4DFPtr = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL, WN_DECIMAL, WN_DECIMAL);
 
+  // 2D
   WN_INLINE WN_DECIMAL *GetStrip2D(Single2DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction);
   WN_INLINE WN_DECIMAL *GetSquare2D(Single2DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height);
   WN_INLINE WN_DECIMAL *GetStrip2D(Fractal2DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction);  
   WN_INLINE WN_DECIMAL *GetSquare2D(Fractal2DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height);
 
+  // 3D
   WN_INLINE WN_DECIMAL *GetStrip3D(Single3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction);
   WN_INLINE WN_DECIMAL *GetSquare3D(Single3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane);
   WN_INLINE WN_DECIMAL *GetCube3D(Single3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth);
@@ -144,30 +189,88 @@ private:
   WN_INLINE WN_DECIMAL *GetSquare3D(Fractal3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane);
   WN_INLINE WN_DECIMAL *GetCube3D(Fractal3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth);
 
-  // Regular Perlin Noise Functions
+  // 4D
+  WN_INLINE WN_DECIMAL *GetStrip4D(Single4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 length, StripDirection direction);
+  WN_INLINE WN_DECIMAL *GetSquare4D(Single4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, SquarePlane plane);
+  WN_INLINE WN_DECIMAL *GetCube4D(Single4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, uint32 depth);
+  WN_INLINE WN_DECIMAL *GetStrip4D(Fractal4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 length, StripDirection direction);
+  WN_INLINE WN_DECIMAL *GetSquare4D(Fractal4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, SquarePlane plane);
+  WN_INLINE WN_DECIMAL *GetCube4D(Fractal4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, uint32 depth);
+
+#if defined(WN_INCLUDE_PERLIN_FRACTAL) || defined(WN_INCLUDE_SIMPLEX_FRACTAL)
+  // 2D
+  WN_INLINE WN_DECIMAL SingleFractalFBM(Single2DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL SingleFractalBillow(Single2DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL SingleFractalRidgedMulti(Single2DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y);
+
+  // 3D
+  WN_INLINE WN_DECIMAL SingleFractalFBM(Single3DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL SingleFractalBillow(Single3DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL SingleFractalRidgedMulti(Single3DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+
+  // 4D
+  WN_INLINE WN_DECIMAL SingleFractalFBM(Single4DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
+  WN_INLINE WN_DECIMAL SingleFractalBillow(Single4DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
+  WN_INLINE WN_DECIMAL SingleFractalRidgedMulti(Single4DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
+#endif
+
 #if defined(WN_INCLUDE_PERLIN) || defined(WN_INCLUDE_PERLIN_FRACTAL)
+  // Regular Perlin Noise Functions, necessary for both regular and fractal functions
   WN_INLINE WN_DECIMAL SinglePerlin(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
   WN_INLINE WN_DECIMAL SinglePerlin(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;  
 #endif 
 
 #ifdef WN_INCLUDE_PERLIN_FRACTAL
-  // Fractal Noise Functions
-  WN_INLINE WN_DECIMAL SinglePerlinFractalFBM(WN_DECIMAL x, WN_DECIMAL y) const;
-  WN_INLINE WN_DECIMAL SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIMAL y) const;
-  WN_INLINE WN_DECIMAL SinglePerlinFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y) const;
-  WN_INLINE WN_DECIMAL SinglePerlinFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
-  WN_INLINE WN_DECIMAL SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
-  WN_INLINE WN_DECIMAL SinglePerlinFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
+  // Fractal Perlin Noise Functions
+  // 2D
+  WN_INLINE WN_DECIMAL SinglePerlinFractalFBM(WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL SinglePerlinFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y);
+
+  // 3D
+  WN_INLINE WN_DECIMAL SinglePerlinFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL SinglePerlinFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
 #endif // WN_INCLUDE_PERLIN_FRACTAL
+
+#if defined(WN_INCLUDE_SIMPLEX) || defined(WN_INCLUDE_SIMPLEX_FRACTAL)
+  // Regular Simplex Noise Functions, necessary for both regular and fractal functions
+  WN_INLINE WN_DECIMAL SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
+  WN_INLINE WN_DECIMAL SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
+  WN_INLINE WN_DECIMAL SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w) const;
+#endif
+
+#ifdef WN_INCLUDE_SIMPLEX_FRACTAL
+  // Fractal Simplex Noise Functions
+  // 2D
+  WN_INLINE WN_DECIMAL SingleSimplexFractalFBM(WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL SingleSimplexFractalBillow(WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL SingleSimplexFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y);
+
+  // 3D
+  WN_INLINE WN_DECIMAL SingleSimplexFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL SingleSimplexFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL SingleSimplexFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+
+  // 4D
+  WN_INLINE WN_DECIMAL SingleSimplexFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
+  WN_INLINE WN_DECIMAL SingleSimplexFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
+  WN_INLINE WN_DECIMAL SingleSimplexFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
+#endif // WN_INCLUDE_SIMPLEX_FRACTAL
 
   WN_INLINE uint8 Index2D_12(uint8 offset, int32 x, int32 y) const;
   WN_INLINE uint8 Index3D_12(uint8 offset, int32 x, int32 y, int32 z) const;
+  WN_INLINE uint8 Index4D_32(uint8 offset, int32 x, int32 y, int32 z, int32 w) const;
+  WN_INLINE uint8 Index2D_256(uint8 offset, int32 x, int32 y) const;
+  WN_INLINE uint8 Index3D_256(uint8 offset, int32 x, int32 y, int32 z) const;
+  WN_INLINE uint8 Index4D_256(uint8 offset, int32 x, int32 y, int32 z, int32 w) const;
 
   WN_INLINE WN_DECIMAL GradCoord2D(uint8 offset, int32 x, int32 y, WN_DECIMAL xd, WN_DECIMAL yd) const;  
   WN_INLINE WN_DECIMAL GradCoord3D(uint8 offset, int32 x, int32 y, int32 z, WN_DECIMAL xd, WN_DECIMAL yd, WN_DECIMAL zd) const;
+  WN_INLINE WN_DECIMAL GradCoord4D(uint8 offset, int32 x, int32 y, int32 z, int32 w, WN_DECIMAL xd, WN_DECIMAL yd, WN_DECIMAL zd, WN_DECIMAL wd) const;
 };
 
-// Declare some log functions as extern so we can call in them in WasmNoise.cpp 
+// Declare some log functions as extern so we can call them in WasmNoise.cpp 
 // but import them from javascript
 extern "C"
 {
