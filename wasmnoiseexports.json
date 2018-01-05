@@ -1,20 +1,52 @@
 {
-  "exports": [
-    "_GLOBAL__sub_I_WasmNoiseInterface.cpp",
-    
-    "SetSeed",
-    "GetSeed",
-    "SetFrequency",
-    "GetFrequency",
-    "SetInterp",
-    "GetInterp",
-
-    "GetPerlin2",
-    "GetPerlin2_Strip",
-    "GetPerlin2_Square",
-    "GetPerlin3",
-    "GetPerlin3_Strip",
-    "GetPerlin3_Square",
-    "GetPerlin3_Cube"
-  ]
+  "exports": {
+    "getset":{
+      "funcs":[      
+      "_GLOBAL__sub_I_WasmNoiseInterface.cpp",    
+      "SetSeed",
+      "GetSeed",
+      "SetFrequency",
+      "GetFrequency",
+      "SetInterp",
+      "GetInterp"    
+      ]
+    },
+    "fractalGetSet":{
+      "funcs":[
+      "SetFractalOctaves",
+      "GetFractalOctaves",
+      "SetFractalLacunarity",
+      "GetFractalLacunarity",
+      "SetFractalGain",
+      "GetFractalGain",
+      "SetFractalType",
+      "GetFractalType"
+      ],
+      "macro":"-DWN_INCLUDE_FRACTAL_GETSET"
+    },
+    "perlin":{
+      "funcs":[
+      "GetPerlin2",
+      "GetPerlin2_Strip",
+      "GetPerlin2_Square",
+      "GetPerlin3",    
+      "GetPerlin3_Strip",
+      "GetPerlin3_Square",
+      "GetPerlin3_Cube"
+      ],
+      "macro":"-DWN_INCLUDE_PERLIN"
+    },
+    "perlinFractal":{
+      "funcs":[
+      "GetPerlinFractal2",
+      "GetPerlinFractal2_Strip",
+      "GetPerlinFractal2_Square",    
+      "GetPerlinFractal3",
+      "GetPerlinFractal3_Strip",
+      "GetPerlinFractal3_Square",
+      "GetPerlinFractal3_Cube"
+      ],
+      "macro":"-DWN_INCLUDE_PERLIN_FRACTAL"
+    }
+  }
 }
