@@ -2,21 +2,11 @@
 
 _I like to think it's pronounced Wah-zum-Noise_
 
-WasmNoise is an open source noise generation library based on the popular 
-[FastNoise Library](https://github.com/Auburns/FastNoise). It is written in 
-C++ and compiled to WebAssembly in an effort to provide faster and more 
-diverse noise generation utilities in the browser than are possible with 
-just JavaScript. 
+WasmNoise is an open source noise generation library based on the popular [FastNoise Library](https://github.com/Auburns/FastNoise). It is written in C++ and compiled to WebAssembly in an effort to provide faster and more diverse noise generation utilities in the browser than are possible with just JavaScript. 
 
-It is still early in development, but I hope to get WasmNoise to a state of 
-parity with FastNoise in terms of features offered. WebAssembly offers _near_ 
-native speeds but there will always be a slight difference in terms of speed. 
+It is still early in development, but I hope to get WasmNoise to a state of parity with FastNoise in terms of features offered. WebAssembly offers _near_ native peeds but there will always be a slight difference in terms of speed. 
 
-My intention for this library is that it can be used to accelerate generation of 
-noise in existing and new web sites, games and applications which consist 
-predominately of JavaScript. **If you are compiling an exisiting C/C++ application 
-which uses FastNoise you should be using Emscripten, as it will compile it into 
-your application.** 
+My intention for this library is that it can be used to accelerate generation of noise in existing and new web sites, games and applications which consist predominately of JavaScript. **If you are compiling an exisiting C/C++ application which uses FastNoise you should be using Emscripten, as it will compile it into your application.** 
 
 ### Current Features
 - Perlin Noise 2D, 3D
@@ -25,6 +15,14 @@ your application.**
 ### Planned Features
 - Feature parity with FastNoise
 - Custom builds to remove different noise types to reduce binary size
+
+### Rough Road Map
+- v0.3.0 - Simplex Noise
+- v0.4.0 - Cellular Noise
+- v0.5.0 - Cubic Noise
+- v0.6.0 - Value Noise
+- v0.7.0 - White Noise
+- v0.8.0/v1.0.0 - Gradient Perturb
 
 ## Using WasmNoise
 WebAssembly does not have the functionality to return arrays like JavaScript does, it is only able to return single values from exported functions. Currently there is also a noticeable overhead for calling an exported WebAssembly function, this makes the single value return functions slower than their JavaScript equivalents. 
@@ -110,7 +108,7 @@ The best way to build Binaryen is with Visual Studio, and is relatively painless
 
 The following command should handle using git to checkout binaryen and building it with MSBuild
 ```
-git clone http://github.com/WebAssembly/binaryen.git && cd binaryen && mkdir build && cd build && cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=RelWithDebInfo .. && cmake --build .
+git clone http://github.com/WebAssembly/binaryen.git && cd binaryen && mkdir build && cd build && cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Release .. && cmake --build .
 ```
 
 You can also use Visual Studio to build with the solution file produced by cmake if you prefer, just omit the `&& cmake --build .` from the above command.
