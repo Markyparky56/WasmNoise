@@ -26,21 +26,28 @@ class FunctionEnableType(enum.IntEnum):
   EnablePerlin = 1
   EnablePerlinFractal = 2
   EnableAllPerlin = 3
+  EnableSimplex = 4
+  EnableSimplexFractal = 5
+  EnableAllSimplex = 6
 
 # Lookup maps to exportNames array
 enableTypeLookup = [
   [0], # EnableAll has special case
   [0, 2], # Enable Perlin
   [0, 1, 3], # Enable Perlin Fractal
-  [0, 1, 2, 3] # Enable Perlin and Perlin Fractal
+  [0, 1, 2, 3], # Enable Perlin and Perlin Fractal
+  [0, 4], # Enable Simplex
+  [0, 1, 5], # Enable Simplex Fractal
+  [0, 1, 4, 5] # Enable Simplex and Simplex Fractal
 ]
 exportNames = [
   "getset",         #0
   "fractalGetSet",  #1
   "perlin",         #2
-  "perlinFractal"   #3
+  "perlinFractal",  #3
+  "simplex",        #4
+  "simplexFractal", #5
 ]
-
 
 class TextColours:
   """Class to store Text Colours"""
@@ -87,7 +94,6 @@ def runCommand(cmd):
 # --patch to increment the patch counter in version.ini and zero build
 # --minor to increment the minor counter in version.ini and zero build and patch
 # --major to increment the major counter in version.ini and zero the rest
-# TODO: Consider optimisation flags and other compiler options
 def main(args):
   """
   Main Function
@@ -105,7 +111,10 @@ def main(args):
     "-EnableAll": FunctionEnableType.EnableAll,
     "-EnablePerlin": FunctionEnableType.EnablePerlin,
     "-EnablePerlinFractal": FunctionEnableType.EnablePerlinFractal,
-    "-EnableAllPerlin": FunctionEnableType.EnableAllPerlin
+    "-EnableAllPerlin": FunctionEnableType.EnableAllPerlin,
+    "-EnableSimplex": FunctionEnableType.EnableSimplex,
+    "-EnableSimplexFractal": FunctionEnableType.EnableSimplexFractal,
+    "-EnableAllSimplex": FunctionEnableType.EnableAllSimplex
   }
   helpArgs = ["-h", "-help", "--h", "--help", "-H", "--H"]
   allowAbortArg = "-AllowAbort"
@@ -344,6 +353,7 @@ def build(buildType, optLevel, verbose, allowAbort, enabledFlags):
   runCommand(wasmoptCmd)
 
   print(TextColours.Green + "Wasm compiled successfully! " + wat2wasmOut + " file now located at " + binLoc + TextColours.StopColour)
+  
   print(TextColours.Blue + "Writing Autoloader Script..." + TextColours.StopColour)
   outputAutloaderFile(wasmoptOut, enabledFunctions, exports)  
   print(TextColours.Green + "wasmnoise.autoloader.js written successfully!" + TextColours.StopColour)

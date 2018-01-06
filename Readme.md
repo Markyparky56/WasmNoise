@@ -2,7 +2,7 @@
 
 _I like to think it's pronounced Wah-zum-Noise_
 
-WasmNoise is an open source noise generation library based on the popular [FastNoise Library](https://github.com/Auburns/FastNoise). It is written in C++ and compiled to WebAssembly in an effort to provide faster and more diverse noise generation utilities in the browser than are possible with just JavaScript. 
+WasmNoise is an open source noise generation library based on the popular [FastNoise Library](https://github.com/Auburns/FastNoise). It is written in C++ and compiled to WebAssembly in an effort to provide faster and more diverse noise generation utilities in the browser than those that are possible with just JavaScript. 
 
 It is still early in development, but I hope to get WasmNoise to a state of parity with FastNoise in terms of features offered. WebAssembly offers _near_ native peeds but there will always be a slight difference in terms of speed. 
 
@@ -10,14 +10,15 @@ My intention for this library is that it can be used to accelerate generation of
 
 ### Current Features
 - Perlin Noise 2D, 3D
-- Fractal Perlin Noise (FBM, Billow, Rigid Multi) 2D, 3D
+- Fractal Perlin Noise (FBM, Billow, Ridged Multi) 2D, 3D
+- Simplex Noise 2D, 3D, 4D
+- Fractal Simplex Noise (FBM, Billow, Ridged Multi) 2D, 3D, 4D
 
 ### Planned Features
 - Feature parity with FastNoise
 - Custom builds to remove different noise types to reduce binary size
 
 ### Rough Road Map
-- v0.3.0 - Simplex Noise
 - v0.4.0 - Cellular Noise
 - v0.5.0 - Value Noise
 - v0.6.0 - Cubic Noise

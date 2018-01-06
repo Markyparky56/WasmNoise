@@ -146,6 +146,27 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinSquare(WN_DECIMAL startX, WN_DECIMAL s
 {  
   return GetSquare2D(&WasmNoise::SinglePerlin, startX, startY, width, height);
 }
+
+// 3D Single
+WN_INLINE WN_DECIMAL WasmNoise::GetPerlin(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
+{
+  return SinglePerlin(0, x * frequency, y * frequency, z * frequency);
+}
+
+WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction)
+{
+  return GetStrip3D(&WasmNoise::SinglePerlin, startX, startY, startZ, length, direction);
+}
+
+WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinSquare(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane)
+{
+  return GetSquare3D(&WasmNoise::SinglePerlin, startX, startY, startZ, width, height, plane);
+}
+
+WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth)
+{
+  return GetCube3D(&WasmNoise::SinglePerlin, startX, startY, startZ, width, height, depth);
+}
 #endif // WN_INCLUDE_PERLIN
 
 #ifdef WN_INCLUDE_PERLIN_FRACTAL
@@ -188,32 +209,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalSquare(WN_DECIMAL startX, WN_DE
     return nullptr;
   }
 }
-#endif // WN_INCLUDE_PERLIN_FRACTAL
 
-#ifdef WN_INCLUDE_PERLIN
-// 3D Single
-WN_INLINE WN_DECIMAL WasmNoise::GetPerlin(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
-{
-  return SinglePerlin(0, x * frequency, y * frequency, z * frequency);
-}
-
-WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction)
-{
-  return GetStrip3D(&WasmNoise::SinglePerlin, startX, startY, startZ, length, direction);
-}
-
-WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinSquare(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane)
-{
-  return GetSquare3D(&WasmNoise::SinglePerlin, startX, startY, startZ, width, height, plane);
-}
-
-WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth)
-{
-  return GetCube3D(&WasmNoise::SinglePerlin, startX, startY, startZ, width, height, depth);
-}
-#endif // WN_INCLUDE_PERLIN_FRACTAL
-
-#ifdef WN_INCLUDE_PERLIN_FRACTAL
 // 3D Fractal
 WN_INLINE WN_DECIMAL WasmNoise::GetPerlinFractal(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {

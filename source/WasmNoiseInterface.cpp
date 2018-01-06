@@ -66,5 +66,35 @@ extern "C"
   WN_INLINE WN_DECIMAL *GetPerlinFractal3_Square(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, int32 plane) { return wasmNoise.GetPerlinFractalSquare(startX, startY, startZ, width, height, static_cast<WasmNoise::SquarePlane>(plane)); }
   WN_INLINE WN_DECIMAL *GetPerlinFractal3_Cube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth) { return wasmNoise.GetPerlinFractalCube(startX, startY, startZ, width, height, depth); }
 #endif // WN_INCLUDE_PERLIN_FRACTAL
+#ifdef WN_INCLUDE_SIMPLEX
+  WN_INLINE WN_DECIMAL  GetSimplex2(WN_DECIMAL x, WN_DECIMAL y) { return wasmNoise.GetSimplex(x, y); }
+  WN_INLINE WN_DECIMAL *GetSimplex2_Strip(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, int32 direction) { return wasmNoise.GetSimplexStrip(startX, startY, length, static_cast<WasmNoise::StripDirection>(direction)); }
+  WN_INLINE WN_DECIMAL *GetSimplex2_Square(WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height) { return wasmNoise.GetSimplexSquare(startX, startY, width, height); }
+
+  WN_INLINE WN_DECIMAL  GetSimplex3(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) { return wasmNoise.GetSimplex(x, y, z); }
+  WN_INLINE WN_DECIMAL *GetSimplex3_Strip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, int32 direction) { return wasmNoise.GetSimplexStrip(startX, startY, startZ, length, static_cast<WasmNoise::StripDirection>(direction)); }
+  WN_INLINE WN_DECIMAL *GetSimplex3_Square(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, int32 plane) { return wasmNoise.GetSimplexSquare(startX, startY, startZ, width, height, static_cast<WasmNoise::SquarePlane>(plane)); }
+  WN_INLINE WN_DECIMAL *GetSimplex3_Cube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth) { return wasmNoise.GetSimplexCube(startX, startY, startZ, width, height, depth); }
+
+  WN_INLINE WN_DECIMAL  GetSimplex4(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w) { return wasmNoise.GetSimplex(x, y, z, w); }
+  WN_INLINE WN_DECIMAL *GetSimplex4_Strip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 length, int32 direction) { return wasmNoise.GetSimplexStrip(startX, startY, startZ, startW, length, static_cast<WasmNoise::StripDirection>(direction)); }
+  WN_INLINE WN_DECIMAL *GetSimplex4_Square(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, int32 plane) { return wasmNoise.GetSimplexSquare(startX, startY, startZ, startW, width, height, static_cast<WasmNoise::SquarePlane>(plane)); }
+  WN_INLINE WN_DECIMAL *GetSimplex4_Cube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, uint32 depth) { return wasmNoise.GetSimplexCube(startX, startY, startZ, startW, width, height, depth); }
+#endif // WN_INCLUDE_SIMPLEX
+#ifdef WN_INCLUDE_SIMPLEX_FRACTAL
+  WN_INLINE WN_DECIMAL  GetSimplexFractal2(WN_DECIMAL x, WN_DECIMAL y) { return wasmNoise.GetSimplexFractal(x, y); }
+  WN_INLINE WN_DECIMAL *GetSimplexFractal2_Strip(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, int32 direction) { return wasmNoise.GetSimplexFractalStrip(startX, startY, length, static_cast<WasmNoise::StripDirection>(direction)); }
+  WN_INLINE WN_DECIMAL *GetSimplexFractal2_Square(WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height) { return wasmNoise.GetSimplexFractalSquare(startX, startY, width, height); }
+
+  WN_INLINE WN_DECIMAL  GetSimplexFractal3(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) { return wasmNoise.GetSimplexFractal(x, y, z); }
+  WN_INLINE WN_DECIMAL *GetSimplexFractal3_Strip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, int32 direction) { return wasmNoise.GetSimplexFractalStrip(startX, startY, startZ, length, static_cast<WasmNoise::StripDirection>(direction)); }
+  WN_INLINE WN_DECIMAL *GetSimplexFractal3_Square(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, int32 plane) { return wasmNoise.GetSimplexFractalSquare(startX, startY, startZ, width, height, static_cast<WasmNoise::SquarePlane>(plane)); }
+  WN_INLINE WN_DECIMAL *GetSimplexFractal3_Cube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth) { return wasmNoise.GetSimplexFractalCube(startX, startY, startZ, width, height, depth); }
+
+  WN_INLINE WN_DECIMAL  GetSimplexFractal4(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w) { return wasmNoise.GetSimplexFractal(x, y, z, w); }
+  WN_INLINE WN_DECIMAL *GetSimplexFractal4_Strip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 length, int32 direction) { return wasmNoise.GetSimplexFractalStrip(startX, startY, startZ, startW, length, static_cast<WasmNoise::StripDirection>(direction)); }
+  WN_INLINE WN_DECIMAL *GetSimplexFractal4_Square(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, int32 plane) { return wasmNoise.GetSimplexFractalSquare(startX, startY, startZ, startW, width, height, static_cast<WasmNoise::SquarePlane>(plane)); }
+  WN_INLINE WN_DECIMAL *GetSimplexFractal4_Cube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, uint32 depth) { return wasmNoise.GetSimplexFractalCube(startX, startY, startZ, startW, width, height, depth); }
+#endif // WN_INCLUDE_SIMPLEX_FRACTAL
 }
 

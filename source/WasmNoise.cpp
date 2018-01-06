@@ -6,6 +6,9 @@
 #if defined(WN_INCLUDE_PERLIN) || defined(WN_INCLUDE_PERLIN_FRACTAL)
 #include "WasmNoise.Perlin.hpp"
 #endif // WN_INCLUDE_PERLIN || WN_INCLUDE_PERLIN_FRACTAL
+#if defined(WN_INCLUDE_SIMPLEX) || defined(WN_INCLUDE_SIMPLEX_FRACTAL)
+#include "WasmNoise.Simplex.hpp"
+#endif // WN_INCLUDE_SIMPLEX || WN_INCLUDE_SIMPLEX_FRACTAL
 
 void WasmNoise::SetSeed(int32 _seed)
 {
