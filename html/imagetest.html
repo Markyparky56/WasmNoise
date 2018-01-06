@@ -21,7 +21,7 @@
 
       let WasmNoise = null;
       let WasmNoiseMemory = WebAssembly.Memory({initial: 9})
-      fetchAndCompileWasmModules(["./wasmnoise-0.1.0.opt.wasm"])
+      fetchAndCompileWasmModules(["./wasmnoise-0.2.0.opt.wasm"])
       .then(([wasmnoiseModule]) => {
         return WebAssembly.instantiate(wasmnoiseModule, {
           env: {
@@ -36,12 +36,12 @@
           console.log(instance);
           WasmNoise = instance;
           WasmNoise.exports["_GLOBAL__sub_I_WasmNoiseInterface.cpp"]();
-          WasmNoise.exports.SetSeed(Date.now());
+          //WasmNoise.exports.SetSeed(Date.now());
           WasmNoise.exports.SetFrequency(0.025);
           // 2D Square to Texture
           {
             let startGenValues = performance.now();
-            let offset = WasmNoise.exports.GetPerlin2_Square(0.5, 0.5, 512, 512);
+            let offset = WasmNoise.exports.GetSimplex2_Square(0.5, 0.5, 512, 512);
             let endGenValues = performance.now();
             let startGenTexture = performance.now();
             let values = new Float32Array(WasmNoiseMemory.buffer.slice(offset, offset+(512*512)*4));
@@ -57,7 +57,7 @@
           // 3D Square to Texture
           {
             let startGenValues = performance.now();
-            let offset = WasmNoise.exports.GetPerlin3_Square(0.5, 0.5, 0.5, 512, 512);
+            let offset = WasmNoise.exports.GetSimplex3_Square(0.5, 0.5, 0.5, 512, 512, 0);
             let endGenValues = performance.now();
             let startGenTexture = performance.now();
             let values = new Float32Array(WasmNoiseMemory.buffer.slice(offset, offset+(512*512)*4));
@@ -66,6 +66,22 @@
             let diffValues = endGenValues-startGenValues;
             let diffTex = endGenTexture-startGenTexture;
             console.log("Time to generate values for 512*512 texture with 3D Perlin Noise: " + diffValues + "ms\n" 
+                      + "Time to generate texture: " + diffTex + "ms\n" 
+                      + "Total time: " + (diffValues + diffTex) + "ms");
+          }
+
+          // 4D Square to Texture
+          {
+            let startGenValues = performance.now();
+            let offset = WasmNoise.exports.GetSimplex4_Square(0.5, 0.5, 0.5, 0.5, 512, 512, 0);
+            let endGenValues = performance.now();
+            let startGenTexture = performance.now();
+            let values = new Float32Array(WasmNoiseMemory.buffer.slice(offset, offset+(512*512)*4));
+            generateTexture(512, 512, "square4d", values);
+            let endGenTexture = performance.now();
+            let diffValues = endGenValues-startGenValues;
+            let diffTex = endGenTexture-startGenTexture;
+            console.log("Time to generate values for 512*512 texture with 4D Perlin Noise: " + diffValues + "ms\n" 
                       + "Time to generate texture: " + diffTex + "ms\n" 
                       + "Total time: " + (diffValues + diffTex) + "ms");
           }

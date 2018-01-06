@@ -47,6 +47,38 @@
       "GetPerlinFractal3_Cube"
       ],
       "macro":"-DWN_INCLUDE_PERLIN_FRACTAL"
+    },
+    "simplex":{
+      "funcs":[
+        "GetSimplex2",
+        "GetSimplex2_Strip",
+        "GetSimplex2_Square",
+        "GetSimplex3",
+        "GetSimplex3_Strip",
+        "GetSimplex3_Square",
+        "GetSimplex3_Cube",
+        "GetSimplex4",
+        "GetSimplex4_Strip",
+        "GetSimplex4_Square",
+        "GetSimplex4_Cube"
+      ],
+      "macro":"-DWN_INCLUDE_SIMPLEX"
+    },
+    "simplexFractal":{
+      "funcs":[
+        "GetSimplexFractal2",
+        "GetSimplexFractal2_Strip",
+        "GetSimplexFractal2_Square",
+        "GetSimplexFractal3",
+        "GetSimplexFractal3_Strip",
+        "GetSimplexFractal3_Square",
+        "GetSimplexFractal3_Cube",
+        "GetSimplexFractal4",
+        "GetSimplexFractal4_Strip",
+        "GetSimplexFractal4_Square",
+        "GetSimplexFractal4_Cube"
+      ],
+      "macro":"-DWN_INCLUDE_SIMPLEX_FRACTAL"
     }
   }
 }

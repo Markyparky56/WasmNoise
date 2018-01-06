@@ -8,6 +8,7 @@
         document.getElementById("loaded").innerText = "Loaded!";
 
         WasmNoise.SetSeed(Date.now());
+        WasmNoise.SetFractalOctaves(5);
         console.log("Seed: " + WasmNoise.GetSeed());        
 
         // 2D Square to Texture, FBM
@@ -43,7 +44,7 @@
 
         // 2D Square to Texture, RigidMulti
         {
-          WasmNoise.SetFractalType(WasmNoise.FractalType.RigidMulti);   
+          WasmNoise.SetFractalType(WasmNoise.FractalType.RidgedMulti);   
           let startGenValues = performance.now();
           let values = WasmNoise.GetPerlinFractal2_Square_Values(-256, -256, 512, 512);
           let endGenValues = performance.now();

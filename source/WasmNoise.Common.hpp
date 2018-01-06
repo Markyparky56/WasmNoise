@@ -23,6 +23,18 @@ const WN_DECIMAL GRAD_Z[] =
   1, 1, -1, -1
 };
 
+const WN_DECIMAL GRAD_4D[] =
+{
+  0,1,1,1,0,1,1,-1,0,1,-1,1,0,-1,-1,
+  0,-1,1,1,0,-1,1,-1,0,-1,-1,1,0,-1,-1,-1,
+  1,0,1,1,1,0,1,-1,1,0,-1,1,1,0,-1,-1,
+  -1,0,1,1,-1,0,1,-1,-1,0,-1,1,-1,0,-1,-1,
+  1,1,0,1,1,1,0,-1,1,-1,0,1,1,-1,0,-1,
+  -1,1,0,1,-1,1,0,-1,-1,-1,0,1,-1,-1,0,-1,
+  1,1,1,0,1,1,-1,0,1,-1,1,0,1,-1,-1,0,
+  -1,1,1,0,-1,1,-1,0,-1,-1,1,0,-1,-1,-1,0
+};
+
 static WN_INLINE int32 FastFloor(WN_DECIMAL f) { return (f >= 0 ? static_cast<int32>(f) : static_cast<int32>(f) - 1); }
 static WN_INLINE int32 FastRound(WN_DECIMAL f) { return (f >= 0 ? static_cast<int32>(f + WN_DECIMAL(0.5)) : static_cast<int32>(f - WN_DECIMAL(0.5))); }
 static WN_INLINE int32 FastAbs(int32 i) { return __builtin_labs(i); }

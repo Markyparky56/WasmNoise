@@ -17,9 +17,6 @@ private:
   }
 
 public:
-  // splitmix64()
-  //   : x(std::random_device()())
-  // {}
   splitmix64(uint64 seed)
     : x(seed)
   {}
