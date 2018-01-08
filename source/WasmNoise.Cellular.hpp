@@ -220,4 +220,216 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleCellular(WN_DECIMAL x, WN_DECIMAL y) const
   }  
 }
 
+WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2Edge(WN_DECIMAL x, WN_DECIMAL y) const
+{
+  int32 xr = FastRound(x);
+  int32 yr = FastRound(y);
+
+  WN_DECIMAL distance[CellularDistanceIndexMax + 1] = { 999999, 999999, 999999, 999999 };
+
+  switch(cellularDistanceFunction)
+  {
+  default:
+  case CellularDistanceFunction::Euclidean:
+  {
+    for(int32 xi = xr - 1; xi <= xr + 1; xi++)
+    {
+      for(int32 yi = yr - 1; yi <= yr + 1; yi++)
+      {
+        uint8 lutPos = Index2D_256(0, xi, yi);
+
+        WN_DECIMAL vecX = xi - x + CELL_2D_X[lutPos] * cellularJitter;
+        WN_DECIMAL vecY = yi - y + CELL_2D_Y[lutPos] * cellularJitter;
+
+        WN_DECIMAL newDistance = vecX*vecX + vecY*vecY;
+
+        for(int32 i = cellularDistanceIndex1; i > 0; i--)
+        {
+          distance[i] = max(min(distance[i], newDistance), distance[i - 1]);
+        }
+        distance[0] = min(distance[0], newDistance);
+      }
+    }
+  }
+  break;
+  case CellularDistanceFunction::Manhattan:
+  {
+    for(int32 xi = xr - 1; xi <= xr + 1; xi++)
+    {
+      for(int32 yi = yr - 1; yi <= yr + 1; yi++)
+      {
+        uint8 lutPos = Index2D_256(0, xi, yi);
+        
+        WN_DECIMAL vecX = xi - x + CELL_2D_X[lutPos] * cellularJitter;
+        WN_DECIMAL vecY = yi - y + CELL_2D_Y[lutPos] * cellularJitter;
+
+        WN_DECIMAL newDistance = FastAbs(vecX) + FastAbs(vecY);
+
+        for(int32 i = cellularDistanceIndex1; i > 0; i--)
+        {
+          distance[i] = max(min(distance[i], newDistance), distance[i - 1]);
+        }
+        distance[0] = min(distance[0], newDistance);
+      }
+    }
+  }
+  break;
+  case CellularDistanceFunction::Natural:
+  {
+    for(int32 xi = xr - 1; xi <= xr + 1; xi++)
+    {
+      for(int32 yi = yr - 1; yi <= yr + 1; yi++)
+      {
+        uint8 lutPos = Index2D_256(0, xi, yi);
+
+        WN_DECIMAL vecX = xi - x + CELL_2D_X[lutPos] * cellularJitter;
+        WN_DECIMAL vecY = yi - y + CELL_2D_Y[lutPos] * cellularJitter;
+
+        WN_DECIMAL newDistance = (FastAbs(vecX) + FastAbs(vecY)) + (vecX*vecX + vecY*vecY);
+
+        for(int32 i = cellularDistanceIndex1; i > 0; i--)
+        {
+          distance[i] = max(min(distance[i], newDistance), distance[i - 1]);
+        }
+        distance[0] = min(distance[0], newDistance);
+      }
+    }
+  }
+  break;
+  }
+
+  switch(cellularReturnType)
+  {
+  case CellularReturnType::Distance2: return distance[cellularDistanceIndex1];
+  case CellularReturnType::Distance2Add: return distance[cellularDistanceIndex1] + distance[cellularDistanceIndex0];
+  case CellularReturnType::Distance2Sub: return distance[cellularDistanceIndex1] - distance[cellularDistanceIndex0];
+  case CellularReturnType::Distance2Mul: return distance[cellularDistanceIndex1] * distance[cellularDistanceIndex0];
+  case CellularReturnType::Distance2Div: return distance[cellularDistanceIndex0] / distance[cellularDistanceIndex1];
+  default: return 0;
+  }
+}
+
+// 3D
+WN_INLINE WN_DECIMAL WasmNoise::SingleCellular(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
+{
+  int32 xr = FastRound(x);
+  int32 yr = FastRound(y);
+  int32 zr = FastRound(z);
+
+  WN_DECIMAL distance = 999999;
+  int32 xc, yc, zc;
+
+  switch(cellularDistanceFunction)
+  {
+  default:
+  case CellularDistanceFunction::Euclidean:
+  {
+    for(int32 xi = xr - 1; xi <= xr + 1; xi++)
+    {
+      for(int32 yi = yr - 1; yi <= yr + 1; yi++)
+      {
+        for(int32 zi = zr - 1; zi <= zr + 1; zi++)
+        {
+          uint8 lutPos = Index3D_256(0, xi, yi, zi);
+
+          WN_DECIMAL vecX = xi - x + CELL_3D_X[lutPos] * cellularJitter;
+          WN_DECIMAL vecY = yi - y + CELL_3D_Y[lutPos] * cellularJitter;
+          WN_DECIMAL vecZ = zi - z + CELL_3D_Z[lutPos] * cellularJitter;
+
+          WN_DECIMAL newDistance = vecX*vecX + vecY*vecY + vecZ*vecZ;
+
+          if(newDistance < distance)
+          {
+            distance = newDistance;
+            xc = xi;
+            yc = yi;
+            zc = zi;
+          }
+        }
+      }
+    }
+    break;
+  }
+  case CellularDistanceFunction::Manhattan:
+  {
+    for(int32 xi = xr - 1; xi <= xr + 1; xi++)
+    {
+      for(int32 yi = yr - 1; yi <= yr + 1; yi++)
+      {
+        for(int32 zi = zr - 1; zi <= zr + 1; zi++)
+        {
+          uint8 lutPos = Index3D_256(0, xi, yi, zi);
+
+          WN_DECIMAL vecX = xi - x + CELL_3D_X[lutPos] * cellularJitter;
+          WN_DECIMAL vecY = yi - y + CELL_3D_Y[lutPos] * cellularJitter;
+          WN_DECIMAL vecZ = zi - z + CELL_3D_Z[lutPos] * cellularJitter;
+
+          WN_DECIMAL newDistance = (FastAbs(vecX) + FastAbs(vecY) + FastAbs(vecZ));
+
+          if(newDistance < distance)
+          {
+            distance = newDistance;
+            xc = xi;
+            yc = yi;
+            zc = zi;
+          }
+        }
+      }
+    }
+    break;
+  }
+  case CellularDistanceFunction::Natural:
+  {
+    for(int32 xi = xr - 1; xi <= xr + 1; xi++)
+    {
+      for(int32 yi = yr - 1; yi <= yr + 1; yi++)
+      {
+        for(int32 zi = zr - 1; zi <= zr + 1; zi++)
+        {
+          uint8 lutPos = Index3D_256(0, xi, yi, zi);
+
+          WN_DECIMAL vecX = xi - x + CELL_3D_X[lutPos] * cellularJitter;
+          WN_DECIMAL vecY = yi - y + CELL_3D_Y[lutPos] * cellularJitter;
+          WN_DECIMAL vecZ = zi - z + CELL_3D_Z[lutPos] * cellularJitter;
+
+          WN_DECIMAL newDistance = (FastAbs(vecX) + FastAbs(vecY) + FastAbs(vecZ)) + (vecX*vecX + vecY*vecY + vecZ*vecZ);
+
+          if(newDistance < distance)
+          {
+            distance = newDistance;
+            xc = xi;
+            yc = yi;
+            zc = zi;
+          }
+        }
+      }
+    }
+    break;
+  }    
+  }
+
+  switch(cellularReturnType)
+  {
+  case CellularReturnType::CellValue:
+  {
+    return ValCoord3D(seed, xc, yc, zc);
+  }
+  case CellularReturnType::NoiseLookupPerlin:
+  {
+    uint8 lutPos = Index3D_256(0, xc, yc, zc);
+    return SinglePerlin(0, xc + CELL_3D_X[lutPos] * cellularJitter, yc + CELL_3D_Y[lutPos] * cellularJitter, zc + CELL_3D_Z[lutPos] * cellularJitter);
+  }
+  case CellularReturnType::NoiseLookupSimplex:
+  {
+    uint8 lutPos = Index3D_256(0, xc, yc, zc);
+    return SingleSimplex(0, xc + CELL_3D_X[lutPos] * cellularJitter, yc + CELL_3D_Y[lutPos] * cellularJitter, zc + CELL_3D_Z[lutPos] * cellularJitter);
+  }
+  case CellularReturnType::Distance:
+  {
+    return distance;
+  }
+  default: return 0;
+  }  
+}
+
 // End Single Noise Function Section ***************************

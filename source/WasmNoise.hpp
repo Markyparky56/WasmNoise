@@ -127,10 +127,10 @@ public:
   // Both indices must be >= 0, index1 must be < 4
   // Internally assures this conformance
   void SetCellularDistance2Indices(int32 _cellularDistanceIndex0, int32 _cellularDistanceIndex1);
-  void GetCellularDistanceIndex0() const { return cellularDistanceIndex0; }
-  void GetCellularDistanceIndex1() const { return cellularDistanceIndex1; }
+  int32 GetCellularDistanceIndex0() const { return cellularDistanceIndex0; }
+  int32 GetCellularDistanceIndex1() const { return cellularDistanceIndex1; }
 
-  void SetCellularJitter(WN_DECIMAL _cellularitter) { cellularJitter = _cellularJitter; }
+  void SetCellularJitter(WN_DECIMAL _cellularJitter) { cellularJitter = _cellularJitter; }
   WN_DECIMAL GetCellularJitter() const { return cellularJitter; }
 #endif
 
@@ -231,7 +231,7 @@ private:
   CellularReturnType cellularReturnType;
   int32 cellularDistanceIndex0;
   int32 cellularDistanceIndex1;
-  constexpr int32 CellularDistanceIndexMax = 3;
+  static constexpr int32 CellularDistanceIndexMax = 3;
   WN_DECIMAL cellularJitter;
 
   void CalculateFractalBounding();

@@ -52,8 +52,9 @@ static WN_INLINE WN_DECIMAL CubicLerp(WN_DECIMAL a, WN_DECIMAL b, WN_DECIMAL c, 
   WN_DECIMAL p = (d-c)-(a-b);
   return t*t*t*p + t*t*((a-b)-p) + t*(c-a) + b;
 }
-static WN_INLINE int32 min(int32 a, int32 b) const { return (a < b) ? a : b; }
-static WN_INLINE int32 max(int32 a, int32 b) const { return (a > b) ? b : a; }
+
+template<class T> static WN_INLINE T min(T a, T b) { return (a < b) ? a : b; }
+template<class T> static WN_INLINE T max(T a, T b) { return (a > b) ? a : b; }
 
 static WN_INLINE WN_DECIMAL ValCoord2D(int32 seed, int32 x, int32 y)
 {
