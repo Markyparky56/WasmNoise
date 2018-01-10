@@ -546,6 +546,7 @@ WN_INLINE WN_DECIMAL WasmNoise::GetCellular(WN_DECIMAL x, WN_DECIMAL y) const
   switch(cellularReturnType)
   {
   case CellularReturnType::CellValue:
+  case CellularReturnType::Distance:
   case CellularReturnType::NoiseLookupPerlin:
   case CellularReturnType::NoiseLookupSimplex:
   {
@@ -563,6 +564,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularStrip(WN_DECIMAL startX, WN_DECIMAL 
   switch(cellularReturnType)
   {
   case CellularReturnType::CellValue:
+  case CellularReturnType::Distance:
   case CellularReturnType::NoiseLookupPerlin:
   case CellularReturnType::NoiseLookupSimplex:
   {
@@ -580,6 +582,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularSquare(WN_DECIMAL startX, WN_DECIMAL
   switch(cellularReturnType)
   {
   case CellularReturnType::CellValue:
+  case CellularReturnType::Distance:
   case CellularReturnType::NoiseLookupPerlin:
   case CellularReturnType::NoiseLookupSimplex:
   {
@@ -602,6 +605,7 @@ WN_INLINE WN_DECIMAL WasmNoise::GetCellular(WN_DECIMAL x, WN_DECIMAL y, WN_DECIM
   switch(cellularReturnType)
   {
   case CellularReturnType::CellValue:
+  case CellularReturnType::Distance:
   case CellularReturnType::NoiseLookupPerlin:
   case CellularReturnType::NoiseLookupSimplex:
   {
@@ -619,6 +623,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularStrip(WN_DECIMAL startX, WN_DECIMAL 
   switch(cellularReturnType)
   {
   case CellularReturnType::CellValue:
+  case CellularReturnType::Distance:
   case CellularReturnType::NoiseLookupPerlin:
   case CellularReturnType::NoiseLookupSimplex:
   {
@@ -636,6 +641,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularSquare(WN_DECIMAL startX, WN_DECIMAL
   switch(cellularReturnType)
   {
   case CellularReturnType::CellValue:
+  case CellularReturnType::Distance:
   case CellularReturnType::NoiseLookupPerlin:
   case CellularReturnType::NoiseLookupSimplex:
   {
@@ -644,6 +650,24 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularSquare(WN_DECIMAL startX, WN_DECIMAL
   default: // Distance2
   {
     return GetSquare3D(&WasmNoise::SingleCellular2Edge, startX, startY, startZ, width, height, plane);
+  }
+  }
+}
+
+WN_INLINE WN_DECIMAL *WasmNoise::GetCellularCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth)
+{
+  switch(cellularReturnType)
+  {
+  case CellularReturnType::CellValue:
+  case CellularReturnType::Distance:
+  case CellularReturnType::NoiseLookupPerlin:
+  case CellularReturnType::NoiseLookupSimplex:
+  {
+    return GetCube3D(&WasmNoise::SingleCellular, startX, startY, startZ, width, height, depth);
+  }
+  default: // Distance2
+  {
+    return GetCube3D(&WasmNoise::SingleCellular2Edge, startX, startY, startZ, width, height, depth);
   }
   }
 }

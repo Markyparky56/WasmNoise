@@ -9,7 +9,9 @@ WasmNoiseEnums = {
   "Interp": "WasmNoise.Interp = WasmNoise.Interp || Object.freeze({Linear: 0, Hermite: 1, Quintic: 2});",
   "FractalType":"WasmNoise.FractalType = WasmNoise.FractalType || Object.freeze({FBM: 0, Billow: 1, RidgedMulti: 2});",
   "StripDirection":"WasmNoise.StripDirection = WasmNoise.StripDirection || Object.freeze({XAxis: 0, YAxis: 1, ZAxis: 2, WAxis: 3});",
-  "SquarePlane":"WasmNoise.SquarePlane = WasmNoise.SquarePlane || Object.freeze({XYPlane: 0, XZPlane: 1, ZYPlane: 2, XWPlane: 3, YWPlane: 4, ZWPlane: 5});"
+  "SquarePlane":"WasmNoise.SquarePlane = WasmNoise.SquarePlane || Object.freeze({XYPlane: 0, XZPlane: 1, ZYPlane: 2, XWPlane: 3, YWPlane: 4, ZWPlane: 5});",
+  "CellularDistanceFunction":"WasmNoise.CellularDistanceFunction = WasmNoise.CellularDistanceFunction || Object.freeze({Euclidean: 0, Manhattan: 1, Natural: 2});",
+  "CellularReturnType":"WasmNoise.CellularReturnType = WasmNoise.CellularReturnType || Object.freeze({CellValue: 0, Distance: 1, Distance2: 2, Distance2Add: 3, Distance2Sub: 4, Distance2Mul: 5, Distance2Div: 6, NoiseLookupPerlin: 7, NoiseLookupSimplex: 8});"
 }
 
 WasmNoiseOnLoadedDef = "WasmNoise.onLoaded = WasmNoise.onLoaded || null;"
@@ -141,6 +143,8 @@ def outputAutloaderFile(fileName, enabledFunctions, exports):
       file.write(WasmNoiseEnums["FractalType"] + "\n")
     file.write(WasmNoiseEnums["StripDirection"] + "\n")
     file.write(WasmNoiseEnums["SquarePlane"] + "\n")
+    file.write(WasmNoiseEnums["CellularDistanceFunction"] + "\n")
+    file.write(WasmNoiseEnums["CellularReturnType"] + "\n")
     file.write(constructFetchCompileAndInstantiateFunction(fileName, enabledFunctions, exports) + "\n")
     file.write(WasmNoiseOnLoadedDef + "\n")
     file.write(WasmNoiseCallCompile + "\n")
