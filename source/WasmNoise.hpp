@@ -74,7 +74,8 @@ public:
                     , CellularReturnType _cellularReturnType = CellularReturnType::CellValue
                     , int32 _cellularDistanceIndex0 = 0
                     , int32 _cellularDistanceIndex1 = 1
-                    , WN_DECIMAL _cellularJitter = WN_DECIMAL(0.45)) 
+                    , WN_DECIMAL _cellularJitter = WN_DECIMAL(0.45)
+                    , WN_DECIMAL _cellularNoiseLookupFrequency = WN_DECIMAL(0.1)) 
     : frequency(_frequency)
     , interp(_interp)
     , fractalOctaves(_fractalOctaves)
@@ -86,6 +87,7 @@ public:
     , cellularDistanceIndex0(_cellularDistanceIndex0)
     , cellularDistanceIndex1(_cellularDistanceIndex1)
     , cellularJitter(_cellularJitter)
+    , cellularNoiseLookupFrequency(_cellularNoiseLookupFrequency)
   { 
     SetSeed(_seed);
     CalculateFractalBounding();
@@ -132,6 +134,9 @@ public:
 
   void SetCellularJitter(WN_DECIMAL _cellularJitter) { cellularJitter = _cellularJitter; }
   WN_DECIMAL GetCellularJitter() const { return cellularJitter; }
+
+  void SetCellularNoiseLookupFrequency(WN_DECIMAL _cellularNoiseLookupFrequency) { cellularNoiseLookupFrequency = _cellularNoiseLookupFrequency; }
+  WN_DECIMAL GetCellularNoiseLookupFrequency() { return cellularNoiseLookupFrequency; }
 #endif
 
 
@@ -233,6 +238,7 @@ private:
   int32 cellularDistanceIndex1;
   static constexpr int32 CellularDistanceIndexMax = 3;
   WN_DECIMAL cellularJitter;
+  WN_DECIMAL cellularNoiseLookupFrequency;
 
   void CalculateFractalBounding();
 

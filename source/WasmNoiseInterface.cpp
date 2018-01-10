@@ -53,6 +53,9 @@ extern "C"
 
   void SetCellularJitter(WN_DECIMAL _cellularJitter) { wasmNoise.SetCellularJitter(_cellularJitter); }
   WN_DECIMAL GetCellularJitter() { return wasmNoise.GetCellularJitter(); }
+
+  void SetCellularNoiseLookupFrequency(WN_DECIMAL _cellularNoiseLookupFrequency) { wasmNoise.SetCellularNoiseLookupFrequency(_cellularNoiseLookupFrequency); }
+  WN_DECIMAL GetCellularNoiseLookupFrequency() { return wasmNoise.GetCellularNoiseLookupFrequency(); }
 #endif
 
   // The non "bulk" or "batch" functions (GetPerlin2, GetPerlin3 etc.) 

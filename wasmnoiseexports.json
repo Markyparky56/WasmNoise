@@ -90,7 +90,9 @@
         "GetCellularDistanceIndex0",
         "GetCellularDistanceIndex1",
         "SetCellularJitter",
-        "GetCellularJitter"
+        "GetCellularJitter",
+        "SetCellularNoiseLookupFrequency",
+        "GetCellularNoiseLookupFrequency"
       ],
       "macro":"-DWN_INCLUDE_CELLULAR_GETSET"
     },

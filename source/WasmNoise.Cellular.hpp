@@ -205,12 +205,12 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleCellular(uint8 offset, WN_DECIMAL x, WN_DE
   case CellularReturnType::NoiseLookupPerlin:
   {
     uint8 lutPos = Index2D_256(offset, xc, yc);
-    return SinglePerlin(offset, xc + CELL_2D_X[lutPos] * cellularJitter, yc + CELL_2D_Y[lutPos] * cellularJitter);
+    return SinglePerlin(offset, (xc + CELL_2D_X[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (yc + CELL_2D_Y[lutPos] * cellularJitter) * cellularNoiseLookupFrequency);
   }
   case CellularReturnType::NoiseLookupSimplex:
   {
     uint8 lutPos = Index2D_256(offset, xc, yc);
-    return SingleSimplex(offset, xc + CELL_2D_X[lutPos] * cellularJitter, yc + CELL_2D_Y[lutPos] * cellularJitter);
+    return SingleSimplex(offset, (xc + CELL_2D_X[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (yc + CELL_2D_Y[lutPos] * cellularJitter) * cellularNoiseLookupFrequency);
   }
   case CellularReturnType::Distance:
   {
@@ -417,12 +417,12 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleCellular(uint8 offset, WN_DECIMAL x, WN_DE
   case CellularReturnType::NoiseLookupPerlin:
   {
     uint8 lutPos = Index3D_256(offset, xc, yc, zc);
-    return SinglePerlin(offset, xc + CELL_3D_X[lutPos] * cellularJitter, yc + CELL_3D_Y[lutPos] * cellularJitter, zc + CELL_3D_Z[lutPos] * cellularJitter);
+    return SinglePerlin(offset, (xc + CELL_3D_X[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (yc + CELL_3D_Y[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (zc + CELL_3D_Z[lutPos] * cellularJitter) * cellularNoiseLookupFrequency);
   }
   case CellularReturnType::NoiseLookupSimplex:
   {
     uint8 lutPos = Index3D_256(offset, xc, yc, zc);
-    return SingleSimplex(offset, xc + CELL_3D_X[lutPos] * cellularJitter, yc + CELL_3D_Y[lutPos] * cellularJitter, zc + CELL_3D_Z[lutPos] * cellularJitter);
+    return SingleSimplex(offset, (xc + CELL_3D_X[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (yc + CELL_3D_Y[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (zc + CELL_3D_Z[lutPos] * cellularJitter) * cellularNoiseLookupFrequency);
   }
   case CellularReturnType::Distance:
   {
