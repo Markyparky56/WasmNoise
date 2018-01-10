@@ -328,12 +328,12 @@ private:
 
 #ifdef WN_INCLUDE_CELLULAR
   // 2D
-  WN_INLINE WN_DECIMAL SingleCellular(WN_DECIMAL x, WN_DECIMAL y) const;
-  WN_INLINE WN_DECIMAL SingleCellular2Edge(WN_DECIMAL x, WN_DECIMAL y) const;
+  WN_INLINE WN_DECIMAL SingleCellular(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
+  WN_INLINE WN_DECIMAL SingleCellular2Edge(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
 
   // 3D
-  WN_INLINE WN_DECIMAL SingleCellular(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
-  WN_INLINE WN_DECIMAL SingleCellular2Edge(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
+  WN_INLINE WN_DECIMAL SingleCellular(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
+  WN_INLINE WN_DECIMAL SingleCellular2Edge(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
 #endif
 
   WN_INLINE uint8 Index2D_12(uint8 offset, int32 x, int32 y) const;

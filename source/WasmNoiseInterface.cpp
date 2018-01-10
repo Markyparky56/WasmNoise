@@ -40,6 +40,20 @@ extern "C"
   void SetFractalType(int32 _fractalType) { wasmNoise.SetFractalType(static_cast<WasmNoise::FractalType>(_fractalType)); }
   int32 GetFractalType() { return static_cast<int32>(wasmNoise.GetFractalType()); }
 #endif // WN_INCLUDE_FRACTAL_GETSET
+#ifdef WN_INCLUDE_CELLULAR_GETSET
+  void SetCellularDistanceFunction(int32 _cellularDistanceFunction) { wasmNoise.SetCellularDistanceFunction(static_cast<WasmNoise::CellularDistanceFunction>(_cellularDistanceFunction)); }
+  int32 GetCellularDistanceFunction() { return static_cast<int32>(wasmNoise.GetCellularDistanceFunction()); }
+
+  void SetCellularReturnType(int32 _cellularReturnType) { wasmNoise.SetCellularReturnType(static_cast<WasmNoise::CellularReturnType>(_cellularReturnType)); }
+  int32 GetCellularReturnType() { return static_cast<int32>(wasmNoise.GetCellularReturnType()); }
+
+  void SetCellularDistance2Indices(int32 _cellularDistanceIndex0, int32 _cellularDistanceIndex1) { wasmNoise.SetCellularDistance2Indices(_cellularDistanceIndex0, _cellularDistanceIndex1); }
+  int32 GetCellularDistanceIndex0() { return wasmNoise.GetCellularDistanceIndex0(); }
+  int32 GetCellularDistanceIndex1() { return wasmNoise.GetCellularDistanceIndex1(); }
+
+  void SetCellularJitter(WN_DECIMAL _cellularJitter) { wasmNoise.SetCellularJitter(_cellularJitter); }
+  WN_DECIMAL GetCellularJitter() { return wasmNoise.GetCellularJitter(); }
+#endif
 
   // The non "bulk" or "batch" functions (GetPerlin2, GetPerlin3 etc.) 
   // are slower than their counterparts because there is a noticable overhead
@@ -96,5 +110,15 @@ extern "C"
   WN_INLINE WN_DECIMAL *GetSimplexFractal4_Square(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, int32 plane) { return wasmNoise.GetSimplexFractalSquare(startX, startY, startZ, startW, width, height, static_cast<WasmNoise::SquarePlane>(plane)); }
   WN_INLINE WN_DECIMAL *GetSimplexFractal4_Cube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, uint32 depth) { return wasmNoise.GetSimplexFractalCube(startX, startY, startZ, startW, width, height, depth); }
 #endif // WN_INCLUDE_SIMPLEX_FRACTAL
+#ifdef WN_INCLUDE_CELLULAR
+  WN_INLINE WN_DECIMAL  GetCellular2(WN_DECIMAL x, WN_DECIMAL y) { return wasmNoise.GetCellular(x, y); }
+  WN_INLINE WN_DECIMAL *GetCellular2_Strip(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, int32 direction) { return wasmNoise.GetCellularStrip(startX, startY, length, static_cast<WasmNoise::StripDirection>(direction)); }
+  WN_INLINE WN_DECIMAL *GetCellular2_Square(WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height) { return wasmNoise.GetCellularSquare(startX, startY, width, height); }
+
+  WN_INLINE WN_DECIMAL  GetCellular3(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) { return wasmNoise.GetCellular(x, y, z); }
+  WN_INLINE WN_DECIMAL *GetCellular3_Strip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, int32 direction) { return wasmNoise.GetCellularStrip(startX, startY, startZ, length, static_cast<WasmNoise::StripDirection>(direction)); }
+  WN_INLINE WN_DECIMAL *GetCellular3_Square(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, int32 plane) { return wasmNoise.GetCellularSquare(startX, startY, startZ, width, height, static_cast<WasmNoise::SquarePlane>(plane)); }
+  WN_INLINE WN_DECIMAL *GetCellular3_Cube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth) { return wasmNoise.GetCellularCube(startX, startY, startZ, width, height, depth); }
+#endif // WN_INCLUDE_CELLULAR
 }
 
