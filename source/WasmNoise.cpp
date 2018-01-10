@@ -9,6 +9,9 @@
 #if defined(WN_INCLUDE_SIMPLEX) || defined(WN_INCLUDE_SIMPLEX_FRACTAL)
 #include "WasmNoise.Simplex.hpp"
 #endif // WN_INCLUDE_SIMPLEX || WN_INCLUDE_SIMPLEX_FRACTAL
+#if defined(WN_INCLUDE_CELLULAR)
+#include "WasmNoise.Cellular.hpp"
+#endif // WN_INCLUDE_CELLULAR
 
 void WasmNoise::SetSeed(int32 _seed)
 {
@@ -507,7 +510,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCube4D(Single4DFPtr noiseFunc, WN_DECIMAL st
   return values;
 }
 
-// 3D - Fractal
+// 4D - Fractal
 WN_INLINE WN_DECIMAL *WasmNoise::GetStrip4D(Fractal4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 length, StripDirection direction)
 {
   WN_DECIMAL *values = returnHelper.NewArray(length);

@@ -29,6 +29,7 @@ class FunctionEnableType(enum.IntEnum):
   EnableSimplex = 4
   EnableSimplexFractal = 5
   EnableAllSimplex = 6
+  EnableCellular = 7
 
 # Lookup maps to exportNames array
 enableTypeLookup = [
@@ -38,7 +39,8 @@ enableTypeLookup = [
   [0, 1, 2, 3], # Enable Perlin and Perlin Fractal
   [0, 4], # Enable Simplex
   [0, 1, 5], # Enable Simplex Fractal
-  [0, 1, 4, 5] # Enable Simplex and Simplex Fractal
+  [0, 1, 4, 5], # Enable Simplex and Simplex Fractal
+  [0, 6, 7] # Enable Cellular
 ]
 exportNames = [
   "getset",         #0
@@ -47,6 +49,8 @@ exportNames = [
   "perlinFractal",  #3
   "simplex",        #4
   "simplexFractal", #5
+  "cellularGetSet", #6  
+  "cellular",       #7
 ]
 
 class TextColours:
@@ -114,7 +118,8 @@ def main(args):
     "-EnableAllPerlin": FunctionEnableType.EnableAllPerlin,
     "-EnableSimplex": FunctionEnableType.EnableSimplex,
     "-EnableSimplexFractal": FunctionEnableType.EnableSimplexFractal,
-    "-EnableAllSimplex": FunctionEnableType.EnableAllSimplex
+    "-EnableAllSimplex": FunctionEnableType.EnableAllSimplex,
+    "-EnableCellular": FunctionEnableType.EnableCellular
   }
   helpArgs = ["-h", "-help", "--h", "--help", "-H", "--H"]
   allowAbortArg = "-AllowAbort"
@@ -145,6 +150,10 @@ def main(args):
         "\t-EnablePerlin\t\tEnable Non-Fractal Perlin Functions Only\n",
         "\t-EnablePerlinFractal\tEnable Fractal Perlin Functions Only\n",
         "\t-EnableAllPerlin\tEnable All Perlin Functions (Fractal and Non-Fractal)\n",
+        "\t-EnableSimplex\t\tEnable Non-Fractal Simplex Functions Only\n",
+        "\t-EnableSimplexFractal\tEnable Fractal Simplex Functions Only\n",
+        "\t-EnableAllSimplex\t\tEnable All Simplex Functions (Fractal and Non-Fractal)\n",
+        "\t-EnableCellular\t\tEnable Cellular Functions\n",
         "Allow Abort Alerts:\n",
         "(Only recommended for testing and development, not for production)\n",
         "\t-AllowAbort\n",

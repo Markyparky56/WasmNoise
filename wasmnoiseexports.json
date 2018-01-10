@@ -79,6 +79,34 @@
         "GetSimplexFractal4_Cube"
       ],
       "macro":"-DWN_INCLUDE_SIMPLEX_FRACTAL"
+    },
+    "cellularGetSet":{
+      "funcs":[
+        "SetCellularDistanceFunction",
+        "GetCellularDistanceFunction",
+        "SetCellularReturnType",
+        "GetCellularReturnType",
+        "SetCellularDistance2Indices",
+        "GetCellularDistanceIndex0",
+        "GetCellularDistanceIndex1",
+        "SetCellularJitter",
+        "GetCellularJitter",
+        "SetCellularNoiseLookupFrequency",
+        "GetCellularNoiseLookupFrequency"
+      ],
+      "macro":"-DWN_INCLUDE_CELLULAR_GETSET"
+    },
+    "cellular":{
+      "funcs":[
+        "GetCellular2",
+        "GetCellular2_Strip",
+        "GetCellular2_Square",
+        "GetCellular3",
+        "GetCellular3_Strip",
+        "GetCellular3_Square",
+        "GetCellular3_Cube"
+      ],
+      "macro":"-DWN_INCLUDE_CELLULAR"
     }
   }
 }

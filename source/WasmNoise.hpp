@@ -12,7 +12,8 @@ public:
   {
     Perlin = 0,
     PerlinFractal = 1,
-    Simplex = 2
+    Simplex = 2,
+    Cellular = 3
   };
   enum class Interp
   {
@@ -26,8 +27,25 @@ public:
     Billow = 1, 
     RidgedMulti = 2
   };
-  // TODO: CellularDistanceFunction
-  // TODO: CellularReturnType
+  enum class CellularDistanceFunction 
+  {
+    Euclidean = 0,
+    Manhattan = 1,
+    Natural = 2
+  };
+  enum class CellularReturnType
+  {
+    CellValue = 0,
+    Distance = 1,
+    Distance2 = 2,
+    Distance2Add = 3,
+    Distance2Sub = 4,
+    Distance2Mul = 5,
+    Distance2Div = 6,
+    NoiseLookupPerlin = 7,    
+    NoiseLookupSimplex = 8
+    // Other Noise Algorithms 
+  };
   enum class StripDirection
   {
     XAxis = 0,
@@ -51,13 +69,25 @@ public:
                     , uint32 _fractalOctaves = 3
                     , WN_DECIMAL _fractalLacunarity = WN_DECIMAL(2)
                     , WN_DECIMAL _fractalGain = WN_DECIMAL(0.5)
-                    , FractalType _fractalType = FractalType::FBM) 
+                    , FractalType _fractalType = FractalType::FBM
+                    , CellularDistanceFunction _cellularDistanceFunction = CellularDistanceFunction::Euclidean
+                    , CellularReturnType _cellularReturnType = CellularReturnType::CellValue
+                    , int32 _cellularDistanceIndex0 = 0
+                    , int32 _cellularDistanceIndex1 = 1
+                    , WN_DECIMAL _cellularJitter = WN_DECIMAL(0.45)
+                    , WN_DECIMAL _cellularNoiseLookupFrequency = WN_DECIMAL(0.1)) 
     : frequency(_frequency)
     , interp(_interp)
     , fractalOctaves(_fractalOctaves)
     , fractalLacunarity(_fractalLacunarity)
     , fractalGain(_fractalGain)
     , fractalType(_fractalType)
+    , cellularDistanceFunction(_cellularDistanceFunction)
+    , cellularReturnType(_cellularReturnType)
+    , cellularDistanceIndex0(_cellularDistanceIndex0)
+    , cellularDistanceIndex1(_cellularDistanceIndex1)
+    , cellularJitter(_cellularJitter)
+    , cellularNoiseLookupFrequency(_cellularNoiseLookupFrequency)
   { 
     SetSeed(_seed);
     CalculateFractalBounding();
@@ -74,17 +104,40 @@ public:
 
 #ifdef WN_INCLUDE_FRACTAL_GETSET
   void SetFractalOctaves(uint32 _octaves) { fractalOctaves = _octaves; CalculateFractalBounding(); }
-  uint32 GetFractalOctaves() { return fractalOctaves; }
+  uint32 GetFractalOctaves() const { return fractalOctaves; }
 
   void SetFractalLacunarity(WN_DECIMAL _lacunarity) { fractalLacunarity = _lacunarity; }
-  WN_DECIMAL GetFractalLacunarity() { return fractalLacunarity; }
+  WN_DECIMAL GetFractalLacunarity() const { return fractalLacunarity; }
 
   void SetFractalGain(WN_DECIMAL _gain) { fractalGain = _gain; CalculateFractalBounding(); }
-  WN_DECIMAL GetFractalGain() { return fractalGain; }
+  WN_DECIMAL GetFractalGain() const { return fractalGain; }
 
   void SetFractalType(FractalType _fractalType) { fractalType = _fractalType; }
-  FractalType GetFractalType() { return fractalType; }
+  FractalType GetFractalType() const { return fractalType; }
 #endif // WN_INCLUDE_FRACTAL_GETSET
+
+#ifdef WN_INCLUDE_CELLULAR_GETSET
+  void SetCellularDistanceFunction(CellularDistanceFunction _cellularDistanceFunction) { cellularDistanceFunction = _cellularDistanceFunction; }
+  CellularDistanceFunction GetCellularDistanceFunction() const { return cellularDistanceFunction; }
+
+  void SetCellularReturnType(CellularReturnType _cellularReturnType) { cellularReturnType = _cellularReturnType; }
+  CellularReturnType GetCellularReturnType() const { return cellularReturnType; }
+
+  // Sets the 2 distance indices used by distance2 return types
+  // Default: 0, 1
+  // Note: index0 should be lower than index1
+  // Both indices must be >= 0, index1 must be < 4
+  // Internally assures this conformance
+  void SetCellularDistance2Indices(int32 _cellularDistanceIndex0, int32 _cellularDistanceIndex1);
+  int32 GetCellularDistanceIndex0() const { return cellularDistanceIndex0; }
+  int32 GetCellularDistanceIndex1() const { return cellularDistanceIndex1; }
+
+  void SetCellularJitter(WN_DECIMAL _cellularJitter) { cellularJitter = _cellularJitter; }
+  WN_DECIMAL GetCellularJitter() const { return cellularJitter; }
+
+  void SetCellularNoiseLookupFrequency(WN_DECIMAL _cellularNoiseLookupFrequency) { cellularNoiseLookupFrequency = _cellularNoiseLookupFrequency; }
+  WN_DECIMAL GetCellularNoiseLookupFrequency() { return cellularNoiseLookupFrequency; }
+#endif
 
 
 #ifdef WN_INCLUDE_PERLIN
@@ -151,6 +204,19 @@ public:
   WN_INLINE WN_DECIMAL *GetSimplexFractalCube(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w, uint32 width, uint32 height, uint32 depth);
 #endif // WN_INCLUDE_SIMPLEX_FRACTAL
 
+#ifdef WN_INCLUDE_CELLULAR
+  // 2D
+  WN_INLINE WN_DECIMAL  GetCellular(WN_DECIMAL x, WN_DECIMAL y) const;
+  WN_INLINE WN_DECIMAL *GetCellularStrip(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction);
+  WN_INLINE WN_DECIMAL *GetCellularSquare(WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height);
+
+  // 3D
+  WN_INLINE WN_DECIMAL  GetCellular(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
+  WN_INLINE WN_DECIMAL *GetCellularStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction);
+  WN_INLINE WN_DECIMAL *GetCellularSquare(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane);
+  WN_INLINE WN_DECIMAL *GetCellularCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth);
+#endif
+
 private:
   ReturnArrayHelper returnHelper;
 
@@ -165,6 +231,14 @@ private:
   WN_DECIMAL fractalGain;
   FractalType fractalType;
   WN_DECIMAL fractalBounding;
+
+  CellularDistanceFunction cellularDistanceFunction;
+  CellularReturnType cellularReturnType;
+  int32 cellularDistanceIndex0;
+  int32 cellularDistanceIndex1;
+  static constexpr int32 CellularDistanceIndexMax = 3;
+  WN_DECIMAL cellularJitter;
+  WN_DECIMAL cellularNoiseLookupFrequency;
 
   void CalculateFractalBounding();
 
@@ -257,6 +331,16 @@ private:
   WN_INLINE WN_DECIMAL SingleSimplexFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
   WN_INLINE WN_DECIMAL SingleSimplexFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
 #endif // WN_INCLUDE_SIMPLEX_FRACTAL
+
+#ifdef WN_INCLUDE_CELLULAR
+  // 2D
+  WN_INLINE WN_DECIMAL SingleCellular(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
+  WN_INLINE WN_DECIMAL SingleCellular2Edge(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
+
+  // 3D
+  WN_INLINE WN_DECIMAL SingleCellular(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
+  WN_INLINE WN_DECIMAL SingleCellular2Edge(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
+#endif
 
   WN_INLINE uint8 Index2D_12(uint8 offset, int32 x, int32 y) const;
   WN_INLINE uint8 Index3D_12(uint8 offset, int32 x, int32 y, int32 z) const;
