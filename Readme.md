@@ -13,13 +13,14 @@ My intention for this library is that it can be used to accelerate generation of
 - Fractal Perlin Noise (FBM, Billow, Ridged Multi) 2D, 3D
 - Simplex Noise 2D, 3D, 4D
 - Fractal Simplex Noise (FBM, Billow, Ridged Multi) 2D, 3D, 4D
+- Cellular Noise 2D, 3D
+- Fractal Cellular Noise (FBM, Billow, Ridged Multi) 2D, 3D
 
 ### Planned Features
 - Feature parity with FastNoise
 - Custom builds to remove different noise types to reduce binary size
 
 ### Rough Road Map
-- v0.4.0 - Cellular Noise
 - v0.5.0 - Value Noise
 - v0.6.0 - Cubic Noise
 - v0.7.0 - White Noise
