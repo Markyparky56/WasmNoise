@@ -107,6 +107,18 @@
         "GetCellular3_Cube"
       ],
       "macro":"-DWN_INCLUDE_CELLULAR"
+    },
+    "cellularFractal":{
+      "funcs":[
+        "GetCellularFractal2",
+        "GetCellularFractal2_Strip",
+        "GetCellularFractal2_Square",
+        "GetCellularFractal3",
+        "GetCellularFractal3_Strip",
+        "GetCellularFractal3_Square",
+        "GetCellularFractal3_Cube"
+      ],
+      "macro":"-DWN_INCLUDE_CELLULAR_FRACTAL"
     }
   }
 }

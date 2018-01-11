@@ -16,6 +16,7 @@
 // #define WN_INCLUDE_SIMPLEX
 // #define WN_INCLUDE_SIMPLEX_FRACTAL
 // #define WN_INCLUDE_CELLULAR
+// #define WN_INCLUDE_CELLULAR_FRACTAL
 
 // Until JavaScript and WebAssembly support returning doubles (f64) we're stuck with floats
 #ifdef WN_USE_DOUBLES
