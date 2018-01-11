@@ -9,7 +9,7 @@
 #if defined(WN_INCLUDE_SIMPLEX) || defined(WN_INCLUDE_SIMPLEX_FRACTAL)
 #include "WasmNoise.Simplex.hpp"
 #endif // WN_INCLUDE_SIMPLEX || WN_INCLUDE_SIMPLEX_FRACTAL
-#if defined(WN_INCLUDE_CELLULAR)
+#if defined(WN_INCLUDE_CELLULAR) || defined(WN_INCLUDE_CELLULAR_FRACTAL)
 #include "WasmNoise.Cellular.hpp"
 #endif // WN_INCLUDE_CELLULAR
 

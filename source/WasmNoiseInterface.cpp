@@ -123,5 +123,15 @@ extern "C"
   WN_INLINE WN_DECIMAL *GetCellular3_Square(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, int32 plane) { return wasmNoise.GetCellularSquare(startX, startY, startZ, width, height, static_cast<WasmNoise::SquarePlane>(plane)); }
   WN_INLINE WN_DECIMAL *GetCellular3_Cube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth) { return wasmNoise.GetCellularCube(startX, startY, startZ, width, height, depth); }
 #endif // WN_INCLUDE_CELLULAR
+#ifdef WN_INCLUDE_CELLULAR_FRACTAL
+  WN_INLINE WN_DECIMAL  GetCellularFractal2(WN_DECIMAL x, WN_DECIMAL y) { return wasmNoise.GetCellularFractal(x, y); }
+  WN_INLINE WN_DECIMAL *GetCellularFractal2_Strip(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, int32 direction) { return wasmNoise.GetCellularFractalStrip(startX, startY, length, static_cast<WasmNoise::StripDirection>(direction)); }
+  WN_INLINE WN_DECIMAL *GetCellularFractal2_Square(WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height) { return wasmNoise.GetCellularFractalSquare(startX, startY, width, height); }
+
+  WN_INLINE WN_DECIMAL  GetCellularFractal3(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) { return wasmNoise.GetCellularFractal(x, y, z); }
+  WN_INLINE WN_DECIMAL *GetCellularFractal3_Strip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, int32 direction) { return wasmNoise.GetCellularFractalStrip(startX, startY, startZ, length, static_cast<WasmNoise::StripDirection>(direction)); }
+  WN_INLINE WN_DECIMAL *GetCellularFractal3_Square(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, int32 plane) { return wasmNoise.GetCellularFractalSquare(startX, startY, startZ, width, height, static_cast<WasmNoise::SquarePlane>(plane)); }
+  WN_INLINE WN_DECIMAL *GetCellularFractal3_Cube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth) { return wasmNoise.GetCellularFractalCube(startX, startY, startZ, width, height, depth); }
+#endif // WN_INCLUDE_CELLULAR_FRACTAL
 }
 

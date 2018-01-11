@@ -215,7 +215,20 @@ public:
   WN_INLINE WN_DECIMAL *GetCellularStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction);
   WN_INLINE WN_DECIMAL *GetCellularSquare(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane);
   WN_INLINE WN_DECIMAL *GetCellularCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth);
-#endif
+#endif // WN_INCLUDE_CELLULAR
+
+#ifdef WN_INCLUDE_CELLULAR_FRACTAL
+  // 2D
+  WN_INLINE WN_DECIMAL  GetCellularFractal(WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL *GetCellularFractalStrip(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction);
+  WN_INLINE WN_DECIMAL *GetCellularFractalSquare(WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height);
+
+  // 3D
+  WN_INLINE WN_DECIMAL  GetCellularFractal(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL *GetCellularFractalStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction);
+  WN_INLINE WN_DECIMAL *GetCellularFractalSquare(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane);
+  WN_INLINE WN_DECIMAL *GetCellularFractalCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth);
+#endif // WN_INCLUDE_CELLULAR_FRACTAL
 
 private:
   ReturnArrayHelper returnHelper;
@@ -271,7 +284,7 @@ private:
   WN_INLINE WN_DECIMAL *GetSquare4D(Fractal4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, SquarePlane plane);
   WN_INLINE WN_DECIMAL *GetCube4D(Fractal4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, uint32 depth);
 
-#if defined(WN_INCLUDE_PERLIN_FRACTAL) || defined(WN_INCLUDE_SIMPLEX_FRACTAL)
+#if defined(WN_INCLUDE_PERLIN_FRACTAL) || defined(WN_INCLUDE_SIMPLEX_FRACTAL) || defined(WN_INCLUDE_CELLULAR_FRACTAL)
   // 2D
   WN_INLINE WN_DECIMAL SingleFractalFBM(Single2DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y);
   WN_INLINE WN_DECIMAL SingleFractalBillow(Single2DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y);
@@ -332,7 +345,7 @@ private:
   WN_INLINE WN_DECIMAL SingleSimplexFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
 #endif // WN_INCLUDE_SIMPLEX_FRACTAL
 
-#ifdef WN_INCLUDE_CELLULAR
+#if defined(WN_INCLUDE_CELLULAR) || defined(WN_INCLUDE_CELLULAR_FRACTAL)
   // 2D
   WN_INLINE WN_DECIMAL SingleCellular(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
   WN_INLINE WN_DECIMAL SingleCellular2Edge(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
@@ -340,6 +353,24 @@ private:
   // 3D
   WN_INLINE WN_DECIMAL SingleCellular(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
   WN_INLINE WN_DECIMAL SingleCellular2Edge(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
+#endif // WN_INCLUDE_CELLULAR || WN_INCLUDE_CELLULAR_FRACTAL
+
+#ifdef WN_INCLUDE_CELLULAR_FRACTAL
+  // 2D
+  WN_INLINE WN_DECIMAL SingleCellularFractalFBM(WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL SingleCellularFractalBillow(WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL SingleCellularFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL SingleCellular2EdgeFractalFBM(WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL SingleCellular2EdgeFractalBillow(WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL SingleCellular2EdgeFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y);
+
+  // 3D
+  WN_INLINE WN_DECIMAL SingleCellularFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL SingleCellularFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL SingleCellularFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL SingleCellular2EdgeFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL SingleCellular2EdgeFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL SingleCellular2EdgeFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
 #endif
 
   WN_INLINE uint8 Index2D_12(uint8 offset, int32 x, int32 y) const;

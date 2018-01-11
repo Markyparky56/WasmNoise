@@ -30,6 +30,8 @@ class FunctionEnableType(enum.IntEnum):
   EnableSimplexFractal = 5
   EnableAllSimplex = 6
   EnableCellular = 7
+  EnableCellularFractal = 8
+  EnableAllCellular = 9
 
 # Lookup maps to exportNames array
 enableTypeLookup = [
@@ -40,7 +42,9 @@ enableTypeLookup = [
   [0, 4], # Enable Simplex
   [0, 1, 5], # Enable Simplex Fractal
   [0, 1, 4, 5], # Enable Simplex and Simplex Fractal
-  [0, 6, 7] # Enable Cellular
+  [0, 6, 7], # Enable Cellular
+  [0, 6, 8], # Enable Cellular Fractal
+  [0, 6, 7, 8], # Enable Cellular and Cellular Fractal
 ]
 exportNames = [
   "getset",         #0
@@ -51,6 +55,7 @@ exportNames = [
   "simplexFractal", #5
   "cellularGetSet", #6  
   "cellular",       #7
+  "cellularFractal",#8
 ]
 
 class TextColours:
@@ -119,7 +124,9 @@ def main(args):
     "-EnableSimplex": FunctionEnableType.EnableSimplex,
     "-EnableSimplexFractal": FunctionEnableType.EnableSimplexFractal,
     "-EnableAllSimplex": FunctionEnableType.EnableAllSimplex,
-    "-EnableCellular": FunctionEnableType.EnableCellular
+    "-EnableCellular": FunctionEnableType.EnableCellular,
+    "-EnableCellularFractal": FunctionEnableType.EnableCellularFractal,
+    "-EnableAllCellular": FunctionEnableType.EnableAllCellular
   }
   helpArgs = ["-h", "-help", "--h", "--help", "-H", "--H"]
   allowAbortArg = "-AllowAbort"
@@ -152,8 +159,10 @@ def main(args):
         "\t-EnableAllPerlin\tEnable All Perlin Functions (Fractal and Non-Fractal)\n",
         "\t-EnableSimplex\t\tEnable Non-Fractal Simplex Functions Only\n",
         "\t-EnableSimplexFractal\tEnable Fractal Simplex Functions Only\n",
-        "\t-EnableAllSimplex\t\tEnable All Simplex Functions (Fractal and Non-Fractal)\n",
+        "\t-EnableAllSimplex\tEnable All Simplex Functions (Fractal and Non-Fractal)\n",
         "\t-EnableCellular\t\tEnable Cellular Functions\n",
+        "\t-EnableCellularFractal\tEnable Fractal Cellular Functions Only\n",
+        "\t-EnableAllCellular\tEnable All Cellular Functions (Fractal and Non-Fractal)\n",
         "Allow Abort Alerts:\n",
         "(Only recommended for testing and development, not for production)\n",
         "\t-AllowAbort\n",
