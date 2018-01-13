@@ -296,7 +296,7 @@ def build(buildType, optLevel, verbose, allowAbort, enabledFlags):
     "clang++",
     "--target=wasm32",
     "-emit-llvm",
-    "-std=c++14",
+    "-std=c++17",
     optimisationLevel,
     "-c",
     "-I..\\..\\..\\wasm-stdlib-hack\\include\\libc",

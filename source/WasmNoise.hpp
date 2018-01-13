@@ -286,19 +286,23 @@ private:
 
 #if defined(WN_INCLUDE_PERLIN_FRACTAL) || defined(WN_INCLUDE_SIMPLEX_FRACTAL) || defined(WN_INCLUDE_CELLULAR_FRACTAL)
   // 2D
-  WN_INLINE WN_DECIMAL SingleFractalFBM(Single2DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y);
-  WN_INLINE WN_DECIMAL SingleFractalBillow(Single2DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y);
-  WN_INLINE WN_DECIMAL SingleFractalRidgedMulti(Single2DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y);
+  // WN_INLINE WN_DECIMAL SingleFractalFBM(Single2DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y);
+  // WN_INLINE WN_DECIMAL SingleFractalBillow(Single2DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y);
+  // WN_INLINE WN_DECIMAL SingleFractalRidgedMulti(Single2DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y);
 
-  // 3D
-  WN_INLINE WN_DECIMAL SingleFractalFBM(Single3DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
-  WN_INLINE WN_DECIMAL SingleFractalBillow(Single3DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
-  WN_INLINE WN_DECIMAL SingleFractalRidgedMulti(Single3DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  // // 3D
+  // WN_INLINE WN_DECIMAL SingleFractalFBM(Single3DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  // WN_INLINE WN_DECIMAL SingleFractalBillow(Single3DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  // WN_INLINE WN_DECIMAL SingleFractalRidgedMulti(Single3DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
 
-  // 4D
-  WN_INLINE WN_DECIMAL SingleFractalFBM(Single4DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
-  WN_INLINE WN_DECIMAL SingleFractalBillow(Single4DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
-  WN_INLINE WN_DECIMAL SingleFractalRidgedMulti(Single4DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
+  // // 4D
+  // WN_INLINE WN_DECIMAL SingleFractalFBM(Single4DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
+  // WN_INLINE WN_DECIMAL SingleFractalBillow(Single4DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
+  // WN_INLINE WN_DECIMAL SingleFractalRidgedMulti(Single4DFPtr noiseFunc, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
+
+  template<class NoiseFunc, class... Args> WN_INLINE WN_DECIMAL SingleFractalFBM(NoiseFunc func, Args... args);
+  template<class NoiseFunc, class... Args> WN_INLINE WN_DECIMAL SingleFractalBillow(NoiseFunc func, Args... args);
+  template<class NoiseFunc, class... Args> WN_INLINE WN_DECIMAL SingleFractalRidgedMulti(NoiseFunc func, Args... args);
 #endif
 
 #if defined(WN_INCLUDE_PERLIN) || defined(WN_INCLUDE_PERLIN_FRACTAL)

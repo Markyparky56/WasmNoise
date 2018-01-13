@@ -96,33 +96,33 @@ WN_INLINE WN_DECIMAL WasmNoise::SinglePerlin(uint8 offset, WN_DECIMAL x, WN_DECI
 // 2D Perlin Fractal Functions
 WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalFBM(WN_DECIMAL x, WN_DECIMAL y) 
 {
-  return SingleFractalFBM(&WasmNoise::SinglePerlin, x, y);
+  return SingleFractalFBM<Single2DFPtr>(&WasmNoise::SinglePerlin, x, y);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIMAL y) 
 {
-  return SingleFractalBillow(&WasmNoise::SinglePerlin, x, y);
+  return SingleFractalBillow<Single2DFPtr>(&WasmNoise::SinglePerlin, x, y);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y) 
 {
-  return SingleFractalRidgedMulti(&WasmNoise::SinglePerlin, x, y);
+  return SingleFractalRidgedMulti<Single2DFPtr>(&WasmNoise::SinglePerlin, x, y);
 }
 
 // 3D Perlin Fractal Functions
 WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
-  return SingleFractalFBM(&WasmNoise::SinglePerlin, x, y, z);
+  return SingleFractalFBM<Single3DFPtr>(&WasmNoise::SinglePerlin, x, y, z);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
-  return SingleFractalBillow(&WasmNoise::SinglePerlin, x, y, z);  
+  return SingleFractalBillow<Single3DFPtr>(&WasmNoise::SinglePerlin, x, y, z);  
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
-  return SingleFractalRidgedMulti(&WasmNoise::SinglePerlin, x, y, z);
+  return SingleFractalRidgedMulti<Single3DFPtr>(&WasmNoise::SinglePerlin, x, y, z);
 }
 #endif // WN_INCLUDE_PERLIN_FRACTAL
 

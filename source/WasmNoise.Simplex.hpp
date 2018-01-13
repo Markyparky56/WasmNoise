@@ -289,49 +289,49 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DEC
 // 2D Simplex Fractal Functions
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalFBM(WN_DECIMAL x, WN_DECIMAL y)
 {
-  return SingleFractalFBM(&WasmNoise::SingleSimplex, x, y);
+  return SingleFractalFBM<Single2DFPtr>(&WasmNoise::SingleSimplex, x, y);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalBillow(WN_DECIMAL x, WN_DECIMAL y)
 {
-  return SingleFractalBillow(&WasmNoise::SingleSimplex, x, y);
+  return SingleFractalBillow<Single2DFPtr>(&WasmNoise::SingleSimplex, x, y);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y)
 {
-  return SingleFractalRidgedMulti(&WasmNoise::SingleSimplex, x, y);
+  return SingleFractalRidgedMulti<Single2DFPtr>(&WasmNoise::SingleSimplex, x, y);
 }
 
 // 3D Simplex Fractal Functions
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
-  return SingleFractalFBM(&WasmNoise::SingleSimplex, x, y, z);
+  return SingleFractalFBM<Single3DFPtr>(&WasmNoise::SingleSimplex, x, y, z);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
-  return SingleFractalBillow(&WasmNoise::SingleSimplex, x, y, z);
+  return SingleFractalBillow<Single3DFPtr>(&WasmNoise::SingleSimplex, x, y, z);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
-  return SingleFractalRidgedMulti(&WasmNoise::SingleSimplex, x, y, z);
+  return SingleFractalRidgedMulti<Single3DFPtr>(&WasmNoise::SingleSimplex, x, y, z);
 }
 
 // 4D Simplex Fractal Functions
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w)
 {
-  return SingleFractalFBM(&WasmNoise::SingleSimplex, x, y, z, w);
+  return SingleFractalFBM<Single4DFPtr>(&WasmNoise::SingleSimplex, x, y, z, w);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w)
 {
-  return SingleFractalBillow(&WasmNoise::SingleSimplex, x, y, z, w);
+  return SingleFractalBillow<Single4DFPtr>(&WasmNoise::SingleSimplex, x, y, z, w);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w)
 {
-  return SingleFractalRidgedMulti(&WasmNoise::SingleSimplex, x, y, z, w);
+  return SingleFractalRidgedMulti<Single4DFPtr>(&WasmNoise::SingleSimplex, x, y, z, w);
 }
 #endif // WN_INCLUDE_SIMPLEX_FRACTAL
 

@@ -549,63 +549,63 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2Edge(uint8 offset, WN_DECIMAL x, 
 // 2D Cellular Fractal Functions
 WN_INLINE WN_DECIMAL WasmNoise::SingleCellularFractalFBM(WN_DECIMAL x, WN_DECIMAL y)
 {
-  return SingleFractalFBM(&WasmNoise::SingleCellular, x, y);
+  return SingleFractalFBM<Single2DFPtr>(&WasmNoise::SingleCellular, x, y);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleCellularFractalBillow(WN_DECIMAL x, WN_DECIMAL y)
 {
-  return SingleFractalBillow(&WasmNoise::SingleCellular, x, y);
+  return SingleFractalBillow<Single2DFPtr>(&WasmNoise::SingleCellular, x, y);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleCellularFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y)
 {
-  return SingleFractalRidgedMulti(&WasmNoise::SingleCellular, x, y);
+  return SingleFractalRidgedMulti<Single2DFPtr>(&WasmNoise::SingleCellular, x, y);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2EdgeFractalFBM(WN_DECIMAL x, WN_DECIMAL y)
 {
-  return SingleFractalFBM(&WasmNoise::SingleCellular2Edge, x, y);
+  return SingleFractalFBM<Single2DFPtr>(&WasmNoise::SingleCellular2Edge, x, y);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2EdgeFractalBillow(WN_DECIMAL x, WN_DECIMAL y)
 {
-  return SingleFractalBillow(&WasmNoise::SingleCellular2Edge, x, y);
+  return SingleFractalBillow<Single2DFPtr>(&WasmNoise::SingleCellular2Edge, x, y);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2EdgeFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y)
 {
-  return SingleFractalRidgedMulti(&WasmNoise::SingleCellular2Edge, x, y);
+  return SingleFractalRidgedMulti<Single2DFPtr>(&WasmNoise::SingleCellular2Edge, x, y);
 }
 
 // 3D Cellular Fractal Functions
 WN_INLINE WN_DECIMAL WasmNoise::SingleCellularFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
-  return SingleFractalFBM(&WasmNoise::SingleCellular, x, y, z);
+  return SingleFractalFBM<Single3DFPtr>(&WasmNoise::SingleCellular, x, y, z);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleCellularFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
-  return SingleFractalBillow(&WasmNoise::SingleCellular, x, y, z);
+  return SingleFractalBillow<Single3DFPtr>(&WasmNoise::SingleCellular, x, y, z);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleCellularFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
-  return SingleFractalRidgedMulti(&WasmNoise::SingleCellular, x, y, z);
+  return SingleFractalRidgedMulti<Single3DFPtr>(&WasmNoise::SingleCellular, x, y, z);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2EdgeFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
-  return SingleFractalFBM(&WasmNoise::SingleCellular2Edge, x, y, z);
+  return SingleFractalFBM<Single3DFPtr>(&WasmNoise::SingleCellular2Edge, x, y, z);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2EdgeFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
-  return SingleFractalBillow(&WasmNoise::SingleCellular2Edge, x, y, z);
+  return SingleFractalBillow<Single3DFPtr>(&WasmNoise::SingleCellular2Edge, x, y, z);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2EdgeFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
-  return SingleFractalRidgedMulti(&WasmNoise::SingleCellular2Edge, x, y, z);
+  return SingleFractalRidgedMulti<Single3DFPtr>(&WasmNoise::SingleCellular2Edge, x, y, z);
 }
 #endif
 
