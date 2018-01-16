@@ -118,7 +118,7 @@ WN_INLINE void WasmNoise::SetCellularDistance2Indices(int32 _cellularDistanceInd
 // These functions are required for both regular and fractal cellular noise
 
 // 2D
-WN_INLINE WN_DECIMAL WasmNoise::SingleCellular(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const
+WN_INLINE WN_DECIMAL WasmNoise::SingleCellular(WN_DECIMAL x, WN_DECIMAL y, uint8 offset) const
 {
   int32 xr = FastRound(x);
   int32 yr = FastRound(y);
@@ -210,14 +210,14 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleCellular(uint8 offset, WN_DECIMAL x, WN_DE
   case CellularReturnType::NoiseLookupPerlin:
   {
     uint8 lutPos = Index2D_256(offset, xc, yc);
-    return SinglePerlin(offset, (xc + CELL_2D_X[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (yc + CELL_2D_Y[lutPos] * cellularJitter) * cellularNoiseLookupFrequency);
+    return SinglePerlin((xc + CELL_2D_X[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (yc + CELL_2D_Y[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, offset);
   }
 #endif // WN_INCLUDE_PERLIN
 #ifdef WN_INCLUDE_SIMPLEX
   case CellularReturnType::NoiseLookupSimplex:
   {
     uint8 lutPos = Index2D_256(offset, xc, yc);
-    return SingleSimplex(offset, (xc + CELL_2D_X[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (yc + CELL_2D_Y[lutPos] * cellularJitter) * cellularNoiseLookupFrequency);
+    return SingleSimplex((xc + CELL_2D_X[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (yc + CELL_2D_Y[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, offset);
   }
 #endif
   case CellularReturnType::Distance:
@@ -228,7 +228,7 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleCellular(uint8 offset, WN_DECIMAL x, WN_DE
   }  
 }
 
-WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2Edge(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const
+WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2Edge(WN_DECIMAL x, WN_DECIMAL y, uint8 offset) const
 {
   int32 xr = FastRound(x);
   int32 yr = FastRound(y);
@@ -318,7 +318,7 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2Edge(uint8 offset, WN_DECIMAL x, 
 }
 
 // 3D
-WN_INLINE WN_DECIMAL WasmNoise::SingleCellular(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
+WN_INLINE WN_DECIMAL WasmNoise::SingleCellular(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, uint8 offset) const
 {
   int32 xr = FastRound(x);
   int32 yr = FastRound(y);
@@ -426,14 +426,14 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleCellular(uint8 offset, WN_DECIMAL x, WN_DE
   case CellularReturnType::NoiseLookupPerlin:
   {
     uint8 lutPos = Index3D_256(offset, xc, yc, zc);
-    return SinglePerlin(offset, (xc + CELL_3D_X[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (yc + CELL_3D_Y[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (zc + CELL_3D_Z[lutPos] * cellularJitter) * cellularNoiseLookupFrequency);
+    return SinglePerlin((xc + CELL_3D_X[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (yc + CELL_3D_Y[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (zc + CELL_3D_Z[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, offset);
   }
 #endif // WN_INCLUDE_PERLIN
 #ifdef WN_INCLUDE_SIMPLEX
   case CellularReturnType::NoiseLookupSimplex:
   {
     uint8 lutPos = Index3D_256(offset, xc, yc, zc);
-    return SingleSimplex(offset, (xc + CELL_3D_X[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (yc + CELL_3D_Y[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (zc + CELL_3D_Z[lutPos] * cellularJitter) * cellularNoiseLookupFrequency);
+    return SingleSimplex((xc + CELL_3D_X[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (yc + CELL_3D_Y[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, (zc + CELL_3D_Z[lutPos] * cellularJitter) * cellularNoiseLookupFrequency, offset);
   }
 #endif
   case CellularReturnType::Distance:
@@ -444,7 +444,7 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleCellular(uint8 offset, WN_DECIMAL x, WN_DE
   }  
 }
 
-WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2Edge(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
+WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2Edge(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, uint8 offset) const
 {
   int32 xr = FastRound(x);
   int32 yr = FastRound(y);
@@ -627,11 +627,11 @@ WN_INLINE WN_DECIMAL WasmNoise::GetCellular(WN_DECIMAL x, WN_DECIMAL y) const
   case CellularReturnType::NoiseLookupPerlin:
   case CellularReturnType::NoiseLookupSimplex:
   {
-    return SingleCellular(0, x, y);
+    return SingleCellular(x, y);
   }
   default: // Distance2
   {
-    return SingleCellular2Edge(0, x, y);
+    return SingleCellular2Edge(x, y);
   }
   }
 }
@@ -687,11 +687,11 @@ WN_INLINE WN_DECIMAL WasmNoise::GetCellular(WN_DECIMAL x, WN_DECIMAL y, WN_DECIM
   case CellularReturnType::NoiseLookupPerlin:
   case CellularReturnType::NoiseLookupSimplex:
   {
-    return SingleCellular(0, x, y, z);
+    return SingleCellular(x, y, z);
   }
   default: // Distance2
   {
-    return SingleCellular2Edge(0, x, y, z);
+    return SingleCellular2Edge(x, y, z);
   }
   }
 }

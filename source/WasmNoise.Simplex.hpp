@@ -30,7 +30,7 @@ static const uint8 SIMPLEX_4D[] =
 };
 
 // 2D
-WN_INLINE WN_DECIMAL WasmNoise::SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const
+WN_INLINE WN_DECIMAL WasmNoise::SingleSimplex(WN_DECIMAL x, WN_DECIMAL y, uint8 offset) const
 {
   WN_DECIMAL t = (x + y) * F2;
   int32 i = FastFloor(x + t);
@@ -88,7 +88,7 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DEC
 }
 
 // 3D
-WN_INLINE WN_DECIMAL WasmNoise::SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
+WN_INLINE WN_DECIMAL WasmNoise::SingleSimplex(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, uint8 offset) const
 {
   WN_DECIMAL t = (x + y + z) * F3;
   int32 i = FastFloor(x + t);
@@ -186,7 +186,7 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DEC
 }
 
 // 4D
-WN_INLINE WN_DECIMAL WasmNoise::SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w) const
+WN_INLINE WN_DECIMAL WasmNoise::SingleSimplex(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w, uint8 offset) const
 {
   WN_DECIMAL n0, n1, n2, n3, n4;
   WN_DECIMAL t = (x + y + z + w) * F4;
@@ -343,7 +343,7 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalRidgedMulti(WN_DECIMAL x, WN
 // 2D Single
 WN_INLINE WN_DECIMAL WasmNoise::GetSimplex(WN_DECIMAL x, WN_DECIMAL y) const
 {
-  return SingleSimplex(0, x * frequency, y * frequency);
+  return SingleSimplex(x * frequency, y * frequency);
 }
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexStrip(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction)
@@ -359,7 +359,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexSquare(WN_DECIMAL startX, WN_DECIMAL 
 // 3D Single
 WN_INLINE WN_DECIMAL WasmNoise::GetSimplex(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
 {
-  return SingleSimplex(0, x * frequency, y * frequency, z * frequency);
+  return SingleSimplex(x * frequency, y * frequency, z * frequency);
 }
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction)
@@ -380,7 +380,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexCube(WN_DECIMAL startX, WN_DECIMAL st
 // 4D Single
 WN_INLINE WN_DECIMAL WasmNoise::GetSimplex(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w) const
 {
-  return SingleSimplex(0, x * frequency, y * frequency, z * frequency, w * frequency);
+  return SingleSimplex(x * frequency, y * frequency, z * frequency, w * frequency);
 }
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 length, StripDirection direction)

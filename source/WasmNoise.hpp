@@ -255,12 +255,22 @@ private:
 
   void CalculateFractalBounding();
 
-  using Single2DFPtr = WN_DECIMAL(WasmNoise::*)(uint8, WN_DECIMAL, WN_DECIMAL) const; 
-  using Single3DFPtr = WN_DECIMAL(WasmNoise::*)(uint8, WN_DECIMAL, WN_DECIMAL, WN_DECIMAL) const;
-  using Single4DFPtr = WN_DECIMAL(WasmNoise::*)(uint8, WN_DECIMAL, WN_DECIMAL, WN_DECIMAL, WN_DECIMAL) const;
+  using Single2DFPtr = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL, uint8) const; 
+  using Single3DFPtr = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL, WN_DECIMAL, uint8) const;
+  using Single4DFPtr = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL, WN_DECIMAL, WN_DECIMAL, uint8) const;
   using Fractal2DFPtr = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL);
   using Fractal3DFPtr = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL, WN_DECIMAL);
   using Fractal4DFPtr = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL, WN_DECIMAL, WN_DECIMAL);
+
+  // Get* Templates
+  template<class InternalFunc, class ...InternalArgs, class NoiseFunc, class... Args>
+  WN_INLINE WN_DECIMAL *GetStrip(InternalFunc internalFunc, InternalArgs... internalArgs, NoiseFunc noiseFunc, Args... noiseArgs);
+
+  template<class InternalFunc, class ...InternalArgs, class NoiseFunc, class... Args>
+  WN_INLINE WN_DECIMAL *GetSquare(InternalFunc internalFunc, InternalArgs... internalArgs, NoiseFunc noiseFunc, Args... noiseArgs);
+
+  template<class InternalFunc, class ...InternalArgs, class NoiseFunc, class... Args>
+  WN_INLINE WN_DECIMAL *GetCube(InternalFunc internalFunc, InternalArgs... internalArgs, NoiseFunc noiseFunc, Args... noiseArgs);
 
   // 2D
   WN_INLINE WN_DECIMAL *GetStrip2D(Single2DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction);
@@ -293,8 +303,8 @@ private:
 
 #if defined(WN_INCLUDE_PERLIN) || defined(WN_INCLUDE_PERLIN_FRACTAL)
   // Regular Perlin Noise Functions, necessary for both regular and fractal functions
-  WN_INLINE WN_DECIMAL SinglePerlin(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
-  WN_INLINE WN_DECIMAL SinglePerlin(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;  
+  WN_INLINE WN_DECIMAL SinglePerlin(WN_DECIMAL x, WN_DECIMAL y, uint8 offset=0) const;
+  WN_INLINE WN_DECIMAL SinglePerlin(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, uint8 offset=0) const;  
 #endif 
 
 #ifdef WN_INCLUDE_PERLIN_FRACTAL
@@ -312,9 +322,9 @@ private:
 
 #if defined(WN_INCLUDE_SIMPLEX) || defined(WN_INCLUDE_SIMPLEX_FRACTAL)
   // Regular Simplex Noise Functions, necessary for both regular and fractal functions
-  WN_INLINE WN_DECIMAL SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
-  WN_INLINE WN_DECIMAL SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
-  WN_INLINE WN_DECIMAL SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w) const;
+  WN_INLINE WN_DECIMAL SingleSimplex(WN_DECIMAL x, WN_DECIMAL y, uint8 offset=0) const;
+  WN_INLINE WN_DECIMAL SingleSimplex(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, uint8 offset=0) const;
+  WN_INLINE WN_DECIMAL SingleSimplex(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w, uint8 offset=0) const;
 #endif
 
 #ifdef WN_INCLUDE_SIMPLEX_FRACTAL
@@ -337,12 +347,12 @@ private:
 
 #if defined(WN_INCLUDE_CELLULAR) || defined(WN_INCLUDE_CELLULAR_FRACTAL)
   // 2D
-  WN_INLINE WN_DECIMAL SingleCellular(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
-  WN_INLINE WN_DECIMAL SingleCellular2Edge(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
+  WN_INLINE WN_DECIMAL SingleCellular(WN_DECIMAL x, WN_DECIMAL y, uint8 offset=0) const;
+  WN_INLINE WN_DECIMAL SingleCellular2Edge(WN_DECIMAL x, WN_DECIMAL y, uint8 offset=0) const;
 
   // 3D
-  WN_INLINE WN_DECIMAL SingleCellular(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
-  WN_INLINE WN_DECIMAL SingleCellular2Edge(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
+  WN_INLINE WN_DECIMAL SingleCellular(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, uint8 offset=0) const;
+  WN_INLINE WN_DECIMAL SingleCellular2Edge(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, uint8 offset=0) const;
 #endif // WN_INCLUDE_CELLULAR || WN_INCLUDE_CELLULAR_FRACTAL
 
 #ifdef WN_INCLUDE_CELLULAR_FRACTAL

@@ -2,6 +2,7 @@
 #include "WasmNoise.Common.hpp"
 #include "xoroshiro128plus.hpp"
 #include "uniform_int_distribution.hpp"
+#include "invoke.hpp"
 
 #if defined(WN_INCLUDE_PERLIN) || defined(WN_INCLUDE_PERLIN_FRACTAL)
 #include "WasmNoise.Perlin.hpp"
@@ -644,4 +645,22 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCube4D(Fractal4DFPtr noiseFunc, WN_DECIMAL s
     }
   }
   return values;
+}
+
+template<class InternalFunc, class ...InternalArgs, class NoiseFunc, class... Args>
+WN_INLINE WN_DECIMAL *WasmNoise::GetStrip(InternalFunc internalFunc, InternalArgs... internalArgs, NoiseFunc noiseFunc, Args... noiseArgs)
+{
+  return invoke(internalFunc, internalArgs..., noiseFunc, noiseArgs...);
+}
+
+template<class InternalFunc, class ...InternalArgs, class NoiseFunc, class... Args>
+WN_INLINE WN_DECIMAL *WasmNoise::GetSquare(InternalFunc internalFunc, InternalArgs... internalArgs, NoiseFunc noiseFunc, Args... noiseArgs)
+{
+  return invoke(internalFunc, internalArgs..., noiseFunc, noiseArgs...);
+}
+
+template<class InternalFunc, class ...InternalArgs, class NoiseFunc, class... Args>
+WN_INLINE WN_DECIMAL *WasmNoise::GetCube(InternalFunc internalFunc, InternalArgs... internalArgs, NoiseFunc noiseFunc, Args... noiseArgs)
+{
+  return invoke(internalFunc, internalArgs..., noiseFunc, noiseArgs...);
 }

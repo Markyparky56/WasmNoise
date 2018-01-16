@@ -9,7 +9,7 @@
 // These functions are required for both regular and fractal perlin noise
 
 // 2D Perlin
-WN_INLINE WN_DECIMAL WasmNoise::SinglePerlin(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const
+WN_INLINE WN_DECIMAL WasmNoise::SinglePerlin(WN_DECIMAL x, WN_DECIMAL y, uint8 offset) const
 {
   int32 x0 = FastFloor(x);
   int32 y0 = FastFloor(y);
@@ -45,7 +45,7 @@ WN_INLINE WN_DECIMAL WasmNoise::SinglePerlin(uint8 offset, WN_DECIMAL x, WN_DECI
 }
 
 // 3D Perlin
-WN_INLINE WN_DECIMAL WasmNoise::SinglePerlin(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
+WN_INLINE WN_DECIMAL WasmNoise::SinglePerlin(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, uint8 offset) const
 {
   int32 x0 = FastFloor(x);
   int32 y0 = FastFloor(y);
@@ -134,12 +134,59 @@ WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinFractalRidgedMulti(WN_DECIMAL x, WN_
 // 2D Single
 WN_INLINE WN_DECIMAL WasmNoise::GetPerlin(WN_DECIMAL x, WN_DECIMAL y) const
 {
-  return SinglePerlin(0, x * frequency, y * frequency);
+  return SinglePerlin(x * frequency, y * frequency);
 }
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinStrip(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction)
 {
   return GetStrip2D(&WasmNoise::SinglePerlin, startX, startY, length, direction);
+}
+
+WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinStrip(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction)
+{
+  //return GetStrip(&WasmNoise::SinglePerlin, startX, startY, length, direction);
+  auto strip2DFunc = [&](uint32 length, StripDirection direction, auto noiseFunc, auto... noiseArgs)
+  {
+    WN_DECIMAL *values = returnHelper.NewArray(length);  
+    auto singleFunc = [this](auto noiseFunc, auto obj, uint8 offset, WN_DECIMAL... posArgs)
+    {
+      WN_DECIMAL start[3] = { noiseArgs... };
+      
+      return invoke(noiseFunc, *this, posArgs..., offset);
+    }
+    auto fractalFunc = [this](auto noiseFunc, auto obj, WN_DECIMAL... posArgs)
+    {
+      return invoke(noiseFunc, *this, posArgs...);
+    }
+    auto func = (sizeof...(noiseArgs) == 3) ? singleFunc : fractalFunc;
+
+    switch(direction)
+    {
+    case StripDirection::XAxis:
+    {
+      for(uint32 i = 0; i < length; i++)
+      {
+        //values[i] = (this->*noiseFunc)(0, (startX+i) * frequency, startY * frequency);
+        (start[0]+i) * frequency;
+        values[i] = invoke([&](auto noiseFunc, auto... args), *this, noiseArgs...);
+      }
+      return values;
+    }
+    case StripDirection::YAxis:
+    {
+      for(uint32 i = 0; i < length; i++)
+      {
+        values[i] = (this->*noiseFunc)(0, startX * frequency, (startY+i) * frequency);
+      }
+      return values;
+    }
+    default: // Invalid direction in 2D Space
+      ABORT();
+      // Return a null value in case aborts are disabled
+      return nullptr;
+    }
+  }
+  return GetStrip(strip2DFunc, length, direction, &WasmNoise::SinglePerlin, startX, startY, 0);
 }
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinSquare(WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height)  
@@ -150,7 +197,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinSquare(WN_DECIMAL startX, WN_DECIMAL s
 // 3D Single
 WN_INLINE WN_DECIMAL WasmNoise::GetPerlin(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const
 {
-  return SinglePerlin(0, x * frequency, y * frequency, z * frequency);
+  return SinglePerlin(x * frequency, y * frequency, z * frequency);
 }
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction)

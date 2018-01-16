@@ -77,6 +77,11 @@ namespace type_traits
     {typedef typename remove_volatile<typename remove_const<T>::type>::type type;};
   template<class T> using remove_cv_t = typename remove_cv<T>::type;
 
+  // enable_if  
+  template<bool B, class T = void> struct enable_if {};
+  
+  template<class T> struct enable_if<true, T> { typedef T type; };
+
   // conditional
   template<bool B, class If, class Then> struct conditional {typedef If type;};
   template<class If, class Then> struct conditional<false, If, Then> {typedef Then type;};
