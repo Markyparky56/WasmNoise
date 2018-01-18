@@ -1,6 +1,7 @@
 #pragma once
 #include "WasmNoise.hpp"
 #include "WasmNoise.Common.hpp"
+#include "invoke.hpp"
 
 // Fractal Functions
 template<class NoiseFunc, class... Args> WN_INLINE WN_DECIMAL WasmNoise::SingleFractalFBM(NoiseFunc func, Args... args)
