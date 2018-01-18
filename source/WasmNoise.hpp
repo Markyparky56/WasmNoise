@@ -271,8 +271,8 @@ private:
   template<class NoiseFunc=FPtr3D> WN_INLINE WN_DECIMAL *GetSquare(NoiseFunc func, uint32 width, uint32 height, SquarePlane plane, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ);
   template<class NoiseFunc=FPtr4D> WN_INLINE WN_DECIMAL *GetSquare(NoiseFunc func, uint32 width, uint32 height, SquarePlane plane, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW);
 
-  template<class NoiseFunc=FPtr3D> WN_INLINE WN_DECIMAL *GetCube(NoiseFunc, uint32 width, uint32 height, uint32 depth, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ);
-  template<class NoiseFunc=FPtr4D> WN_INLINE WN_DECIMAL *GetCube(NoiseFunc, uint32 width, uint32 height, uint32 depth, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW); 
+  template<class NoiseFunc=FPtr3D> WN_INLINE WN_DECIMAL *GetCube(NoiseFunc func, uint32 width, uint32 height, uint32 depth, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ);
+  template<class NoiseFunc=FPtr4D> WN_INLINE WN_DECIMAL *GetCube(NoiseFunc func, uint32 width, uint32 height, uint32 depth, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW); 
 
 #if defined(WN_INCLUDE_PERLIN_FRACTAL) || defined(WN_INCLUDE_SIMPLEX_FRACTAL) || defined(WN_INCLUDE_CELLULAR_FRACTAL)
   // Fractal templates
@@ -307,9 +307,9 @@ private:
   WN_INLINE WN_DECIMAL SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
   WN_INLINE WN_DECIMAL SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
   WN_INLINE WN_DECIMAL SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w) const;
-  WN_INLINE WN_DECIMAL SingleSimplex(WN_DECIMAL x, WN_DECIMAL y);
-  WN_INLINE WN_DECIMAL SingleSimplex(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
-  WN_INLINE WN_DECIMAL SingleSimplex(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
+  WN_INLINE WN_DECIMAL SingleSimplexNoOffset(WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL SingleSimplexNoOffset(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL SingleSimplexNoOffset(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
 #endif
 
 #ifdef WN_INCLUDE_SIMPLEX_FRACTAL

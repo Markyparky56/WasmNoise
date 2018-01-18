@@ -287,17 +287,17 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DEC
 
 // Functionally aliases which fill in the offset parameter, allowing them to share
 // the same parameter order as the fractal functions
-WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinNoOffset(WN_DECIMAL x, WN_DECIMAL y)
+WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexNoOffset(WN_DECIMAL x, WN_DECIMAL y)
 {
   return SingleSimplex(0, x, y);
 }
 
-WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinNoOffset(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
+WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexNoOffset(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
   return SingleSimplex(0, x, y, z);
 }
 
-WN_INLINE WN_DECIMAL WasmNoise::SinglePerlinNoOffset(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w)
+WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexNoOffset(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w)
 {
   return SingleSimplex(0, x, y, z, w);
 }

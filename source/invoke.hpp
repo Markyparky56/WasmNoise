@@ -41,7 +41,7 @@ WN_INLINE auto invoke(Ret T::*func, Arg&& arg) ->
 
 template <class T, class Ret, class... Params, class U, class... Args>
 WN_INLINE auto invoke(Ret (T::*func)(Params...), U&& u, Args&&... args) ->
-  decltype((Forward<U>(u)).*func(Forward<Args>(args)...)) 
+  decltype((Forward<U>(u).*func)(Forward<Args>(args)...))
 {
   return (Forward<U>(u).*func)(Forward<Args>(args)...);
 }

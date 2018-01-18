@@ -562,7 +562,7 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleCellularNoOffset(WN_DECIMAL x, WN_DECIMAL 
   return SingleCellular(0, x, y, z);
 }
 
-WN_INLINE WN_DECIMAL WasmNouse::SingleCellular2EdgeNoOffset(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
+WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2EdgeNoOffset(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
   return SingleCellular2Edge(0, x, y, z);
 }

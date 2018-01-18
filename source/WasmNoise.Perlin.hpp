@@ -266,9 +266,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetPerlinFractalCube(WN_DECIMAL startX, WN_DECI
 {
   switch(fractalType)
   {
-  case FractalType::FBM:          return GetCube<>(&WasmNoise::SinglePerlinFractalFBM, width, height, depth, , startX, startY, startZ);
-  case FractalType::Billow:       return GetCube<>(&WasmNoise::SinglePerlinFractalBillow, width, height, depth, , startX, startY, startZ);
-  case FractalType::RidgedMulti:  return GetCube<>(&WasmNoise::SinglePerlinFractalRidgedMulti, width, height, depth, , startX, startY, startZ);
+  case FractalType::FBM:          return GetCube<>(&WasmNoise::SinglePerlinFractalFBM, width, height, depth, startX, startY, startZ);
+  case FractalType::Billow:       return GetCube<>(&WasmNoise::SinglePerlinFractalBillow, width, height, depth, startX, startY, startZ);
+  case FractalType::RidgedMulti:  return GetCube<>(&WasmNoise::SinglePerlinFractalRidgedMulti, width, height, depth, startX, startY, startZ);
   default:
     ABORT();
     return nullptr;

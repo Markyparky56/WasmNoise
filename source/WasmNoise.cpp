@@ -101,7 +101,7 @@ WN_INLINE WN_DECIMAL WasmNoise::GradCoord4D(uint8 offset, int32 x, int32 y, int3
 // Base Array Functions
 
 // 2D Strip
-template<class NoiseFunc=FPtr2D> 
+template<class NoiseFunc> 
 WN_INLINE WN_DECIMAL *WasmNoise::GetStrip(NoiseFunc func, uint32 length, StripDirection direction, WN_DECIMAL startX, WN_DECIMAL startY)
 {
   switch(direction)
@@ -131,7 +131,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetStrip(NoiseFunc func, uint32 length, StripDi
 }
 
 // 3D Strip
-template<class NoiseFunc=FPtr3D> 
+template<class NoiseFunc> 
 WN_INLINE WN_DECIMAL *WasmNoise::GetStrip(NoiseFunc func, uint32 length, StripDirection direction, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ)
 {
   switch(direction)
@@ -150,7 +150,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetStrip(NoiseFunc func, uint32 length, StripDi
     WN_DECIMAL *values = returnHelper.NewArray(length);    
     for(uint32 i = 0; i < length; i++)
     {
-      value[i] = invoke(func, *this, startX * frequency, (startY+i) * frequency, startZ * frequency);
+      values[i] = invoke(func, *this, startX * frequency, (startY+i) * frequency, startZ * frequency);
     }
     return values;
   }
@@ -159,7 +159,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetStrip(NoiseFunc func, uint32 length, StripDi
     WN_DECIMAL *values = returnHelper.NewArray(length);    
     for(uint32 i = 0; i < length; i++)
     {
-      value[i] = invoke(func, *this, startX * frequency, startY * frequency, (startZ+i) * frequency);
+      values[i] = invoke(func, *this, startX * frequency, startY * frequency, (startZ+i) * frequency);
     }
     return values;
   }
@@ -170,7 +170,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetStrip(NoiseFunc func, uint32 length, StripDi
 }
 
 // 4D Strip
-template<class NoiseFunc=FPtr4D>
+template<class NoiseFunc>
 WN_INLINE WN_DECIMAL *WasmNoise::GetStrip(NoiseFunc func, uint32 length, StripDirection direction, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW)
 {
   switch(direction)
@@ -218,7 +218,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetStrip(NoiseFunc func, uint32 length, StripDi
 }
 
 // 2D Square
-template<class NoiseFunc=FPtr2D> 
+template<class NoiseFunc> 
 WN_INLINE WN_DECIMAL *WasmNoise::GetSquare(NoiseFunc func, uint32 width, uint32 height, WN_DECIMAL startX, WN_DECIMAL startY)
 {
   WN_DECIMAL *values = returnHelper.NewArray(width*height);
@@ -233,7 +233,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetSquare(NoiseFunc func, uint32 width, uint32 
 }
 
 // 3D Square
-template<class NoiseFunc=FPtr3D> 
+template<class NoiseFunc> 
 WN_INLINE WN_DECIMAL *WasmNoise::GetSquare(NoiseFunc func, uint32 width, uint32 height, SquarePlane plane, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ)
 {
   switch(plane)
@@ -281,7 +281,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetSquare(NoiseFunc func, uint32 width, uint32 
 }
 
 // 4D Square
-template<class NoiseFunc=FPtr4D> 
+template<class NoiseFunc> 
 WN_INLINE WN_DECIMAL *WasmNoise::GetSquare(NoiseFunc func, uint32 width, uint32 height, SquarePlane plane, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW)
 {
   switch(plane)
@@ -365,35 +365,37 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetSquare(NoiseFunc func, uint32 width, uint32 
 }
 
 // 3D Cube
-template<class NoiseFunc=FPtr3D> 
-WN_INLINE WN_DECIMAL *WasmNoise::GetCube(NoiseFunc, uint32 width, uint32 height, uint32 depth, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ)
+template<class NoiseFunc> 
+WN_INLINE WN_DECIMAL *WasmNoise::GetCube(NoiseFunc func, uint32 width, uint32 height, uint32 depth, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ)
 {
   WN_DECIMAL *values = returnHelper.NewArray(width*height*depth);
   for(uint32 z = 0; z < depth; z++)
   {
     for(uint32 y = 0; y < height; y++)
     {
-      for(uint32 z = 0; z < height; z++)
+      for(uint32 x = 0; x < height; x++)
       {
         values[(height * width * z) + (width * y) + x] = invoke(func, *this, (startX+x) * frequency, (startY+y) * frequency, (startZ+z) * frequency);
       }
     }
   }
+  return values;
 }
 
 // 4D Cube
-template<class NoiseFunc=FPtr4D> 
-WN_INLINE WN_DECIMAL *WasmNoise::GetCube(NoiseFunc, uint32 width, uint32 height, uint32 depth, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW)
+template<class NoiseFunc> 
+WN_INLINE WN_DECIMAL *WasmNoise::GetCube(NoiseFunc func, uint32 width, uint32 height, uint32 depth, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW)
 {
   WN_DECIMAL *values = returnHelper.NewArray(width*height*depth);
   for(uint32 z = 0; z < depth; z++)
   {
     for(uint32 y = 0; y < height; y++)
     {
-      for(uint32 z = 0; z < height; z++)
+      for(uint32 x = 0; x < height; x++)
       {
         values[(height * width * z) + (width * y) + x] = invoke(func, *this, (startX+x) * frequency, (startY+y) * frequency, (startZ+z) * frequency, startW * frequency);
       }
     }
   }
+  return values;
 }
