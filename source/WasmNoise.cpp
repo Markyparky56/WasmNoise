@@ -2,6 +2,7 @@
 #include "WasmNoise.Common.hpp"
 #include "xoroshiro128plus.hpp"
 #include "uniform_int_distribution.hpp"
+#include "invoke.hpp"
 
 #if defined(WN_INCLUDE_PERLIN) || defined(WN_INCLUDE_PERLIN_FRACTAL)
 #include "WasmNoise.Perlin.hpp"
@@ -98,392 +99,261 @@ WN_INLINE WN_DECIMAL WasmNoise::GradCoord4D(uint8 offset, int32 x, int32 y, int3
 }
 
 // Base Array Functions
-// 2D - Single
-WN_INLINE WN_DECIMAL *WasmNoise::GetStrip2D(Single2DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction) 
+
+// 2D Strip
+template<class NoiseFunc=FPtr2D> 
+WN_INLINE WN_DECIMAL *WasmNoise::GetStrip(NoiseFunc func, uint32 length, StripDirection direction, WN_DECIMAL startX, WN_DECIMAL startY)
 {
-  WN_DECIMAL *values = returnHelper.NewArray(length);  
   switch(direction)
   {
   case StripDirection::XAxis:
   {
+    WN_DECIMAL *values = returnHelper.NewArray(length);
     for(uint32 i = 0; i < length; i++)
     {
-      values[i] = (this->*noiseFunc)(0, (startX+i) * frequency, startY * frequency);
+      values[i] = invoke(func, *this, (startX+i) * frequency, startY * frequency);
     }
     return values;
   }
   case StripDirection::YAxis:
   {
+    WN_DECIMAL *values = returnHelper.NewArray(length);
     for(uint32 i = 0; i < length; i++)
     {
-      values[i] = (this->*noiseFunc)(0, startX * frequency, (startY+i) * frequency);
+      values[i] = invoke(func, *this, startX * frequency, (startY+i) * frequency);
     }
     return values;
   }
-  default: // Invalid direction in 2D Space
+  default: // Z and W are invalid directions in 2D-space
     ABORT();
-    // Return a null value in case aborts are disabled
+    return nullptr; // ABORT is likely disabled so return a nullptr
+  }
+}
+
+// 3D Strip
+template<class NoiseFunc=FPtr3D> 
+WN_INLINE WN_DECIMAL *WasmNoise::GetStrip(NoiseFunc func, uint32 length, StripDirection direction, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ)
+{
+  switch(direction)
+  {
+  case StripDirection::XAxis:
+  {
+    WN_DECIMAL *values = returnHelper.NewArray(length);
+    for(uint32 i = 0; i < length; i++)
+    {
+      values[i] = invoke(func, *this, (startX+i) * frequency, startY * frequency, startZ * frequency);
+    }
+    return values;
+  }
+  case StripDirection::YAxis:
+  {
+    WN_DECIMAL *values = returnHelper.NewArray(length);    
+    for(uint32 i = 0; i < length; i++)
+    {
+      value[i] = invoke(func, *this, startX * frequency, (startY+i) * frequency, startZ * frequency);
+    }
+    return values;
+  }
+  case StripDirection::ZAxis:
+  {
+    WN_DECIMAL *values = returnHelper.NewArray(length);    
+    for(uint32 i = 0; i < length; i++)
+    {
+      value[i] = invoke(func, *this, startX * frequency, startY * frequency, (startZ+i) * frequency);
+    }
+    return values;
+  }
+  default: // W is an invalid direction in 3D-space
+    ABORT();
+    return nullptr;
+  }
+}
+
+// 4D Strip
+template<class NoiseFunc=FPtr4D>
+WN_INLINE WN_DECIMAL *WasmNoise::GetStrip(NoiseFunc func, uint32 length, StripDirection direction, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW)
+{
+  switch(direction)
+  {
+  case StripDirection::XAxis:
+  {
+    WN_DECIMAL *values = returnHelper.NewArray(length);
+    for(uint32 i = 0; i < length; i++)
+    {
+      values[i] = invoke(func, *this, (startX+i) * frequency, startY * frequency, startZ * frequency, startW * frequency);
+    }
+    return values;
+  }
+  case StripDirection::YAxis:
+  {
+    WN_DECIMAL *values = returnHelper.NewArray(length);
+    for(uint32 i = 0; i < length; i++)
+    {
+      values[i] = invoke(func, *this, startX * frequency, (startY+i) * frequency, startZ * frequency, startW * frequency);
+    }
+    return values;
+  }
+  case StripDirection::ZAxis:
+  {
+    WN_DECIMAL *values = returnHelper.NewArray(length);
+    for(uint32 i = 0; i < length; i++)
+    {
+      values[i] = invoke(func, *this, startX * frequency, startY * frequency, (startZ+i) * frequency, startW * frequency);
+    }
+    return values;
+  }
+  case StripDirection::WAxis:
+  {
+    WN_DECIMAL *values = returnHelper.NewArray(length);
+    for(uint32 i = 0; i < length; i++)
+    {
+      values[i] = invoke(func, *this, startX * frequency, startY * frequency, startZ * frequency, (startW+i) * frequency);
+    }
+    return values;
+  }
+  default: // Should never happen unless someone is sending non enum values
+    ABORT();
     return nullptr;
   }  
 }
 
-WN_INLINE WN_DECIMAL *WasmNoise::GetSquare2D(Single2DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height)
+// 2D Square
+template<class NoiseFunc=FPtr2D> 
+WN_INLINE WN_DECIMAL *WasmNoise::GetSquare(NoiseFunc func, uint32 width, uint32 height, WN_DECIMAL startX, WN_DECIMAL startY)
 {
   WN_DECIMAL *values = returnHelper.NewArray(width*height);
   for(uint32 y = 0; y < height; y++)
   {
     for(uint32 x = 0; x < width; x++)
     {
-      values[(width * y) + x] = (this->*noiseFunc)(0, (startX+x) * frequency, (startY+y) * frequency);
+      values[(width*y) + x] = invoke(func, *this, (startX+x) * frequency, (startY+y) * frequency);
     }
   }
   return values;
 }
 
-// 2D - Fractal
-WN_INLINE WN_DECIMAL *WasmNoise::GetStrip2D(Fractal2DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction) 
+// 3D Square
+template<class NoiseFunc=FPtr3D> 
+WN_INLINE WN_DECIMAL *WasmNoise::GetSquare(NoiseFunc func, uint32 width, uint32 height, SquarePlane plane, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ)
 {
-  WN_DECIMAL *values = returnHelper.NewArray(length);  
-  switch(direction)
-  {
-  case StripDirection::XAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)((startX+i) * frequency, startY * frequency);
-    }
-    return values;
-  }
-  case StripDirection::YAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)(startX * frequency, (startY+i) * frequency);
-    }
-    return values;
-  }
-  default: // Invalid direction in 2D Space
-    ABORT();
-    // Return a null value in case aborts are disabled
-    return nullptr;
-  }  
-}
-
-WN_INLINE WN_DECIMAL *WasmNoise::GetSquare2D(Fractal2DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height)
-{
-  WN_DECIMAL *values = returnHelper.NewArray(width*height);
-  for(uint32 y = 0; y < height; y++)
-  {
-    for(uint32 x = 0; x < width; x++)
-    {
-      values[(width * y) + x] = (this->*noiseFunc)((startX+x) * frequency, (startY+y) * frequency);
-    }
-  }
-  return values;
-}
-
-// 3D - Single
-WN_INLINE WN_DECIMAL *WasmNoise::GetStrip3D(Single3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction)
-{
-  WN_DECIMAL *values = returnHelper.NewArray(length);
-  switch(direction)
-  {
-  case StripDirection::XAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)(0, (startX + i) * frequency, startY *frequency, startZ * frequency);
-    }
-    return values;
-  }
-  case StripDirection::YAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)(0, startX * frequency, (startY + i) *frequency, startZ * frequency);
-    }
-    return values;
-  }
-  case StripDirection::ZAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)(0, startX * frequency, startY *frequency, (startZ + i) * frequency);
-    }
-    return values;
-  }
-  default:
-    ABORT();
-    return nullptr;
-  }  
-}
-
-WN_INLINE WN_DECIMAL *WasmNoise::GetSquare3D(Single3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane)
-{
-  WN_DECIMAL *values = returnHelper.NewArray(width*height);
   switch(plane)
   {
   case SquarePlane::XYPlane:
   {
+    WN_DECIMAL *values = returnHelper.NewArray(width*height);
     for(uint32 y = 0; y < height; y++)
     {
       for(uint32 x = 0; x < width; x++)
       {
-        values[(width * y) + x] = (this->*noiseFunc)(0, (startX+x) * frequency, (startY+y) * frequency, startZ * frequency);
+        values[(width*y) + x] = invoke(func, *this, (startX+x) * frequency, (startY+y) * frequency, startZ * frequency);
+      }
+    }
+    return values;
+  }
+  case SquarePlane::XZPlane:
+  {
+    WN_DECIMAL *values = returnHelper.NewArray(width*height);
+    for(uint32 z = 0; z < height; z++)
+    {
+      for(uint32 x = 0; x < width; x++)
+      {
+        values[(width*z) + x] = invoke(func, *this, (startX+x) * frequency, startY * frequency, (startZ+z) * frequency);
+      }
+    }
+    return values;
+  }
+  case SquarePlane::ZYPlane:
+  {
+    WN_DECIMAL *values = returnHelper.NewArray(width*height);
+    for(uint32 y = 0; y < height; y++)
+    {
+      for(uint32 z = 0; z < width; z++)
+      {
+        values[(width*y) + z] = invoke(func, *this, startX * frequency, (startY+y) * frequency, (startZ+z) * frequency);
+      }
+    }
+    return values;
+  }
+  default: // W-planes are invalid in 3D-space
+    ABORT();
+    return nullptr;
+  }
+}
+
+// 4D Square
+template<class NoiseFunc=FPtr4D> 
+WN_INLINE WN_DECIMAL *WasmNoise::GetSquare(NoiseFunc func, uint32 width, uint32 height, SquarePlane plane, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW)
+{
+  switch(plane)
+  {
+  case SquarePlane::XYPlane:
+  {
+    WN_DECIMAL *values = returnHelper.NewArray(width*height);    
+    for(uint32 y = 0; y < height; y++)
+    {
+      for(uint32 x = 0; x < width; x++)
+      {
+        values[(width * y) + x] = invoke(func, *this, (startX+x) * frequency, (startY+y) * frequency, startZ * frequency, startW * frequency);
       }
     }
     return values;  
   }
   case SquarePlane::XZPlane:
   {
+    WN_DECIMAL *values = returnHelper.NewArray(width*height);        
     for(uint32 z = 0; z < height; z++)
     {
       for(uint32 x = 0; x < width; x++)
       {
-        values[(width * z) + x] = (this->*noiseFunc)(0, (startX+x) * frequency, startY * frequency, (startZ+z) * frequency);
+        values[(width * z) + x] = invoke(func, *this, (startX+x) * frequency, startY * frequency, (startZ+z) * frequency, startW * frequency);
       }
     }
     return values;  
   }
   case SquarePlane::ZYPlane:
   {
+    WN_DECIMAL *values = returnHelper.NewArray(width*height);        
     for(uint32 y = 0; y < height; y++)
     {
       for(uint32 z = 0; z < width; z++)
       {
-        values[(width * y) + z] = (this->*noiseFunc)(0, startX * frequency, (startY+y) * frequency, (startZ+z) * frequency);
-      }
-    }
-    return values;  
-  }
-  default:
-    ABORT();
-    return nullptr;  
-  }
-}
-
-WN_INLINE WN_DECIMAL *WasmNoise::GetCube3D(Single3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth)
-{
-  WN_DECIMAL *values = returnHelper.NewArray(width*height*depth);
-  for(uint32 z = 0; z < depth; z++)
-  {
-    for(uint32 y = 0; y < height; y++)
-    {
-      for(uint32 x = 0; x < width; x++)
-      {
-        values[(height * width * z) + (width * y) + x] = (this->*noiseFunc)(0, (startX+x) * frequency, (startY+y) * frequency, (startZ+z) * frequency);
-      }
-    }
-  }
-  return values;
-}
-
-// 3D - Fractal
-WN_INLINE WN_DECIMAL *WasmNoise::GetStrip3D(Fractal3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction)
-{
-  WN_DECIMAL *values = returnHelper.NewArray(length);
-  switch(direction)
-  {
-  case StripDirection::XAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)((startX + i) * frequency, startY *frequency, startZ * frequency);
-    }
-    return values;
-  }
-  case StripDirection::YAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)(startX * frequency, (startY + i) *frequency, startZ * frequency);
-    }
-    return values;
-  }
-  case StripDirection::ZAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)(startX * frequency, startY *frequency, (startZ + i) * frequency);
-    }
-    return values;
-  }
-  default:
-    ABORT();
-    return nullptr;
-  }  
-}
-
-WN_INLINE WN_DECIMAL *WasmNoise::GetSquare3D(Fractal3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane)
-{
-  WN_DECIMAL *values = returnHelper.NewArray(width*height);
-  switch(plane)
-  {
-  case SquarePlane::XYPlane:
-  {
-    for(uint32 y = 0; y < height; y++)
-    {
-      for(uint32 x = 0; x < width; x++)
-      {
-        values[(width * y) + x] = (this->*noiseFunc)((startX+x) * frequency, (startY+y) * frequency, startZ * frequency);
-      }
-    }
-    return values;  
-  }
-  case SquarePlane::XZPlane:
-  {
-    for(uint32 z = 0; z < height; z++)
-    {
-      for(uint32 x = 0; x < width; x++)
-      {
-        values[(width * z) + x] = (this->*noiseFunc)((startX+x) * frequency, startY * frequency, (startZ+z) * frequency);
-      }
-    }
-    return values;  
-  }
-  case SquarePlane::ZYPlane:
-  {
-    for(uint32 y = 0; y < height; y++)
-    {
-      for(uint32 z = 0; z < width; z++)
-      {
-        values[(width * y) + z] = (this->*noiseFunc)(startX * frequency, (startY+y) * frequency, (startZ+z) * frequency);
-      }
-    }
-    return values;  
-  }
-  default:
-    ABORT();
-    return nullptr;  
-  }
-}
-
-WN_INLINE WN_DECIMAL *WasmNoise::GetCube3D(Fractal3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth)
-{
-  WN_DECIMAL *values = returnHelper.NewArray(width*height*depth);
-  for(uint32 z = 0; z < depth; z++)
-  {
-    for(uint32 y = 0; y < height; y++)
-    {
-      for(uint32 x = 0; x < width; x++)
-      {
-        values[(height * width * z) + (width * y) + x] = (this->*noiseFunc)((startX+x) * frequency, (startY+y) * frequency, (startZ+z) * frequency);
-      }
-    }
-  }
-  return values;
-}
-
-// 4D - Single
-WN_INLINE WN_DECIMAL *WasmNoise::GetStrip4D(Single4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 length, StripDirection direction)
-{
-  WN_DECIMAL *values = returnHelper.NewArray(length);
-  switch(direction)
-  {
-  case StripDirection::XAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)(0, (startX + i) * frequency, startY * frequency, startZ * frequency, startW * frequency);
-    }
-    return values;
-  }
-  case StripDirection::YAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)(0, startX * frequency, (startY + i) * frequency, startZ * frequency, startW * frequency);
-    }
-    return values;
-  }
-  case StripDirection::ZAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)(0, startX * frequency, startY * frequency, (startZ + i) * frequency, startW * frequency);
-    }
-    return values;
-  }
-  case StripDirection::WAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)(0, startX * frequency, startY * frequency, startZ * frequency, (startW + i) * frequency);
-    }
-  }
-  default:
-    ABORT();
-    return nullptr;
-  }  
-}
-
-WN_INLINE WN_DECIMAL *WasmNoise::GetSquare4D(Single4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, SquarePlane plane)
-{
-  WN_DECIMAL *values = returnHelper.NewArray(width*height);
-  switch(plane)
-  {
-  case SquarePlane::XYPlane:
-  {
-    for(uint32 y = 0; y < height; y++)
-    {
-      for(uint32 x = 0; x < width; x++)
-      {
-        values[(width * y) + x] = (this->*noiseFunc)(0, (startX+x) * frequency, (startY+y) * frequency, startZ * frequency, startW * frequency);
-      }
-    }
-    return values;  
-  }
-  case SquarePlane::XZPlane:
-  {
-    for(uint32 z = 0; z < height; z++)
-    {
-      for(uint32 x = 0; x < width; x++)
-      {
-        values[(width * z) + x] = (this->*noiseFunc)(0, (startX+x) * frequency, startY * frequency, (startZ+z) * frequency, startW * frequency);
-      }
-    }
-    return values;  
-  }
-  case SquarePlane::ZYPlane:
-  {
-    for(uint32 y = 0; y < height; y++)
-    {
-      for(uint32 z = 0; z < width; z++)
-      {
-        values[(width * y) + z] = (this->*noiseFunc)(0, startX * frequency, (startY+y) * frequency, (startZ+z) * frequency, startW * frequency);
+        values[(width * y) + z] = invoke(func, *this, startX * frequency, (startY+y) * frequency, (startZ+z) * frequency, startW * frequency);
       }
     }
     return values;  
   }
   case SquarePlane::XWPlane:
   {
+    WN_DECIMAL *values = returnHelper.NewArray(width*height);        
     for(uint32 w = 0; w < height; w++)
     {
       for(uint32 x = 0; x < width; x++)
       {
-        values[(width * w) + x] = (this->*noiseFunc)(0, (startX+x) * frequency, startY * frequency, startZ * frequency, (startW+w) * frequency);
+        values[(width * w) + x] = invoke(func, *this, (startX+x) * frequency, startY * frequency, startZ * frequency, (startW+w) * frequency);
       }
     }
     return values;  
   }
   case SquarePlane::YWPlane:
   {
+    WN_DECIMAL *values = returnHelper.NewArray(width*height);        
     for(uint32 w = 0; w < height; w++)
     {
       for(uint32 y = 0; y < width; y++)
       {
-        values[(width * w) + y] = (this->*noiseFunc)(0, startX * frequency, (startY+y) * frequency, startZ * frequency, (startW+w) * frequency);
+        values[(width * w) + y] = invoke(func, *this, startX * frequency, (startY+y) * frequency, startZ * frequency, (startW+w) * frequency);
       }
     }
     return values;  
   }
   case SquarePlane::ZWPlane:
   {
+    WN_DECIMAL *values = returnHelper.NewArray(width*height);        
     for(uint32 w = 0; w < height; w++)
     {
       for(uint32 z = 0; z < width; z++)
       {
-        values[(width * w) + z] = (this->*noiseFunc)(0, startX * frequency, startY * frequency, (startZ+z) * frequency, (startW+w) * frequency);
+        values[(width * w) + z] = invoke(func, *this, startX * frequency, startY * frequency, (startZ+z) * frequency, (startW+w) * frequency);
       }
     }
     return values;  
@@ -494,154 +364,36 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetSquare4D(Single4DFPtr noiseFunc, WN_DECIMAL 
   }
 }
 
-WN_INLINE WN_DECIMAL *WasmNoise::GetCube4D(Single4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, uint32 depth)
+// 3D Cube
+template<class NoiseFunc=FPtr3D> 
+WN_INLINE WN_DECIMAL *WasmNoise::GetCube(NoiseFunc, uint32 width, uint32 height, uint32 depth, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ)
 {
   WN_DECIMAL *values = returnHelper.NewArray(width*height*depth);
   for(uint32 z = 0; z < depth; z++)
   {
     for(uint32 y = 0; y < height; y++)
     {
-      for(uint32 x = 0; x < width; x++)
+      for(uint32 z = 0; z < height; z++)
       {
-        values[(height * width * z) + (width * y) + x] = (this->*noiseFunc)(0, (startX+x) * frequency, (startY+y) * frequency, (startZ+z) * frequency, startW * frequency);
+        values[(height * width * z) + (width * y) + x] = invoke(func, *this, (startX+x) * frequency, (startY+y) * frequency, (startZ+z) * frequency);
       }
     }
-  }
-  return values;
-}
-
-// 4D - Fractal
-WN_INLINE WN_DECIMAL *WasmNoise::GetStrip4D(Fractal4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 length, StripDirection direction)
-{
-  WN_DECIMAL *values = returnHelper.NewArray(length);
-  switch(direction)
-  {
-  case StripDirection::XAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)((startX + i) * frequency, startY * frequency, startZ * frequency, startW * frequency);
-    }
-    return values;
-  }
-  case StripDirection::YAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)(startX * frequency, (startY + i) * frequency, startZ * frequency, startW * frequency);
-    }
-    return values;
-  }
-  case StripDirection::ZAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)(startX * frequency, startY * frequency, (startZ + i) * frequency, startW * frequency);
-    }
-    return values;
-  }
-  case StripDirection::WAxis:
-  {
-    for(uint32 i = 0; i < length; i++)
-    {
-      values[i] = (this->*noiseFunc)(startX * frequency, startY * frequency, startZ * frequency, (startW + i) * frequency);
-    }
-  }
-  default:
-    ABORT();
-    return nullptr;
-  }  
-}
-
-WN_INLINE WN_DECIMAL *WasmNoise::GetSquare4D(Fractal4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, SquarePlane plane)
-{
-  WN_DECIMAL *values = returnHelper.NewArray(width*height);
-  switch(plane)
-  {
-    case SquarePlane::XYPlane:
-  {
-    for(uint32 y = 0; y < height; y++)
-    {
-      for(uint32 x = 0; x < width; x++)
-      {
-        values[(width * y) + x] = (this->*noiseFunc)((startX+x) * frequency, (startY+y) * frequency, startZ * frequency, startW * frequency);
-      }
-    }
-    return values;  
-  }
-  case SquarePlane::XZPlane:
-  {
-    for(uint32 z = 0; z < height; z++)
-    {
-      for(uint32 x = 0; x < width; x++)
-      {
-        values[(width * z) + x] = (this->*noiseFunc)((startX+x) * frequency, startY * frequency, (startZ+z) * frequency, startW * frequency);
-      }
-    }
-    return values;  
-  }
-  case SquarePlane::ZYPlane:
-  {
-    for(uint32 y = 0; y < height; y++)
-    {
-      for(uint32 z = 0; z < width; z++)
-      {
-        values[(width * y) + z] = (this->*noiseFunc)(startX * frequency, (startY+y) * frequency, (startZ+z) * frequency, startW * frequency);
-      }
-    }
-    return values;  
-  }
-  case SquarePlane::XWPlane:
-  {
-    for(uint32 w = 0; w < height; w++)
-    {
-      for(uint32 x = 0; x < width; x++)
-      {
-        values[(width * w) + x] = (this->*noiseFunc)((startX+x) * frequency, startY * frequency, startZ * frequency, (startW+w) * frequency);
-      }
-    }
-    return values;  
-  }
-  case SquarePlane::YWPlane:
-  {
-    for(uint32 w = 0; w < height; w++)
-    {
-      for(uint32 y = 0; y < width; y++)
-      {
-        values[(width * w) + y] = (this->*noiseFunc)(startX * frequency, (startY+y) * frequency, startZ * frequency, (startW+w) * frequency);
-      }
-    }
-    return values;  
-  }
-  case SquarePlane::ZWPlane:
-  {
-    for(uint32 w = 0; w < height; w++)
-    {
-      for(uint32 z = 0; z < width; z++)
-      {
-        values[(width * w) + z] = (this->*noiseFunc)(startX * frequency, startY * frequency, (startZ+z) * frequency, (startW+w) * frequency);
-      }
-    }
-    return values;  
-  }
-  default:
-    ABORT();
-    return nullptr;  
   }
 }
 
-WN_INLINE WN_DECIMAL *WasmNoise::GetCube4D(Fractal4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, uint32 depth)
+// 4D Cube
+template<class NoiseFunc=FPtr4D> 
+WN_INLINE WN_DECIMAL *WasmNoise::GetCube(NoiseFunc, uint32 width, uint32 height, uint32 depth, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW)
 {
   WN_DECIMAL *values = returnHelper.NewArray(width*height*depth);
   for(uint32 z = 0; z < depth; z++)
   {
     for(uint32 y = 0; y < height; y++)
     {
-      for(uint32 x = 0; x < width; x++)
+      for(uint32 z = 0; z < height; z++)
       {
-        values[(height * width * z) + (width * y) + x] = (this->*noiseFunc)((startX+x) * frequency, (startY+y) * frequency, (startZ+z) * frequency, startW * frequency);
+        values[(height * width * z) + (width * y) + x] = invoke(func, *this, (startX+x) * frequency, (startY+y) * frequency, (startZ+z) * frequency, startW * frequency);
       }
     }
   }
-  return values;
 }

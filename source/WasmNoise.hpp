@@ -258,31 +258,21 @@ private:
   using Single2DFPtr = WN_DECIMAL(WasmNoise::*)(uint8, WN_DECIMAL, WN_DECIMAL) const; 
   using Single3DFPtr = WN_DECIMAL(WasmNoise::*)(uint8, WN_DECIMAL, WN_DECIMAL, WN_DECIMAL) const;
   using Single4DFPtr = WN_DECIMAL(WasmNoise::*)(uint8, WN_DECIMAL, WN_DECIMAL, WN_DECIMAL, WN_DECIMAL) const;
-  using Fractal2DFPtr = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL);
-  using Fractal3DFPtr = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL, WN_DECIMAL);
-  using Fractal4DFPtr = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL, WN_DECIMAL, WN_DECIMAL);
+  using FPtr2D = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL);
+  using FPtr3D = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL, WN_DECIMAL);
+  using FPtr4D = WN_DECIMAL(WasmNoise::*)(WN_DECIMAL, WN_DECIMAL, WN_DECIMAL, WN_DECIMAL);
 
-  // 2D
-  WN_INLINE WN_DECIMAL *GetStrip2D(Single2DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction);
-  WN_INLINE WN_DECIMAL *GetSquare2D(Single2DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height);
-  WN_INLINE WN_DECIMAL *GetStrip2D(Fractal2DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction);  
-  WN_INLINE WN_DECIMAL *GetSquare2D(Fractal2DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height);
+  // GetStrip/Square/Cube Templates
+  template<class NoiseFunc=FPtr2D> WN_INLINE WN_DECIMAL *GetStrip(NoiseFunc func, uint32 length, StripDirection direction, WN_DECIMAL startX, WN_DECIMAL startY);
+  template<class NoiseFunc=FPtr3D> WN_INLINE WN_DECIMAL *GetStrip(NoiseFunc func, uint32 length, StripDirection direction, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ);
+  template<class NoiseFunc=FPtr4D> WN_INLINE WN_DECIMAL *GetStrip(NoiseFunc func, uint32 length, StripDirection direction, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW);
 
-  // 3D
-  WN_INLINE WN_DECIMAL *GetStrip3D(Single3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction);
-  WN_INLINE WN_DECIMAL *GetSquare3D(Single3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane);
-  WN_INLINE WN_DECIMAL *GetCube3D(Single3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth);
-  WN_INLINE WN_DECIMAL *GetStrip3D(Fractal3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction);
-  WN_INLINE WN_DECIMAL *GetSquare3D(Fractal3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane);
-  WN_INLINE WN_DECIMAL *GetCube3D(Fractal3DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth);
+  template<class NoiseFunc=FPtr2D> WN_INLINE WN_DECIMAL *GetSquare(NoiseFunc func, uint32 width, uint32 height, WN_DECIMAL startX, WN_DECIMAL startY);
+  template<class NoiseFunc=FPtr3D> WN_INLINE WN_DECIMAL *GetSquare(NoiseFunc func, uint32 width, uint32 height, SquarePlane plane, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ);
+  template<class NoiseFunc=FPtr4D> WN_INLINE WN_DECIMAL *GetSquare(NoiseFunc func, uint32 width, uint32 height, SquarePlane plane, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW);
 
-  // 4D
-  WN_INLINE WN_DECIMAL *GetStrip4D(Single4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 length, StripDirection direction);
-  WN_INLINE WN_DECIMAL *GetSquare4D(Single4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, SquarePlane plane);
-  WN_INLINE WN_DECIMAL *GetCube4D(Single4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, uint32 depth);
-  WN_INLINE WN_DECIMAL *GetStrip4D(Fractal4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 length, StripDirection direction);
-  WN_INLINE WN_DECIMAL *GetSquare4D(Fractal4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, SquarePlane plane);
-  WN_INLINE WN_DECIMAL *GetCube4D(Fractal4DFPtr noiseFunc, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, uint32 depth);
+  template<class NoiseFunc=FPtr3D> WN_INLINE WN_DECIMAL *GetCube(NoiseFunc, uint32 width, uint32 height, uint32 depth, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ);
+  template<class NoiseFunc=FPtr4D> WN_INLINE WN_DECIMAL *GetCube(NoiseFunc, uint32 width, uint32 height, uint32 depth, WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW); 
 
 #if defined(WN_INCLUDE_PERLIN_FRACTAL) || defined(WN_INCLUDE_SIMPLEX_FRACTAL) || defined(WN_INCLUDE_CELLULAR_FRACTAL)
   // Fractal templates
@@ -295,6 +285,8 @@ private:
   // Regular Perlin Noise Functions, necessary for both regular and fractal functions
   WN_INLINE WN_DECIMAL SinglePerlin(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
   WN_INLINE WN_DECIMAL SinglePerlin(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;  
+  WN_INLINE WN_DECIMAL SinglePerlinNoOffset(WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL SinglePerlinNoOffset(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
 #endif 
 
 #ifdef WN_INCLUDE_PERLIN_FRACTAL
@@ -315,6 +307,9 @@ private:
   WN_INLINE WN_DECIMAL SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
   WN_INLINE WN_DECIMAL SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
   WN_INLINE WN_DECIMAL SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w) const;
+  WN_INLINE WN_DECIMAL SingleSimplex(WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL SingleSimplex(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL SingleSimplex(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w);
 #endif
 
 #ifdef WN_INCLUDE_SIMPLEX_FRACTAL
@@ -339,10 +334,14 @@ private:
   // 2D
   WN_INLINE WN_DECIMAL SingleCellular(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
   WN_INLINE WN_DECIMAL SingleCellular2Edge(uint8 offset, WN_DECIMAL x, WN_DECIMAL y) const;
+  WN_INLINE WN_DECIMAL SingleCellularNoOffset(WN_DECIMAL x, WN_DECIMAL y);
+  WN_INLINE WN_DECIMAL SingleCellular2EdgeNoOffset(WN_DECIMAL x, WN_DECIMAL y);
 
   // 3D
   WN_INLINE WN_DECIMAL SingleCellular(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
   WN_INLINE WN_DECIMAL SingleCellular2Edge(uint8 offset, WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z) const;
+  WN_INLINE WN_DECIMAL SingleCellularNoOffset(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
+  WN_INLINE WN_DECIMAL SingleCellular2EdgeNoOffset(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z);
 #endif // WN_INCLUDE_CELLULAR || WN_INCLUDE_CELLULAR_FRACTAL
 
 #ifdef WN_INCLUDE_CELLULAR_FRACTAL

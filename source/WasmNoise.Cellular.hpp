@@ -545,6 +545,28 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2Edge(uint8 offset, WN_DECIMAL x, 
   }
 }
 
+// Functionally aliases which fill in the offset parameter, allowing them to share
+// the same parameter order as the fractal functions
+WN_INLINE WN_DECIMAL WasmNoise::SingleCellularNoOffset(WN_DECIMAL x, WN_DECIMAL y)
+{
+  return SingleCellular(0, x, y);
+}
+
+WN_INLINE WN_DECIMAL WasmNoise::SingleCellular2EdgeNoOffset(WN_DECIMAL x, WN_DECIMAL y)
+{
+  return SingleCellular2Edge(0, x, y);
+}
+
+WN_INLINE WN_DECIMAL WasmNoise::SingleCellularNoOffset(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
+{
+  return SingleCellular(0, x, y, z);
+}
+
+WN_INLINE WN_DECIMAL WasmNouse::SingleCellular2EdgeNoOffset(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
+{
+  return SingleCellular2Edge(0, x, y, z);
+}
+
 #ifdef WN_INCLUDE_CELLULAR_FRACTAL
 // 2D Cellular Fractal Functions
 WN_INLINE WN_DECIMAL WasmNoise::SingleCellularFractalFBM(WN_DECIMAL x, WN_DECIMAL y)
@@ -645,11 +667,11 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularStrip(WN_DECIMAL startX, WN_DECIMAL 
   case CellularReturnType::NoiseLookupPerlin:
   case CellularReturnType::NoiseLookupSimplex:
   {
-    return GetStrip2D(&WasmNoise::SingleCellular, startX, startY, length, direction);
+    return GetStrip<>(&WasmNoise::SingleCellularNoOffset, length, direction, startX, startY);
   }
   default: // Distance2
   {
-    return GetStrip2D(&WasmNoise::SingleCellular2Edge, startX, startY, length, direction);
+    return GetStrip<>(&WasmNoise::SingleCellular2EdgeNoOffset, length, direction, startX, startY);
   }
   }
 }
@@ -663,11 +685,11 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularSquare(WN_DECIMAL startX, WN_DECIMAL
   case CellularReturnType::NoiseLookupPerlin:
   case CellularReturnType::NoiseLookupSimplex:
   {
-    return GetSquare2D(&WasmNoise::SingleCellular, startX, startY, width, height);
+    return GetSquare<>(&WasmNoise::SingleCellularNoOffset, width, height, startX, startY);
   }
   default: // Distance2
   {
-    return GetSquare2D(&WasmNoise::SingleCellular2Edge, startX, startY, width, height);
+    return GetSquare<>(&WasmNoise::SingleCellular2EdgeNoOffset, width, height, startX, startY);
   }
   }
 }
@@ -705,11 +727,11 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularStrip(WN_DECIMAL startX, WN_DECIMAL 
   case CellularReturnType::NoiseLookupPerlin:
   case CellularReturnType::NoiseLookupSimplex:
   {
-    return GetStrip3D(&WasmNoise::SingleCellular, startX, startY, startZ, length, direction);
+    return GetStrip<>(&WasmNoise::SingleCellularNoOffset, length, direction, startX, startY, startZ);
   }
   default: // Distance2
   {
-    return GetStrip3D(&WasmNoise::SingleCellular2Edge, startX, startY, startZ, length, direction);
+    return GetStrip<>(&WasmNoise::SingleCellular2EdgeNoOffset, length, direction, startX, startY, startZ);
   }
   }
 }
@@ -723,11 +745,11 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularSquare(WN_DECIMAL startX, WN_DECIMAL
   case CellularReturnType::NoiseLookupPerlin:
   case CellularReturnType::NoiseLookupSimplex:
   {
-    return GetSquare3D(&WasmNoise::SingleCellular, startX, startY, startZ, width, height, plane);
+    return GetSquare<>(&WasmNoise::SingleCellularNoOffset, width, height, plane, startX, startY, startZ);
   }
   default: // Distance2
   {
-    return GetSquare3D(&WasmNoise::SingleCellular2Edge, startX, startY, startZ, width, height, plane);
+    return GetSquare<>(&WasmNoise::SingleCellular2EdgeNoOffset, width, height, plane, startX, startY, startZ);
   }
   }
 }
@@ -741,11 +763,11 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularCube(WN_DECIMAL startX, WN_DECIMAL s
   case CellularReturnType::NoiseLookupPerlin:
   case CellularReturnType::NoiseLookupSimplex:
   {
-    return GetCube3D(&WasmNoise::SingleCellular, startX, startY, startZ, width, height, depth);
+    return GetCube<>(&WasmNoise::SingleCellularNoOffset, width, height, depth, startX, startY, startZ);
   }
   default: // Distance2
   {
-    return GetCube3D(&WasmNoise::SingleCellular2Edge, startX, startY, startZ, width, height, depth);
+    return GetCube<>(&WasmNoise::SingleCellular2EdgeNoOffset, width, height, depth, startX, startY, startZ);
   }
   }
 }
@@ -798,9 +820,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularFractalStrip(WN_DECIMAL startX, WN_D
   {
     switch(fractalType)
     {
-    case FractalType::FBM:          return GetStrip2D(&WasmNoise::SingleCellularFractalFBM, startX, startY, length, direction);
-    case FractalType::Billow:       return GetStrip2D(&WasmNoise::SingleCellularFractalBillow, startX, startY, length, direction);
-    case FractalType::RidgedMulti:  return GetStrip2D(&WasmNoise::SingleCellularFractalRidgedMulti, startX, startY, length, direction);
+    case FractalType::FBM:          return GetStrip<>(&WasmNoise::SingleCellularFractalFBM, length, direction, startX, startY);
+    case FractalType::Billow:       return GetStrip<>(&WasmNoise::SingleCellularFractalBillow, length, direction, startX, startY);
+    case FractalType::RidgedMulti:  return GetStrip<>(&WasmNoise::SingleCellularFractalRidgedMulti, length, direction, startX, startY);
     default:
       ABORT();
       return 0;
@@ -810,9 +832,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularFractalStrip(WN_DECIMAL startX, WN_D
   {
     switch(fractalType)
     {
-    case FractalType::FBM:          return GetStrip2D(&WasmNoise::SingleCellular2EdgeFractalFBM, startX, startY, length, direction);
-    case FractalType::Billow:       return GetStrip2D(&WasmNoise::SingleCellular2EdgeFractalBillow, startX, startY, length, direction);
-    case FractalType::RidgedMulti:  return GetStrip2D(&WasmNoise::SingleCellular2EdgeFractalRidgedMulti, startX, startY, length, direction);
+    case FractalType::FBM:          return GetStrip<>(&WasmNoise::SingleCellular2EdgeFractalFBM, length, direction, startX, startY);
+    case FractalType::Billow:       return GetStrip<>(&WasmNoise::SingleCellular2EdgeFractalBillow, length, direction, startX, startY);
+    case FractalType::RidgedMulti:  return GetStrip<>(&WasmNoise::SingleCellular2EdgeFractalRidgedMulti, length, direction, startX, startY);
     default:
       ABORT();
       return 0;
@@ -832,9 +854,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularFractalSquare(WN_DECIMAL startX, WN_
   {
     switch(fractalType)
     {
-    case FractalType::FBM:          return GetSquare2D(&WasmNoise::SingleCellularFractalFBM, startX, startY, length, height);
-    case FractalType::Billow:       return GetSquare2D(&WasmNoise::SingleCellularFractalBillow, startX, startY, length, height);
-    case FractalType::RidgedMulti:  return GetSquare2D(&WasmNoise::SingleCellularFractalRidgedMulti, startX, startY, length, height);
+    case FractalType::FBM:          return GetSquare<>(&WasmNoise::SingleCellularFractalFBM, length, height, startX, startY);
+    case FractalType::Billow:       return GetSquare<>(&WasmNoise::SingleCellularFractalBillow, length, height, startX, startY);
+    case FractalType::RidgedMulti:  return GetSquare<>(&WasmNoise::SingleCellularFractalRidgedMulti, length, height, startX, startY);
     default:
       ABORT();
       return 0;
@@ -844,9 +866,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularFractalSquare(WN_DECIMAL startX, WN_
   {
     switch(fractalType)
     {
-    case FractalType::FBM:          return GetSquare2D(&WasmNoise::SingleCellular2EdgeFractalFBM, startX, startY, length, height);
-    case FractalType::Billow:       return GetSquare2D(&WasmNoise::SingleCellular2EdgeFractalBillow, startX, startY, length, height);
-    case FractalType::RidgedMulti:  return GetSquare2D(&WasmNoise::SingleCellular2EdgeFractalRidgedMulti, startX, startY, length, height);
+    case FractalType::FBM:          return GetSquare<>(&WasmNoise::SingleCellular2EdgeFractalFBM, length, height, startX, startY);
+    case FractalType::Billow:       return GetSquare<>(&WasmNoise::SingleCellular2EdgeFractalBillow, length, height, startX, startY);
+    case FractalType::RidgedMulti:  return GetSquare<>(&WasmNoise::SingleCellular2EdgeFractalRidgedMulti, length, height, startX, startY);
     default:
       ABORT();
       return 0;
@@ -901,9 +923,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularFractalStrip(WN_DECIMAL startX, WN_D
   {
     switch(fractalType)
     {
-    case FractalType::FBM:          return GetStrip3D(&WasmNoise::SingleCellularFractalFBM, startX, startY, startZ, length, direction);
-    case FractalType::Billow:       return GetStrip3D(&WasmNoise::SingleCellularFractalBillow, startX, startY, startZ, length, direction);
-    case FractalType::RidgedMulti:  return GetStrip3D(&WasmNoise::SingleCellularFractalRidgedMulti, startX, startY, startZ, length, direction);
+    case FractalType::FBM:          return GetStrip<>(&WasmNoise::SingleCellularFractalFBM, length, direction, startX, startY, startZ);
+    case FractalType::Billow:       return GetStrip<>(&WasmNoise::SingleCellularFractalBillow, length, direction, startX, startY, startZ);
+    case FractalType::RidgedMulti:  return GetStrip<>(&WasmNoise::SingleCellularFractalRidgedMulti, length, direction, startX, startY, startZ);
     default:
       ABORT();
       return 0;
@@ -913,9 +935,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularFractalStrip(WN_DECIMAL startX, WN_D
   {
     switch(fractalType)
     {
-    case FractalType::FBM:          return GetStrip3D(&WasmNoise::SingleCellular2EdgeFractalFBM, startX, startY, startZ, length, direction);
-    case FractalType::Billow:       return GetStrip3D(&WasmNoise::SingleCellular2EdgeFractalBillow, startX, startY, startZ, length, direction);
-    case FractalType::RidgedMulti:  return GetStrip3D(&WasmNoise::SingleCellular2EdgeFractalRidgedMulti, startX, startY, startZ, length, direction);
+    case FractalType::FBM:          return GetStrip<>(&WasmNoise::SingleCellular2EdgeFractalFBM, length, direction, startX, startY, startZ);
+    case FractalType::Billow:       return GetStrip<>(&WasmNoise::SingleCellular2EdgeFractalBillow, length, direction, startX, startY, startZ);
+    case FractalType::RidgedMulti:  return GetStrip<>(&WasmNoise::SingleCellular2EdgeFractalRidgedMulti, length, direction, startX, startY, startZ);
     default:
       ABORT();
       return 0;
@@ -935,9 +957,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularFractalSquare(WN_DECIMAL startX, WN_
   {
     switch(fractalType)
     {
-    case FractalType::FBM:          return GetSquare3D(&WasmNoise::SingleCellularFractalFBM, startX, startY, startZ, length, height, plane);
-    case FractalType::Billow:       return GetSquare3D(&WasmNoise::SingleCellularFractalBillow, startX, startY, startZ, length, height, plane);
-    case FractalType::RidgedMulti:  return GetSquare3D(&WasmNoise::SingleCellularFractalRidgedMulti, startX, startY, startZ, length, height, plane);
+    case FractalType::FBM:          return GetSquare<>(&WasmNoise::SingleCellularFractalFBM, length, height, plane, startX, startY, startZ);
+    case FractalType::Billow:       return GetSquare<>(&WasmNoise::SingleCellularFractalBillow, length, height, plane, startX, startY, startZ);
+    case FractalType::RidgedMulti:  return GetSquare<>(&WasmNoise::SingleCellularFractalRidgedMulti, length, height, plane, startX, startY, startZ);
     default:
       ABORT();
       return 0;
@@ -947,9 +969,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularFractalSquare(WN_DECIMAL startX, WN_
   {
     switch(fractalType)
     {
-    case FractalType::FBM:          return GetSquare3D(&WasmNoise::SingleCellular2EdgeFractalFBM, startX, startY, startZ, length, height, plane);
-    case FractalType::Billow:       return GetSquare3D(&WasmNoise::SingleCellular2EdgeFractalBillow, startX, startY, startZ, length, height, plane);
-    case FractalType::RidgedMulti:  return GetSquare3D(&WasmNoise::SingleCellular2EdgeFractalRidgedMulti, startX, startY, startZ, length, height, plane);
+    case FractalType::FBM:          return GetSquare<>(&WasmNoise::SingleCellular2EdgeFractalFBM, length, height, plane, startX, startY, startZ);
+    case FractalType::Billow:       return GetSquare<>(&WasmNoise::SingleCellular2EdgeFractalBillow, length, height, plane, startX, startY, startZ);
+    case FractalType::RidgedMulti:  return GetSquare<>(&WasmNoise::SingleCellular2EdgeFractalRidgedMulti, length, height, plane, startX, startY, startZ);
     default:
       ABORT();
       return 0;
@@ -960,7 +982,7 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularFractalSquare(WN_DECIMAL startX, WN_
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetCellularFractalCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth)
 {
-    switch(cellularReturnType)
+  switch(cellularReturnType)
   {
   case CellularReturnType::CellValue:
   case CellularReturnType::Distance:
@@ -969,9 +991,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularFractalCube(WN_DECIMAL startX, WN_DE
   {
     switch(fractalType)
     {
-    case FractalType::FBM:          return GetCube3D(&WasmNoise::SingleCellularFractalFBM, startX, startY, startZ, width, height, depth);
-    case FractalType::Billow:       return GetCube3D(&WasmNoise::SingleCellularFractalBillow, startX, startY, startZ, width, height, depth);
-    case FractalType::RidgedMulti:  return GetCube3D(&WasmNoise::SingleCellularFractalRidgedMulti, startX, startY, startZ, width, height, depth);
+    case FractalType::FBM:          return GetCube<>(&WasmNoise::SingleCellularFractalFBM, width, height, depth, startX, startY, startZ);
+    case FractalType::Billow:       return GetCube<>(&WasmNoise::SingleCellularFractalBillow, width, height, depth, startX, startY, startZ);
+    case FractalType::RidgedMulti:  return GetCube<>(&WasmNoise::SingleCellularFractalRidgedMulti, width, height, depth, startX, startY, startZ);
     default:
       ABORT();
       return 0;
@@ -981,9 +1003,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetCellularFractalCube(WN_DECIMAL startX, WN_DE
   {
     switch(fractalType)
     {
-    case FractalType::FBM:          return GetCube3D(&WasmNoise::SingleCellular2EdgeFractalFBM, startX, startY, startZ, width, height, depth);
-    case FractalType::Billow:       return GetCube3D(&WasmNoise::SingleCellular2EdgeFractalBillow, startX, startY, startZ, width, height, depth);
-    case FractalType::RidgedMulti:  return GetCube3D(&WasmNoise::SingleCellular2EdgeFractalRidgedMulti, startX, startY, startZ, width, height, depth);
+    case FractalType::FBM:          return GetCube<>(&WasmNoise::SingleCellular2EdgeFractalFBM, width, height, depth, startX, startY, startZ);
+    case FractalType::Billow:       return GetCube<>(&WasmNoise::SingleCellular2EdgeFractalBillow, width, height, depth, startX, startY, startZ);
+    case FractalType::RidgedMulti:  return GetCube<>(&WasmNoise::SingleCellular2EdgeFractalRidgedMulti, width, height, depth, startX, startY, startZ);
     default:
       ABORT();
       return 0;
