@@ -285,53 +285,70 @@ WN_INLINE WN_DECIMAL WasmNoise::SingleSimplex(uint8 offset, WN_DECIMAL x, WN_DEC
   return 27 * (n0 + n1 + n2 + n3 + n4);
 }
 
+// Functionally aliases which fill in the offset parameter, allowing them to share
+// the same parameter order as the fractal functions
+WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexNoOffset(WN_DECIMAL x, WN_DECIMAL y)
+{
+  return SingleSimplex(0, x, y);
+}
+
+WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexNoOffset(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
+{
+  return SingleSimplex(0, x, y, z);
+}
+
+WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexNoOffset(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w)
+{
+  return SingleSimplex(0, x, y, z, w);
+}
+
 #ifdef WN_INCLUDE_SIMPLEX_FRACTAL
 // 2D Simplex Fractal Functions
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalFBM(WN_DECIMAL x, WN_DECIMAL y)
 {
-  return SingleFractalFBM(&WasmNoise::SingleSimplex, x, y);
+  return SingleFractalFBM<Single2DFPtr>(&WasmNoise::SingleSimplex, x, y);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalBillow(WN_DECIMAL x, WN_DECIMAL y)
 {
-  return SingleFractalBillow(&WasmNoise::SingleSimplex, x, y);
+  return SingleFractalBillow<Single2DFPtr>(&WasmNoise::SingleSimplex, x, y);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y)
 {
-  return SingleFractalRidgedMulti(&WasmNoise::SingleSimplex, x, y);
+  return SingleFractalRidgedMulti<Single2DFPtr>(&WasmNoise::SingleSimplex, x, y);
 }
 
 // 3D Simplex Fractal Functions
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
-  return SingleFractalFBM(&WasmNoise::SingleSimplex, x, y, z);
+  return SingleFractalFBM<Single3DFPtr>(&WasmNoise::SingleSimplex, x, y, z);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
-  return SingleFractalBillow(&WasmNoise::SingleSimplex, x, y, z);
+  return SingleFractalBillow<Single3DFPtr>(&WasmNoise::SingleSimplex, x, y, z);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z)
 {
-  return SingleFractalRidgedMulti(&WasmNoise::SingleSimplex, x, y, z);
+  return SingleFractalRidgedMulti<Single3DFPtr>(&WasmNoise::SingleSimplex, x, y, z);
 }
 
 // 4D Simplex Fractal Functions
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalFBM(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w)
 {
-  return SingleFractalFBM(&WasmNoise::SingleSimplex, x, y, z, w);
+  return SingleFractalFBM<Single4DFPtr>(&WasmNoise::SingleSimplex, x, y, z, w);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalBillow(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w)
 {
-  return SingleFractalBillow(&WasmNoise::SingleSimplex, x, y, z, w);
+  return SingleFractalBillow<Single4DFPtr>(&WasmNoise::SingleSimplex, x, y, z, w);
 }
 
 WN_INLINE WN_DECIMAL WasmNoise::SingleSimplexFractalRidgedMulti(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMAL z, WN_DECIMAL w)
 {
-  return SingleFractalRidgedMulti(&WasmNoise::SingleSimplex, x, y, z, w);
+  return SingleFractalRidgedMulti<Single4DFPtr>(&WasmNoise::SingleSimplex, x, y, z, w);
 }
 #endif // WN_INCLUDE_SIMPLEX_FRACTAL
 
@@ -348,12 +365,12 @@ WN_INLINE WN_DECIMAL WasmNoise::GetSimplex(WN_DECIMAL x, WN_DECIMAL y) const
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexStrip(WN_DECIMAL startX, WN_DECIMAL startY, uint32 length, StripDirection direction)
 {
-  return GetStrip2D(&WasmNoise::SinglePerlin, startX, startY, length, direction);
+  return GetStrip<>(&WasmNoise::SinglePerlinNoOffset, length, direction, startX, startY);
 }
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexSquare(WN_DECIMAL startX, WN_DECIMAL startY, uint32 width, uint32 height)
 {
-  return GetSquare2D(&WasmNoise::SingleSimplex, startX, startY, width, height);
+  return GetSquare<>(&WasmNoise::SingleSimplexNoOffset, width, height, startX, startY);
 }
 
 // 3D Single
@@ -364,17 +381,17 @@ WN_INLINE WN_DECIMAL WasmNoise::GetSimplex(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMA
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 length, StripDirection direction)
 {
-  return GetStrip3D(&WasmNoise::SingleSimplex, startX, startY, startZ, length, direction);
+  return GetStrip<>(&WasmNoise::SingleSimplexNoOffset, length, direction, startX, startY, startZ);
 }
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexSquare(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, SquarePlane plane)
 {
-  return GetSquare3D(&WasmNoise::SingleSimplex, startX, startY, startZ, width, height, plane);
+  return GetSquare<>(&WasmNoise::SingleSimplexNoOffset, width, height, plane, startX, startY, startZ);
 }
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, uint32 width, uint32 height, uint32 depth)
 {
-  return GetCube3D(&WasmNoise::SingleSimplex, startX, startY, startZ, width, height, depth);
+  return GetCube<>(&WasmNoise::SingleSimplexNoOffset, width, height, depth, startX, startY, startZ);
 }
 
 // 4D Single
@@ -385,17 +402,17 @@ WN_INLINE WN_DECIMAL WasmNoise::GetSimplex(WN_DECIMAL x, WN_DECIMAL y, WN_DECIMA
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexStrip(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 length, StripDirection direction)
 {
-  return GetStrip4D(&WasmNoise::SingleSimplex, startX, startY, startZ, startW, length, direction);
+  return GetStrip<>(&WasmNoise::SingleSimplexNoOffset, length, direction, startX, startY, startZ, startW);
 }
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexSquare(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, SquarePlane plane)
 {
-  return GetSquare4D(&WasmNoise::SingleSimplex, startX, startY, startZ, startW, width, height, plane);
+  return GetSquare<>(&WasmNoise::SingleSimplexNoOffset, width, height, plane, startX, startY, startZ, startW);
 }
 
 WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexCube(WN_DECIMAL startX, WN_DECIMAL startY, WN_DECIMAL startZ, WN_DECIMAL startW, uint32 width, uint32 height, uint32 depth)
 {
-  return GetCube4D(&WasmNoise::SingleSimplex, startX, startY, startZ, startW, width, height, depth);
+  return GetCube<>(&WasmNoise::SingleSimplexNoOffset, width, height, depth, startX, startY, startZ, startW);
 }
 #endif // WN_INCLUDE_SIMPLEX
 
@@ -418,9 +435,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexFractalStrip(WN_DECIMAL startX, WN_DE
 {
   switch(fractalType)
   {
-  case FractalType::FBM:          return GetStrip2D(&WasmNoise::SingleSimplexFractalFBM, startX, startY, length, direction);
-  case FractalType::Billow:       return GetStrip2D(&WasmNoise::SingleSimplexFractalBillow, startX, startY, length, direction);
-  case FractalType::RidgedMulti:  return GetStrip2D(&WasmNoise::SingleSimplexFractalRidgedMulti, startX, startY, length, direction);
+  case FractalType::FBM:          return GetStrip<>(&WasmNoise::SingleSimplexFractalFBM, length, direction, startX, startY);
+  case FractalType::Billow:       return GetStrip<>(&WasmNoise::SingleSimplexFractalBillow, length, direction, startX, startY);
+  case FractalType::RidgedMulti:  return GetStrip<>(&WasmNoise::SingleSimplexFractalRidgedMulti, length, direction, startX, startY);
   default:
     ABORT();
     return nullptr;
@@ -431,9 +448,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexFractalSquare(WN_DECIMAL startX, WN_D
 {
   switch(fractalType)
   {
-  case FractalType::FBM:          return GetSquare2D(&WasmNoise::SingleSimplexFractalFBM, startX, startY, width, height);
-  case FractalType::Billow:       return GetSquare2D(&WasmNoise::SingleSimplexFractalBillow, startX, startY, width, height);
-  case FractalType::RidgedMulti:  return GetSquare2D(&WasmNoise::SingleSimplexFractalRidgedMulti, startX, startY, width, height);
+  case FractalType::FBM:          return GetSquare<>(&WasmNoise::SingleSimplexFractalFBM, width, height, startX, startY);
+  case FractalType::Billow:       return GetSquare<>(&WasmNoise::SingleSimplexFractalBillow, width, height, startX, startY);
+  case FractalType::RidgedMulti:  return GetSquare<>(&WasmNoise::SingleSimplexFractalRidgedMulti, width, height, startX, startY);
   default:
     ABORT();
     return nullptr;
@@ -458,9 +475,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexFractalStrip(WN_DECIMAL startX, WN_DE
 {
   switch(fractalType)
   {
-  case FractalType::FBM:          return GetStrip3D(&WasmNoise::SingleSimplexFractalFBM, startX, startY, startZ, length, direction);
-  case FractalType::Billow:       return GetStrip3D(&WasmNoise::SingleSimplexFractalBillow, startX, startY, startZ, length, direction);
-  case FractalType::RidgedMulti:  return GetStrip3D(&WasmNoise::SingleSimplexFractalRidgedMulti, startX, startY, startZ, length, direction);
+  case FractalType::FBM:          return GetStrip<>(&WasmNoise::SingleSimplexFractalFBM, length, direction, startX, startY, startZ);
+  case FractalType::Billow:       return GetStrip<>(&WasmNoise::SingleSimplexFractalBillow, length, direction, startX, startY, startZ);
+  case FractalType::RidgedMulti:  return GetStrip<>(&WasmNoise::SingleSimplexFractalRidgedMulti, length, direction, startX, startY, startZ);
   default:
     ABORT();
     return nullptr;
@@ -471,9 +488,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexFractalSquare(WN_DECIMAL startX, WN_D
 {
   switch(fractalType)
   {
-  case FractalType::FBM:          return GetSquare3D(&WasmNoise::SingleSimplexFractalFBM, startX, startY, startZ, width, height, plane);
-  case FractalType::Billow:       return GetSquare3D(&WasmNoise::SingleSimplexFractalBillow, startX, startY, startZ, width, height, plane);
-  case FractalType::RidgedMulti:  return GetSquare3D(&WasmNoise::SingleSimplexFractalRidgedMulti, startX, startY, startZ, width, height, plane);
+  case FractalType::FBM:          return GetSquare<>(&WasmNoise::SingleSimplexFractalFBM, width, height, plane, startX, startY, startZ);
+  case FractalType::Billow:       return GetSquare<>(&WasmNoise::SingleSimplexFractalBillow, width, height, plane, startX, startY, startZ);
+  case FractalType::RidgedMulti:  return GetSquare<>(&WasmNoise::SingleSimplexFractalRidgedMulti, width, height, plane, startX, startY, startZ);
   default:
     ABORT();
     return nullptr;
@@ -484,9 +501,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexFractalCube(WN_DECIMAL startX, WN_DEC
 {
   switch(fractalType)
   {
-  case FractalType::FBM:          return GetCube3D(&WasmNoise::SingleSimplexFractalFBM, startX, startY, startZ, width, height, depth);
-  case FractalType::Billow:       return GetCube3D(&WasmNoise::SingleSimplexFractalBillow, startX, startY, startZ, width, height, depth);
-  case FractalType::RidgedMulti:  return GetCube3D(&WasmNoise::SingleSimplexFractalRidgedMulti, startX, startY, startZ, width, height, depth);
+  case FractalType::FBM:          return GetCube<>(&WasmNoise::SingleSimplexFractalFBM, width, height, depth, startX, startY, startZ);
+  case FractalType::Billow:       return GetCube<>(&WasmNoise::SingleSimplexFractalBillow, width, height, depth, startX, startY, startZ);
+  case FractalType::RidgedMulti:  return GetCube<>(&WasmNoise::SingleSimplexFractalRidgedMulti, width, height, depth, startX, startY, startZ);
   default:
     ABORT();
     return nullptr;
@@ -511,9 +528,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexFractalStrip(WN_DECIMAL startX, WN_DE
 {
   switch(fractalType)
   {
-  case FractalType::FBM:          return GetStrip4D(&WasmNoise::SingleSimplexFractalFBM, startX, startY, startZ, startW, length, direction);
-  case FractalType::Billow:       return GetStrip4D(&WasmNoise::SingleSimplexFractalBillow, startX, startY, startZ, startW, length, direction);
-  case FractalType::RidgedMulti:  return GetStrip4D(&WasmNoise::SingleSimplexFractalRidgedMulti, startX, startY, startZ, startW, length, direction);
+  case FractalType::FBM:          return GetStrip<>(&WasmNoise::SingleSimplexFractalFBM, length, direction, startX, startY, startZ, startW);
+  case FractalType::Billow:       return GetStrip<>(&WasmNoise::SingleSimplexFractalBillow, length, direction, startX, startY, startZ, startW);
+  case FractalType::RidgedMulti:  return GetStrip<>(&WasmNoise::SingleSimplexFractalRidgedMulti, length, direction, startX, startY, startZ, startW);
   default:
     ABORT();
     return nullptr;
@@ -524,9 +541,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexFractalSquare(WN_DECIMAL startX, WN_D
 {
   switch(fractalType)
   {
-  case FractalType::FBM:          return GetSquare4D(&WasmNoise::SingleSimplexFractalFBM, startX, startY, startZ, startW, width, height, plane);
-  case FractalType::Billow:       return GetSquare4D(&WasmNoise::SingleSimplexFractalBillow, startX, startY, startZ, startW, width, height, plane);
-  case FractalType::RidgedMulti:  return GetSquare4D(&WasmNoise::SingleSimplexFractalRidgedMulti, startX, startY, startZ, startW, width, height, plane);
+  case FractalType::FBM:          return GetSquare<>(&WasmNoise::SingleSimplexFractalFBM, width, height, plane, startX, startY, startZ, startW);
+  case FractalType::Billow:       return GetSquare<>(&WasmNoise::SingleSimplexFractalBillow, width, height, plane, startX, startY, startZ, startW);
+  case FractalType::RidgedMulti:  return GetSquare<>(&WasmNoise::SingleSimplexFractalRidgedMulti, width, height, plane, startX, startY, startZ, startW);
   default:
     ABORT();
     return nullptr;
@@ -537,9 +554,9 @@ WN_INLINE WN_DECIMAL *WasmNoise::GetSimplexFractalCube(WN_DECIMAL startX, WN_DEC
 {
   switch(fractalType)
   {
-  case FractalType::FBM:          return GetCube4D(&WasmNoise::SingleSimplexFractalFBM, startX, startY, startZ, startW, width, height, depth);
-  case FractalType::Billow:       return GetCube4D(&WasmNoise::SingleSimplexFractalBillow, startX, startY, startZ, startW, width, height, depth);
-  case FractalType::RidgedMulti:  return GetCube4D(&WasmNoise::SingleSimplexFractalRidgedMulti, startX, startY, startZ, startW, width, height, depth);
+  case FractalType::FBM:          return GetCube<>(&WasmNoise::SingleSimplexFractalFBM, width, height, depth, startX, startY, startZ, startW);
+  case FractalType::Billow:       return GetCube<>(&WasmNoise::SingleSimplexFractalBillow, width, height, depth, startX, startY, startZ, startW);
+  case FractalType::RidgedMulti:  return GetCube<>(&WasmNoise::SingleSimplexFractalRidgedMulti, width, height, depth, startX, startY, startZ, startW);
   default:
     ABORT();
     return nullptr;

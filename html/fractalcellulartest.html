@@ -1,0 +1,181 @@
+<html>
+  <head>
+    <script type="text/javascript">
+      // Optional onLoaded function callback
+      let WasmNoise = {}
+      WasmNoise.onLoaded = function()
+      {
+        document.getElementById("loaded").innerText = "Loaded!";
+
+        //WasmNoise.SetSeed(Date.now());
+        //WasmNoise.SetFractalOctaves(0);
+        console.log("Seed: " + WasmNoise.GetSeed());  
+        console.log("Octaves: " + WasmNoise.GetFractalOctaves());
+        console.log("Gain: " + WasmNoise.GetFractalGain());
+
+        WasmNoise.SetFractalOctaves(3);
+        WasmNoise.SetFractalLacunarity(3.0);
+        WasmNoise.SetFrequency(0.02);
+        WasmNoise.SetCellularDistanceFunction(WasmNoise.CellularDistanceFunction.Euclidean);
+        WasmNoise.SetCellularReturnType(WasmNoise.CellularReturnType.Distance2Add);
+        WasmNoise.SetCellularDistance2Indices(0, 1);
+        WasmNoise.SetCellularJitter(0.4);
+
+        // 2D Square to Texture, FBM
+        {
+          WasmNoise.SetFractalType(WasmNoise.FractalType.FBM);
+          let startGenValues = performance.now();
+          let values = WasmNoise.GetCellularFractal2_Square_Values(-256, -256, 512, 512);
+          let endGenValues = performance.now();
+          let startGenTexture = performance.now();
+          generateTexture(512, 512, "cellular2DFBM", values);
+          let endGenTexture = performance.now();
+          let diffValues = endGenValues - startGenValues;
+          let diffTex = endGenTexture - startGenTexture;
+          console.log("Time to generate values for 512*512 texture with Fractal 2D Cellular Noise, FBM: " + diffValues + "ms\n"
+                    + "Time to generate texture: " + diffTex + "ms\n"
+                    + "Total time: " + (diffValues + diffTex) + "ms");
+        }
+
+        // 2D Square to Texture, Billow
+        {
+          WasmNoise.SetFractalType(WasmNoise.FractalType.Billow);
+          let startGenValues = performance.now();
+          let values = WasmNoise.GetCellularFractal2_Square_Values(-256, -256, 512, 512);
+          let endGenValues = performance.now();
+          let startGenTexture = performance.now();
+          generateTexture(512, 512, "cellular2DBillow", values, false);
+          let endGenTexture = performance.now();
+          let diffValues = endGenValues - startGenValues;
+          let diffTex = endGenTexture - startGenTexture;
+          console.log("Time to generate values for 512*512 texture with Fractal 2D Cellular Noise, Billow: " + diffValues + "ms\n"
+                    + "Time to generate texture: " + diffTex + "ms\n"
+                    + "Total time: " + (diffValues + diffTex) + "ms");
+        }
+
+        // 2D Square to Texture, RidgedMulti
+        {
+          WasmNoise.SetFractalType(WasmNoise.FractalType.RidgedMulti);   
+          let startGenValues = performance.now();
+          let values = WasmNoise.GetCellularFractal2_Square_Values(-256, -256, 512, 512);
+          let endGenValues = performance.now();
+          let startGenTexture = performance.now();
+          generateTexture(512, 512, "cellular2DRidged", values);
+          let endGenTexture = performance.now();
+          let diffValues = endGenValues - startGenValues;
+          let diffTex = endGenTexture - startGenTexture;
+          console.log("Time to generate values for 512*512 texture with Fractal 2D Cellular Noise, Ridged: " + diffValues + "ms\n"
+                    + "Time to generate texture: " + diffTex + "ms\n"
+                    + "Total time: " + (diffValues + diffTex) + "ms");
+        }
+
+        // 3D Square to Texture, FBM
+        {
+          WasmNoise.SetFractalType(WasmNoise.FractalType.FBM);
+          let startGenValues = performance.now();
+          let values = WasmNoise.GetCellularFractal3_Square_Values(-256, -256, 0, 512, 512, WasmNoise.SquarePlane.XYPlane);
+          let endGenValues = performance.now();
+          let startGenTexture = performance.now();
+          generateTexture(512, 512, "cellular3DFBM", values);
+          let endGenTexture = performance.now();
+          let diffValues = endGenValues - startGenValues;
+          let diffTex = endGenTexture - startGenTexture;
+          console.log("Time to generate values for 512*512 texture with Fractal 3D Cellular Noise, FBM: " + diffValues + "ms\n"
+                    + "Time to generate texture: " + diffTex + "ms\n"
+                    + "Total time: " + (diffValues + diffTex) + "ms");
+        }
+
+        // 3D Square to Texture, Billow
+        {
+          WasmNoise.SetFractalType(WasmNoise.FractalType.Billow);
+          let startGenValues = performance.now();
+          let values = WasmNoise.GetCellularFractal3_Square_Values(-256, -256, 0, 512, 512, WasmNoise.SquarePlane.XYPlane);
+          let endGenValues = performance.now();
+          let startGenTexture = performance.now();
+          generateTexture(512, 512, "cellular3DBillow", values, false);
+          let endGenTexture = performance.now();
+          let diffValues = endGenValues - startGenValues;
+          let diffTex = endGenTexture - startGenTexture;
+          console.log("Time to generate values for 512*512 texture with Fractal 3D Cellular Noise, Billow: " + diffValues + "ms\n"
+                    + "Time to generate texture: " + diffTex + "ms\n"
+                    + "Total time: " + (diffValues + diffTex) + "ms");
+        }
+
+        // 3D Square to Texture, RidgedMulti
+        {
+          WasmNoise.SetFractalType(WasmNoise.FractalType.RidgedMulti);   
+          let startGenValues = performance.now();
+          let values = WasmNoise.GetCellularFractal3_Square_Values(-256, -256, 0, 512, 512, WasmNoise.SquarePlane.XYPlane);
+          let endGenValues = performance.now();
+          let startGenTexture = performance.now();
+          generateTexture(512, 512, "cellular3DRidged", values);
+          let endGenTexture = performance.now();
+          let diffValues = endGenValues - startGenValues;
+          let diffTex = endGenTexture - startGenTexture;
+          console.log("Time to generate values for 512*512 texture with Fractal 3D Cellular Noise, Ridged: " + diffValues + "ms\n"
+                    + "Time to generate texture: " + diffTex + "ms\n"
+                    + "Total time: " + (diffValues + diffTex) + "ms");
+        }
+      }
+
+      function generateTexture(width, height, id, values, invert = false)
+      {
+        // Create the canvas for this texture
+        let div = document.createElement("div");
+        div.id = id;
+        let canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        div.appendChild(canvas);
+        document.body.appendChild(div);
+
+        let context = canvas.getContext("2d");
+        let imageDataObject = context.createImageData(width, height);
+        let imageData = imageDataObject.data;
+
+        // Find min/max values
+        let min = 9999999;
+        let max = -9999999;
+        for(let i = 0; i < values.length; i++)
+        {
+          if(values[i] > max) max = values[i];
+          if(values[i] < min) min = values[i];
+        }
+
+        // Normalise values and convert to pixel range
+        let pixelValues = new Float32Array(values);
+        for(let i = 0; i < pixelValues.length; i++)
+        {
+          pixelValues[i] = ((pixelValues[i] - min) / (max - min)) * 255;
+        }
+                
+        // Fill out the image data with our values
+        let imageDataSize = width * height * 4;
+        for(let di = 0, vi = 0; di < imageDataSize; di += 4, vi++)
+        {
+          if(invert)
+          {
+            // Invert
+            imageData[di    ] = (255 - pixelValues[vi]);
+            imageData[di + 1] = (255 - pixelValues[vi]);
+            imageData[di + 2] = (255 - pixelValues[vi]);
+          }
+          else
+          {
+            imageData[di    ] = pixelValues[vi];
+            imageData[di + 1] = pixelValues[vi];
+            imageData[di + 2] = pixelValues[vi];
+          }
+          imageData[di + 3] = 255;          
+        }
+
+        // Present the texture
+        context.putImageData(imageDataObject, 0, 0);
+      }
+    </script>
+    <script type="text/javascript" src="./wasmnoise.autoloader.js"></script>
+  </head>
+  <body>
+    <span id="loaded">Loading...</span>
+  </body>
+</html>
