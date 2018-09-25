@@ -82,6 +82,7 @@ public:
     , fractalLacunarity(_fractalLacunarity)
     , fractalGain(_fractalGain)
     , fractalType(_fractalType)
+    , fractalExponents(nullptr)
     , cellularDistanceFunction(_cellularDistanceFunction)
     , cellularReturnType(_cellularReturnType)
     , cellularDistanceIndex0(_cellularDistanceIndex0)
@@ -91,6 +92,7 @@ public:
   { 
     SetSeed(_seed);
     CalculateFractalBounding();
+    CalculateFractalExponents();
   }
 
   void SetSeed(int32 _seed);
@@ -103,10 +105,10 @@ public:
   Interp GetInterp() const { return interp; }
 
 #ifdef WN_INCLUDE_FRACTAL_GETSET
-  void SetFractalOctaves(uint32 _octaves) { fractalOctaves = _octaves; CalculateFractalBounding(); }
+  void SetFractalOctaves(uint32 _octaves) { fractalOctaves = _octaves; CalculateFractalBounding(); CalculateFractalExponents(); }
   uint32 GetFractalOctaves() const { return fractalOctaves; }
 
-  void SetFractalLacunarity(WN_DECIMAL _lacunarity) { fractalLacunarity = _lacunarity; }
+  void SetFractalLacunarity(WN_DECIMAL _lacunarity) { fractalLacunarity = _lacunarity; CalculateFractalExponents();}
   WN_DECIMAL GetFractalLacunarity() const { return fractalLacunarity; }
 
   void SetFractalGain(WN_DECIMAL _gain) { fractalGain = _gain; CalculateFractalBounding(); }
@@ -244,6 +246,7 @@ private:
   WN_DECIMAL fractalGain;
   FractalType fractalType;
   WN_DECIMAL fractalBounding;
+  WN_DECIMAL *fractalExponents;
 
   CellularDistanceFunction cellularDistanceFunction;
   CellularReturnType cellularReturnType;
@@ -254,6 +257,7 @@ private:
   WN_DECIMAL cellularNoiseLookupFrequency;
 
   void CalculateFractalBounding();
+  void CalculateFractalExponents();
 
   using Single2DFPtr = WN_DECIMAL(WasmNoise::*)(uint8, WN_DECIMAL, WN_DECIMAL) const; 
   using Single3DFPtr = WN_DECIMAL(WasmNoise::*)(uint8, WN_DECIMAL, WN_DECIMAL, WN_DECIMAL) const;

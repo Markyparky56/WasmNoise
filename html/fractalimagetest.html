@@ -9,19 +9,21 @@
 
         WasmNoise.SetSeed(Date.now());
         WasmNoise.SetFractalOctaves(5);
+        WasmNoise.SetFrequency(0.003);
+
         console.log("Seed: " + WasmNoise.GetSeed());        
 
         // 2D Square to Texture, FBM
         {
           let startGenValues = performance.now();
-          let values = WasmNoise.GetPerlinFractal2_Square_Values(-256, -256, 512, 512);
+          let values = WasmNoise.GetSimplexFractal2_Square_Values(-256, -256, 512, 512);
           let endGenValues = performance.now();
           let startGenTexture = performance.now();
-          generateTexture(512, 512, "perlinFBMSquare2D", values);
+          generateTexture(512, 512, "SimplexFBMSquare2D", values);
           let endGenTexture = performance.now();
           let diffValues = endGenValues - startGenValues;
           let diffTex = endGenTexture - startGenTexture;
-          console.log("Time to generate values for 512*512 texture with 2D Fractal Perlin Noise (FBM, default settings): " + diffValues + "ms\n"
+          console.log("Time to generate values for 512*512 texture with 2D Fractal Simplex Noise (FBM, default settings): " + diffValues + "ms\n"
                     + "Time to generate texture: " + diffTex + "ms\n"
                     + "Total time: " + (diffValues + diffTex) + "ms");
         }
@@ -30,30 +32,33 @@
         {
           WasmNoise.SetFractalType(WasmNoise.FractalType.Billow);
           let startGenValues = performance.now();
-          let values = WasmNoise.GetPerlinFractal2_Square_Values(-256, -256, 512, 512);
+          let values = WasmNoise.GetSimplexFractal2_Square_Values(-256, -256, 512, 512);
           let endGenValues = performance.now();
           let startGenTexture = performance.now();
-          generateTexture(512, 512, "perlinBillowSquare2D", values, false);
+          generateTexture(512, 512, "SimplexBillowSquare2D", values, false);
           let endGenTexture = performance.now();
           let diffValues = endGenValues - startGenValues;
           let diffTex = endGenTexture - startGenTexture;
-          console.log("Time to generate values for 512*512 texture with 2D Fractal Perlin Noise (Billow, default settings): " + diffValues + "ms\n"
+          console.log("Time to generate values for 512*512 texture with 2D Fractal Simplex Noise (Billow, default settings): " + diffValues + "ms\n"
                     + "Time to generate texture: " + diffTex + "ms\n"
                     + "Total time: " + (diffValues + diffTex) + "ms");
         }
 
         // 2D Square to Texture, RigidMulti
         {
+          WasmNoise.SetFractalLacunarity(2.0);
+          WasmNoise.SetFractalOctaves(8);
+          WasmNoise.SetFractalGain(3.0);
           WasmNoise.SetFractalType(WasmNoise.FractalType.RidgedMulti);   
           let startGenValues = performance.now();
-          let values = WasmNoise.GetPerlinFractal2_Square_Values(-256, -256, 512, 512);
+          let values = WasmNoise.GetSimplexFractal2_Square_Values(-256, -256, 512, 512);
           let endGenValues = performance.now();
           let startGenTexture = performance.now();
-          generateTexture(512, 512, "perlinRigidMultiSquare2D", values);
+          generateTexture(512, 512, "SimplexRigidMultiSquare2D", values);
           let endGenTexture = performance.now();
           let diffValues = endGenValues - startGenValues;
           let diffTex = endGenTexture - startGenTexture;
-          console.log("Time to generate values for 512*512 texture with 2D Fractal Perlin Noise (RigidMulti, default settings): " + diffValues + "ms\n"
+          console.log("Time to generate values for 512*512 texture with 2D Fractal Simplex Noise (RigidMulti, default settings): " + diffValues + "ms\n"
                     + "Time to generate texture: " + diffTex + "ms\n"
                     + "Total time: " + (diffValues + diffTex) + "ms");
         }
@@ -74,31 +79,19 @@
         let imageDataObject = context.createImageData(width, height);
         let imageData = imageDataObject.data;
 
-        let normedValues = new Float32Array(values);
-        let vMin = 1, vMax = -1;
-        let nMin = 1, nMax = 0;
-        for(let vi = 0; vi < width*height*4; vi++)
+        //let normedValues = new Float32Array(values);
+        let vMin = 999, vMax = -999;
+        for(let vi = 0; vi < width*height; vi++)
         {
-          normedValues[vi] = (values[vi]*0.5)+0.5;
-          if(normedValues[vi] < nMin) nMin = normedValues[vi];
-          if(normedValues[vi] > nMax) nMax = normedValues[vi];
-          if(values[vi] < vMin) vMin = values[vi];
           if(values[vi] > vMax) vMax = values[vi];
+          if(values[vi] < vMin) vMin = values[vi];
         }
-        console.log(normedValues);        
-        let pixelValues = new Float32Array(normedValues);
-        let pMin = 255, pMax = 0;
-        for(let vi = 0; vi < width*height*4; vi++)
+        let pixelValues = new Float32Array(values);
+        for(let vi = 0; vi < width*height; vi++)
         {
-          pixelValues[vi] = normedValues[vi] * 255;
-          if(pixelValues[vi] < pMin) pMin = pixelValues[vi];
-          if(pixelValues[vi] > pMax) pMax = pixelValues[vi];
+          pixelValues[vi] = ((((values[vi] - vMin)/(vMax-vMin)) * 255)+0.5)|0;
         }
-        console.log(pixelValues);
-        console.log("Min Original Value: " + vMin + "\n" + "Max Original Value: " + vMax
-                  + "\nMin Normalised Value: " + nMin + "\n" + "Max Normalised Value: " + nMax
-                  + "\nMin Pixel Value: " + pMin + "\n" + "Max Pixel Value: " + pMax);
-        
+
         // Fill out the image data with our values
         let imageDataSize = width * height * 4;
         for(let di = 0, vi = 0; di < imageDataSize; di += 4, vi++)

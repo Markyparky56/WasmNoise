@@ -8,16 +8,16 @@
         document.getElementById("loaded").innerText = "Loaded!";
 
         //WasmNoise.SetSeed(Date.now());
-        //WasmNoise.SetFractalOctaves(0);
+        WasmNoise.SetFractalOctaves(8);
         console.log("Seed: " + WasmNoise.GetSeed());  
         console.log("Octaves: " + WasmNoise.GetFractalOctaves());
         console.log("Gain: " + WasmNoise.GetFractalGain());
 
         WasmNoise.SetFractalOctaves(3);
-        WasmNoise.SetFractalLacunarity(3.0);
+        //WasmNoise.SetFractalLacunarity(3.0);
         WasmNoise.SetFrequency(0.02);
         WasmNoise.SetCellularDistanceFunction(WasmNoise.CellularDistanceFunction.Euclidean);
-        WasmNoise.SetCellularReturnType(WasmNoise.CellularReturnType.Distance2Add);
+        WasmNoise.SetCellularReturnType(WasmNoise.CellularReturnType.Distance);
         WasmNoise.SetCellularDistance2Indices(0, 1);
         WasmNoise.SetCellularJitter(0.4);
 
@@ -133,22 +133,19 @@
         let imageDataObject = context.createImageData(width, height);
         let imageData = imageDataObject.data;
 
-        // Find min/max values
-        let min = 9999999;
-        let max = -9999999;
-        for(let i = 0; i < values.length; i++)
+        //let normedValues = new Float32Array(values);
+        let vMin = 999, vMax = -999;
+        for(let vi = 0; vi < width*height; vi++)
         {
-          if(values[i] > max) max = values[i];
-          if(values[i] < min) min = values[i];
+          if(values[vi] > vMax) vMax = values[vi];
+          if(values[vi] < vMin) vMin = values[vi];
+        }
+        let pixelValues = new Float32Array(values);
+        for(let vi = 0; vi < width*height; vi++)
+        {
+          pixelValues[vi] = ((((values[vi] - vMin)/(vMax-vMin)) * 255)+0.5)|0;
         }
 
-        // Normalise values and convert to pixel range
-        let pixelValues = new Float32Array(values);
-        for(let i = 0; i < pixelValues.length; i++)
-        {
-          pixelValues[i] = ((pixelValues[i] - min) / (max - min)) * 255;
-        }
-                
         // Fill out the image data with our values
         let imageDataSize = width * height * 4;
         for(let di = 0, vi = 0; di < imageDataSize; di += 4, vi++)

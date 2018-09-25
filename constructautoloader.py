@@ -4,7 +4,7 @@ Moudle to output an autoloader js file tailored to the build
 from string import Template
 
 WasmNoiseObjectDeclaration = "if(WasmNoise != undefined) {let WasmNoise = {};}"
-WasmNoiseMemoryDeclaration = "WasmNoise.memory = WasmNoise.memory || WebAssembly.Memory({initial: 9});"
+WasmNoiseMemoryDeclaration = "WasmNoise.memory = WasmNoise.memory || new WebAssembly.Memory({initial: 9});"
 WasmNoiseEnums = {
   "Interp": "WasmNoise.Interp = WasmNoise.Interp || Object.freeze({Linear: 0, Hermite: 1, Quintic: 2});",
   "FractalType":"WasmNoise.FractalType = WasmNoise.FractalType || Object.freeze({FBM: 0, Billow: 1, RidgedMulti: 2});",

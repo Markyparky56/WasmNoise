@@ -48,6 +48,18 @@ void WasmNoise::CalculateFractalBounding()
   fractalBounding = WN_DECIMAL(1.0) / ampFractal;
 }
 
+void WasmNoise::CalculateFractalExponents()
+{
+  if(fractalExponents) delete[] fractalExponents;
+  fractalExponents = new WN_DECIMAL[fractalOctaves + 1];
+  WN_DECIMAL frequency = 1.0;
+  for(uint32 i = 0; i < fractalOctaves; i++)
+  {
+    fractalExponents[i] = 1 / frequency;
+    frequency *= fractalLacunarity;
+  }
+}
+
 // Index Functions
 WN_INLINE uint8 WasmNoise::Index2D_12(uint8 offset, int32 x, int32 y) const
 {

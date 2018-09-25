@@ -55,6 +55,10 @@ static WN_INLINE WN_DECIMAL CubicLerp(WN_DECIMAL a, WN_DECIMAL b, WN_DECIMAL c, 
 
 template<class T> static WN_INLINE T min(T a, T b) { return (a < b) ? a : b; }
 template<class T> static WN_INLINE T max(T a, T b) { return (a > b) ? a : b; }
+static WN_INLINE void Clamp(WN_DECIMAL &value, WN_DECIMAL minValue, WN_DECIMAL maxValue)
+{
+  value = max(minValue, min(value, maxValue));
+}
 
 static WN_INLINE WN_DECIMAL ValCoord2D(int32 seed, int32 x, int32 y)
 {
