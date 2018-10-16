@@ -1,16 +1,24 @@
 <html>
   <head>
+    <script type="text/javascript" src="./wasmnoise.autoloader.js"></script>
     <script type="text/javascript">
       // Optional onLoaded function callback
-      let WasmNoise = {}
       WasmNoise.onLoaded = function()
       {
         document.getElementById("loaded").innerText = "Loaded!";
       }
     </script>
-    <script type="text/javascript" src="./wasmnoise.autoloader.js"></script>
   </head>
   <body>
     <span id="loaded">Loading...</span>
+    <script>
+      function update()
+      {
+        if(WasmNoise) 
+          if(WasmNoise.loaded) 
+            console.log(WasmNoise.GetSimplex2(Math.random(), Math.random()));
+      }
+      setInterval(() => {update()}, 1000);
+    </script>
   </body>
 </html>
