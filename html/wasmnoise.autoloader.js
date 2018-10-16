@@ -1,4 +1,6 @@
-if(WasmNoise != undefined) {let WasmNoise = {};}
+// This is not the real autoloader, it's left over from prototyping. 
+// Use the one generated during the build in the bin folder
+if(WasmNoise != undefined) {var WasmNoise = {};}
 WasmNoise.memory = WasmNoise.memory || WebAssembly.Memory({initial: 9});
 // TODO: Rest of the enums
 WasmNoise.Interp = WasmNoise.Interp || Object.freeze({
