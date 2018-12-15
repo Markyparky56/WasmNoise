@@ -9,8 +9,8 @@ extern "C"
 // We need to override the global new/delete operators to use our own malloc/free functions
 // which allocate and free memory in the WebAssembly modules linear memory,
 // otherwise they'll be requested as imports
-void *operator new     (size_t size) { return malloc(size); }
-void *operator new[]   (size_t size) { return malloc(size); }
+void *operator new     (std::size_t size) { return malloc(size); }
+void *operator new[]   (std::size_t size) { return malloc(size); }
 void  operator delete  (void   *ptr) noexcept { return free(ptr); }
 void  operator delete[](void   *ptr) noexcept { return free(ptr); }
 

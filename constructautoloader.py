@@ -82,7 +82,7 @@ def constructFetchCompileAndInstantiateFunction(filename, enabledFunctions, expo
     "})" +
     ".then(instance => {\n" +
     "this.instance = instance;\n" +
-    "this.instance.exports['_GLOBAL__sub_I_WasmNoiseInterface.cpp']();\n"
+    "this.instance.exports.__wasm_call_ctors();\n"
     "${functionElevations}" +
     "${valueFunctions}" +
     "this.GetValues = function(offset, elements)" +
@@ -99,7 +99,7 @@ def constructFetchCompileAndInstantiateFunction(filename, enabledFunctions, expo
   elevateFunctionList = []
   for enabledFunctionSet in enabledFunctions:
     elevateFunctionList += exports["exports"][enabledFunctionSet]["funcs"]
-  elevateFunctionList.remove("_GLOBAL__sub_I_WasmNoiseInterface.cpp")
+  #elevateFunctionList.remove("_GLOBAL__sub_I_WasmNoiseInterface.cpp")
 
   # Construct function elevations
   functionElevationsStr = str()

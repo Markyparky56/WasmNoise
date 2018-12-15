@@ -2,7 +2,7 @@
   "exports": {
     "getset":{
       "funcs":[      
-      "_GLOBAL__sub_I_WasmNoiseInterface.cpp",    
+      "__wasm_call_ctors",    
       "SetSeed",
       "GetSeed",
       "SetFrequency",

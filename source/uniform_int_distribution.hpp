@@ -77,11 +77,11 @@ uniform_int_distribution<IntType>::operator()(URNG& _g, const param_type& _p)
   const UIntType Rp = _p.b() - _p.a() + UIntType(1);
   if(Rp == 1)
     return _p.a();
-  const size_t Dt = numeric_limits<UIntType>::digits;
+  const std::size_t Dt = numeric_limits<UIntType>::digits;
   typedef independent_bits_engine<URNG, UIntType> Eng;
   if(Rp == 0)
     return static_cast<result_type>(Eng(_g, Dt)());
-  size_t w = Dt - __builtin_clz(Rp) - 1;
+  std::size_t w = Dt - __builtin_clz(Rp) - 1;
   if((Rp & (numeric_limits<UIntType>::max() >> (Dt - w))) != 0)
     ++w;
   Eng e(_g, w);

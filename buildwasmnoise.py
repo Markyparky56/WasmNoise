@@ -10,6 +10,7 @@ import enum
 import json
 from removeextraexports import removeExtraExports
 from constructautoloader import outputAutloaderFile
+from getexports import getExports
 
 class BuildType(enum.IntEnum):
   """Enum for build types"""
@@ -285,10 +286,10 @@ def build(buildType, optLevel, verbose, allowAbort, enabledFlags):
   # Assemble build commands
   binLoc = "bin/" + outName + '.b' + config["VERSION"]["build"]
   llvmlinkOut = outName+".bc"
-  llcOut = outName+".s"
+  wasmldOut = outName+".s"
   s2wasmOut = outName+".wat"
   processedWat = outName+".cleanexports.wat"
-  wat2wasmOut = outName+".wasm"
+  wasmOut = outName+".wasm"
   wasmoptOut = outName+".opt.wasm"
   optimisationLevel = optLevel
 
@@ -297,6 +298,7 @@ def build(buildType, optLevel, verbose, allowAbort, enabledFlags):
     "--target=wasm32",
     "-emit-llvm",
     "-std=c++17",
+    "-nostdlib",
     optimisationLevel,
     "-c",
     "-I..\\..\\..\\wasm-stdlib-hack\\include\\libc",
@@ -313,24 +315,20 @@ def build(buildType, optLevel, verbose, allowAbort, enabledFlags):
   if verbose:
     clangCmd.append("-v")
 
-  llcCmd = [
-    "llc",
-    "-asm-verbose=false",
-    optimisationLevel,
-    "-o", llcOut,
-    llvmlinkOut
+  wasmldExports = getExports(exports, enabledFunctions)
+  wasmldCmd = [
+    "wasm-ld",
+    "--no-entry",
+    "--allow-undefined",
+    "--import-memory",
+    "--initial-memory=589824",
+    "--verbose",
+    optimisationLevel   
   ]
+  wasmldCmd += wasmldExports
+  wasmldCmd += ["-o", wasmOut, llvmlinkOut]
 
-  s2wasmCmd = [
-    "s2wasm",
-     "-s", "524288",
-     "--import-memory",
-     llcOut, ">", s2wasmOut
-  ]
-
-  wat2wasmCmd = ["wat2wasm", processedWat, "-o", wat2wasmOut]
-
-  wasmoptCmd = ["wasm-opt", optimisationLevel, wat2wasmOut, "-o", wasmoptOut]
+  wasmoptCmd = ["wasm-opt", optimisationLevel, wasmOut, "-o", wasmoptOut]
 
   # Make sure the build directory exists
   os.makedirs(binLoc, exist_ok=True)
@@ -354,23 +352,13 @@ def build(buildType, optLevel, verbose, allowAbort, enabledFlags):
   print(TextColours.Blue + "Linking with llvm-link..." + TextColours.StopColour)
   runCommand(llvmlinkCmd)
 
-  print(TextColours.Blue + "Converting to S-expressions with llc..." + TextColours.StopColour)
-  runCommand(llcCmd)
-
-  print(TextColours.Blue + "Converting S-expressions to wat..." + TextColours.StopColour)
-  runCommand(s2wasmCmd)
-
-  # Remove extra exports from the wat file before compiling
-  print(TextColours.Blue + "Removing unwanted exports from wat file..." + TextColours.StopColour)
-  removeExtraExports(s2wasmOut, enabledFunctions, exports)
-
-  print(TextColours.Blue + "Compiling wat to wasm..." + TextColours.StopColour)
-  runCommand(wat2wasmCmd)
+  print(TextColours.Blue + "Compiling/Linking to wasm via wasm-ld..." + TextColours.StopColour)
+  runCommand(wasmldCmd)
 
   print(TextColours.Blue + "Passing compiled wasm through wasm-opt to try to achieve faster and smaller binary..." + TextColours.StopColour)
   runCommand(wasmoptCmd)
 
-  print(TextColours.Green + "Wasm compiled successfully! " + wat2wasmOut + " file now located at " + binLoc + TextColours.StopColour)
+  print(TextColours.Green + "Wasm compiled successfully! " + wasmOut + " file now located at " + binLoc + TextColours.StopColour)
   
   print(TextColours.Blue + "Writing Autoloader Script..." + TextColours.StopColour)
   outputAutloaderFile(wasmoptOut, enabledFunctions, exports)  

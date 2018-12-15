@@ -30,7 +30,9 @@ using uint_fast64 = unsigned long long;
 using intmax = long long;
 using uintmax = unsigned long long;
 
-using size_t = unsigned int;
+namespace std {
+using size_t = unsigned long;
+}
 
 #define INT8_MIN (-127i8 - 1)
 #define INT16_MIN (-32767i16 - 1)

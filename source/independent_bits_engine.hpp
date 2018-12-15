@@ -3,28 +3,28 @@
 #include "numeric_limits.hpp"
 
 // Helper functions used by independent_bits_engine
-template<unsigned long long Xp, size_t Rp>
+template<unsigned long long Xp, std::size_t Rp>
 struct __log2_imp
 {
-  static const size_t value = Xp & ((unsigned long long)(1) << Rp) ? Rp : __log2_imp<Xp, Rp - 1>::value;
+  static const std::size_t value = Xp & ((unsigned long long)(1) << Rp) ? Rp : __log2_imp<Xp, Rp - 1>::value;
 };
 
 template<unsigned long long Xp>
 struct __log2_imp<Xp, 0>
 {
-  static const size_t value = 0;
+  static const std::size_t value = 0;
 };
 
-template<size_t Rp>
+template<std::size_t Rp>
 struct __log2_imp<0, Rp>
 {
-  static const size_t value = Rp + 1;
+  static const std::size_t value = Rp + 1;
 };
 
 template<class UIntType, UIntType Xp>
 struct __log2
 {
-  static const size_t value = __log2_imp<Xp, sizeof(UIntType) * __CHAR_BIT__ - 1>::value;
+  static const std::size_t value = __log2_imp<Xp, sizeof(UIntType) * __CHAR_BIT__ - 1>::value;
 };
 
 template<class Engine, class UIntType>
@@ -40,18 +40,18 @@ private:
                                       result_type,
                                       Engine_result_type>:: type Working_result_type;
   Engine &e;
-  size_t w, w0, n, n0;
+  std::size_t w, w0, n, n0;
   Working_result_type y0, y1;
   Engine_result_type mask0, mask1;
 
   static constexpr const Working_result_type Rp = Engine::max() - Engine::min() + Working_result_type(1);
-  static constexpr const size_t m = __log2<Working_result_type, Rp>::value;
-  static constexpr const size_t WDt = numeric_limits<Working_result_type>::digits;
-  static constexpr const size_t EDt = numeric_limits<Engine_result_type>::digits;
+  static constexpr const std::size_t m = __log2<Working_result_type, Rp>::value;
+  static constexpr const std::size_t WDt = numeric_limits<Working_result_type>::digits;
+  static constexpr const std::size_t EDt = numeric_limits<Engine_result_type>::digits;
 
 public:
   // Constructors and seeding functions
-  independent_bits_engine(Engine& _e, size_t _w);
+  independent_bits_engine(Engine& _e, std::size_t _w);
 
   // Generating functions
   result_type operator()() {return eval(type_traits::integral_constant<bool, Rp != 0>());}
@@ -63,7 +63,7 @@ private:
 
 // Caveat: I have no idea what's going on here, so much for meaningful variable names
 template<class Engine, class UIntType>
-independent_bits_engine<Engine, UIntType>::independent_bits_engine(Engine& _e, size_t _w)
+independent_bits_engine<Engine, UIntType>::independent_bits_engine(Engine& _e, std::size_t _w)
   : e(_e)
   , w(_w)
 {
@@ -102,9 +102,9 @@ inline UIntType independent_bits_engine<Engine, UIntType>::eval(type_traits::fal
 template<class Engine, class UIntType>
 UIntType independent_bits_engine<Engine, UIntType>::eval(type_traits::true_type)
 {
-  const size_t WRt = numeric_limits<result_type>::digits;
+  const std::size_t WRt = numeric_limits<result_type>::digits;
   result_type Sp = 0;
-  for(size_t k = 0; k < n0; ++k)
+  for(std::size_t k = 0; k < n0; ++k)
   {
     Engine_result_type u;
     do
@@ -117,7 +117,7 @@ UIntType independent_bits_engine<Engine, UIntType>::eval(type_traits::true_type)
       Sp = 0;
     Sp += u & mask0;
   }
-  for(size_t k = n0; k < n; ++k)
+  for(std::size_t k = n0; k < n; ++k)
   {
     Engine_result_type u;
     do

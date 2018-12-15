@@ -34,3 +34,6 @@ extern "C"
 #else
 #define ABORT(dummy)
 #endif
+
+#define EXPORT __attribute__((visibility ("default")))
+#define IMPORT __attribute__((visibility ("default")))
