@@ -25,20 +25,20 @@ def constructValuesFunc(funcName, funcType):
     "let offset = this.${func}_${funcType}(${startParams}, ${otherParams});" +
     "return new Float32Array(this.memory.buffer.slice(offset, offset+${size}));" +
     "}")
-  startParams = "startX, startY" if funcName[-1] is '2' else ("startX, startY, startZ" if (funcName[-1] is '3') else "startX, startY, startZ, startW")
+  startParams = "startX, startY" if funcName[-1] == '2' else ("startX, startY, startZ" if (funcName[-1] == '3') else "startX, startY, startZ, startW")
   otherParams = str()
   size = str()
-  if funcName[-1] is '2':
-    otherParams = "length, direction" if funcType is "Strip" else "width, height"
-    size = "length*4" if funcType is "Strip" else "width*height*4"
+  if funcName[-1] == '2':
+    otherParams = "length, direction" if funcType == "Strip" else "width, height"
+    size = "length*4" if funcType == "Strip" else "width*height*4"
   else:
-    if funcType is "Strip":
+    if funcType == "Strip":
       otherParams = "length, direction"
       size = "length*4"
-    elif funcType is "Square":
+    elif funcType == "Square":
       otherParams = "width, height, plane"
       size = "width*height*4"
-    elif funcType is "Cube":
+    elif funcType == "Cube":
       otherParams = "width, height, depth"
       size = "width*height*depth*4"
   return funcTemplate.substitute(func=funcName, funcType=funcType, startParams=startParams, otherParams=otherParams, size=size)
@@ -99,7 +99,7 @@ def constructFetchCompileAndInstantiateFunction(filename, enabledFunctions, expo
   elevateFunctionList = []
   for enabledFunctionSet in enabledFunctions:
     elevateFunctionList += exports["exports"][enabledFunctionSet]["funcs"]
-  #elevateFunctionList.remove("_GLOBAL__sub_I_WasmNoiseInterface.cpp")
+  elevateFunctionList.remove("__wasm_call_ctors")
 
   # Construct function elevations
   functionElevationsStr = str()
@@ -110,7 +110,7 @@ def constructFetchCompileAndInstantiateFunction(filename, enabledFunctions, expo
   # We can picked them out by the prescense of their dimension in their function name
   valueFunctionList = []  
   for elevatedFunction in elevateFunctionList:
-    if elevatedFunction[-1] is '2' or elevatedFunction[-1] is '3' or elevatedFunction[-1] is '4':
+    if elevatedFunction[-1] == '2' or elevatedFunction[-1] == '3' or elevatedFunction[-1] == '4':
       valueFunctionList.append(elevatedFunction)
 
   # Construct _Values functions

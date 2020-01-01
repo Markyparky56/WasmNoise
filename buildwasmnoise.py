@@ -285,27 +285,26 @@ def build(buildType, optLevel, verbose, allowAbort, enabledFlags):
 
   # Assemble build commands
   binLoc = "bin/" + outName + '.b' + config["VERSION"]["build"]
-  llvmlinkOut = outName+".bc"
-  wasmldOut = outName+".s"
-  s2wasmOut = outName+".wat"
-  processedWat = outName+".cleanexports.wat"
   wasmOut = outName+".wasm"
   wasmoptOut = outName+".opt.wasm"
   optimisationLevel = optLevel
 
   clangCmd = [
     "clang++",
-    "--target=wasm32",
-    "-emit-llvm",
-    "-std=c++17",
-    "-nostdlib",
-    optimisationLevel,
-    "-c",
-    "-I..\\..\\..\\wasm-stdlib-hack\\include\\libc",
     "../../source/*.cpp",
+    "--target=wasm32-wasi",
+    "-std=c++17",
+    optimisationLevel,
+    "--sysroot=C:/local/wasi-sysroot",
+    "-LC:/local/WasmNoise/lib/wasi",
+    "--save-temps=obj",
     "-pedantic",
     "-Wall",
-    "-Wextra"
+    "-Wextra",
+    "--for-linker=--no-entry",
+    "--for-linker=--allow-undefined",
+    "--for-linker=--import-memory",
+    "--for-linker=--initial-memory=589824"
   ]
   for macro in enabledFuncMacros:
     clangCmd.append(macro)
@@ -314,19 +313,12 @@ def build(buildType, optLevel, verbose, allowAbort, enabledFlags):
   
   if verbose:
     clangCmd.append("-v")
+    clangCmd += ["--for-linker=--verbose"]
 
   wasmldExports = getExports(exports, enabledFunctions)
-  wasmldCmd = [
-    "wasm-ld",
-    "--no-entry",
-    "--allow-undefined",
-    "--import-memory",
-    "--initial-memory=589824",
-    "--verbose",
-    optimisationLevel   
-  ]
-  wasmldCmd += wasmldExports
-  wasmldCmd += ["-o", wasmOut, llvmlinkOut]
+  for export in wasmldExports:
+    clangCmd += ["--for-linker="+export]
+  clangCmd += ["-o", wasmOut]
 
   wasmoptCmd = ["wasm-opt", optimisationLevel, wasmOut, "-o", wasmoptOut]
 
@@ -339,21 +331,6 @@ def build(buildType, optLevel, verbose, allowAbort, enabledFlags):
   # Run build commands
   print(TextColours.Blue + "Compiling With clang..." + TextColours.StopColour)
   runCommand(clangCmd)
-
-  # The llvm-link command requires knowledge of the output from the clang command
-  # so we assemble it here
-  llvmlinkCmd = ["llvm-link", "-v", "-o", llvmlinkOut]
-  for file in os.listdir('.'):
-    if file.endswith(".bc"):
-      llvmlinkCmd.append(file)
-  # Include memory.bc
-  llvmlinkCmd.append("../../source/memory-bitcode/memory.bc")
-
-  print(TextColours.Blue + "Linking with llvm-link..." + TextColours.StopColour)
-  runCommand(llvmlinkCmd)
-
-  print(TextColours.Blue + "Compiling/Linking to wasm via wasm-ld..." + TextColours.StopColour)
-  runCommand(wasmldCmd)
 
   print(TextColours.Blue + "Passing compiled wasm through wasm-opt to try to achieve faster and smaller binary..." + TextColours.StopColour)
   runCommand(wasmoptCmd)
